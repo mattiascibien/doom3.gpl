@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 GPL Source Code
-Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -37,42 +37,42 @@ If you have questions concerning this license or the applicable additional terms
 
 
 DialogName::DialogName(const char *pName, CWnd* pParent /*=NULL*/)
-	: CDialog(DialogName::IDD, pParent)
+    : CDialog(DialogName::IDD, pParent)
 {
-	//{{AFX_DATA_INIT(DialogName)
-	m_strName = _T("");
-	//}}AFX_DATA_INIT
-	m_strCaption = pName;
+    //{{AFX_DATA_INIT(DialogName)
+    m_strName = _T("");
+    //}}AFX_DATA_INIT
+    m_strCaption = pName;
 }
 
 
 void DialogName::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(DialogName)
-	DDX_Text(pDX, IDC_TOOLS_EDITNAME, m_strName);
-	//}}AFX_DATA_MAP
+    CDialog::DoDataExchange(pDX);
+    //{{AFX_DATA_MAP(DialogName)
+    DDX_Text(pDX, IDC_TOOLS_EDITNAME, m_strName);
+    //}}AFX_DATA_MAP
 }
 
-BOOL DialogName::OnInitDialog() 
+BOOL DialogName::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+    CDialog::OnInitDialog();
 
-	SetWindowText(m_strCaption);
-	
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+    SetWindowText(m_strCaption);
+
+    return TRUE;  // return TRUE unless you set the focus to a control
+    // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 BEGIN_MESSAGE_MAP(DialogName, CDialog)
-	//{{AFX_MSG_MAP(DialogName)
-	//}}AFX_MSG_MAP
+    //{{AFX_MSG_MAP(DialogName)
+    //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // DialogName message handlers
 
-void DialogName::OnOK() 
+void DialogName::OnOK()
 {
-	CDialog::OnOK();
+    CDialog::OnOK();
 }

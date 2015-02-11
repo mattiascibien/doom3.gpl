@@ -53,14 +53,15 @@
 #endif
 
 
-typedef struct {
-  int n;
-  int log2n;
-  
-  DATA_TYPE *trig;
-  int       *bitrev;
+typedef struct
+{
+    int n;
+    int log2n;
 
-  DATA_TYPE scale;
+    DATA_TYPE *trig;
+    int       *bitrev;
+
+    DATA_TYPE scale;
 } mdct_lookup;
 
 extern void mdct_init(mdct_lookup *lookup,int n);

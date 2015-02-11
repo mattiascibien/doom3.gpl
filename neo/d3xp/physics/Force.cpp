@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 GPL Source Code
-Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "../Game_local.h"
 
-CLASS_DECLARATION( idClass, idForce )
+CLASS_DECLARATION(idClass, idForce)
 END_CLASS
 
 idList<idForce*> idForce::forceList;
@@ -41,8 +41,9 @@ idList<idForce*> idForce::forceList;
 idForce::idForce
 ================
 */
-idForce::idForce( void ) {
-	forceList.Append( this );
+idForce::idForce(void)
+{
+    forceList.Append(this);
 }
 
 /*
@@ -50,8 +51,9 @@ idForce::idForce( void ) {
 idForce::~idForce
 ================
 */
-idForce::~idForce( void ) {
-	forceList.Remove( this );
+idForce::~idForce(void)
+{
+    forceList.Remove(this);
 }
 
 /*
@@ -59,12 +61,14 @@ idForce::~idForce( void ) {
 idForce::DeletePhysics
 ================
 */
-void idForce::DeletePhysics( const idPhysics *phys ) {
-	int i;
+void idForce::DeletePhysics(const idPhysics *phys)
+{
+    int i;
 
-	for ( i = 0; i < forceList.Num(); i++ ) {
-		forceList[i]->RemovePhysics( phys );
-	}
+    for (i = 0; i < forceList.Num(); i++)
+    {
+        forceList[i]->RemovePhysics(phys);
+    }
 }
 
 /*
@@ -72,8 +76,9 @@ void idForce::DeletePhysics( const idPhysics *phys ) {
 idForce::ClearForceList
 ================
 */
-void idForce::ClearForceList( void ) {
-	forceList.Clear();
+void idForce::ClearForceList(void)
+{
+    forceList.Clear();
 }
 
 /*
@@ -81,7 +86,8 @@ void idForce::ClearForceList( void ) {
 idForce::Evaluate
 ================
 */
-void idForce::Evaluate( int time ) {
+void idForce::Evaluate(int time)
+{
 }
 
 /*
@@ -89,5 +95,6 @@ void idForce::Evaluate( int time ) {
 idForce::RemovePhysics
 ================
 */
-void idForce::RemovePhysics( const idPhysics *phys ) {
+void idForce::RemovePhysics(const idPhysics *phys)
+{
 }

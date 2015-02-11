@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 GPL Source Code
-Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,9 +30,9 @@ If you have questions concerning this license or the applicable additional terms
 patchMesh_t* MakeNewPatch(int width, int height);
 brush_t* AddBrushForPatch(patchMesh_t *pm, bool bLinkToWorld = true);
 brush_t* Patch_GenericMesh(int nWidth, int nHeight, int nOrientation = 2, bool bDeleteSource = true, bool bOverride = false, patchMesh_t *parent = NULL);
-void Patch_ReadFile (char *name);
-void Patch_WriteFile (char *name); 
-void Patch_BuildPoints (brush_t *b);
+void Patch_ReadFile(char *name);
+void Patch_WriteFile(char *name);
+void Patch_BuildPoints(brush_t *b);
 void Patch_Move(patchMesh_t *p, const idVec3 vMove, bool bRebuild = false);
 //++timo had to add a default value for bSnap (see Patch_ApplyMatrix call from Select_ApplyMatrix in select.cpp)
 void Patch_ApplyMatrix(patchMesh_t *p, const idVec3 vOrigin, const idMat3 matrix, bool bSnap = false);
@@ -50,12 +50,12 @@ void Patch_SetTextureName(patchMesh_t *p, const char *name);
 void Patch_BrushToMesh(bool bCone = false, bool bBevel = false, bool bEndcap = false, bool bSquare = false, int nHeight = 3);
 bool Patch_DragScale(patchMesh_t *p, idVec3 vAmt, idVec3 vMove);
 void Patch_ReadBuffer(char* pBuff, bool bSelect = false);
-void Patch_WriteFile (CMemFile* pMemFile);
+void Patch_WriteFile(CMemFile* pMemFile);
 void Patch_UpdateSelected(idVec3 vMove);
 void Patch_AddRow(patchMesh_t *p);
 brush_t* Patch_Parse(bool bOld);
-void Patch_Write (patchMesh_t *p, FILE *f);
-void Patch_Write (patchMesh_t *p, CMemFile *file);
+void Patch_Write(patchMesh_t *p, FILE *f);
+void Patch_Write(patchMesh_t *p, CMemFile *file);
 void Patch_AdjustColumns(patchMesh_t *p, int nCols);
 void Patch_AdjustRows(patchMesh_t *p, int nRows);
 void Patch_AdjustSelected(bool bInsert, bool bColumn, bool bFlag);

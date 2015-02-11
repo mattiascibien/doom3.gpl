@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 GPL Source Code
-Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,22 +30,22 @@ If you have questions concerning this license or the applicable additional terms
 
 enum EDebuggerMessage
 {
-	DBMSG_UNKNOWN,
-	DBMSG_CONNECT,
-	DBMSG_CONNECTED,
-	DBMSG_DISCONNECT,
-	DBMSG_ADDBREAKPOINT,
-	DBMSG_REMOVEBREAKPOINT,
-	DBMSG_HITBREAKPOINT,
-	DBMSG_RESUME,
-	DBMSG_RESUMED,
-	DBMSG_BREAK,
-	DBMSG_PRINT,
-	DBMSG_INSPECTVARIABLE,
-	DBMSG_INSPECTCALLSTACK,
-	DBMSG_INSPECTTHREADS,
-	DBMSG_STEPOVER,
-	DBMSG_STEPINTO,
+    DBMSG_UNKNOWN,
+    DBMSG_CONNECT,
+    DBMSG_CONNECTED,
+    DBMSG_DISCONNECT,
+    DBMSG_ADDBREAKPOINT,
+    DBMSG_REMOVEBREAKPOINT,
+    DBMSG_HITBREAKPOINT,
+    DBMSG_RESUME,
+    DBMSG_RESUMED,
+    DBMSG_BREAK,
+    DBMSG_PRINT,
+    DBMSG_INSPECTVARIABLE,
+    DBMSG_INSPECTCALLSTACK,
+    DBMSG_INSPECTTHREADS,
+    DBMSG_STEPOVER,
+    DBMSG_STEPINTO,
 };
 
 #endif // DEBUGGER_MESSAGES_H_

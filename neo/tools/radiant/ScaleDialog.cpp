@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 GPL Source Code
-Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -44,31 +44,31 @@ static char THIS_FILE[] = __FILE__;
 
 
 CScaleDialog::CScaleDialog(CWnd* pParent /*=NULL*/)
-	: CDialog(CScaleDialog::IDD, pParent)
+    : CDialog(CScaleDialog::IDD, pParent)
 {
-	//{{AFX_DATA_INIT(CScaleDialog)
-	m_fZ = 1.0f;
-	m_fX = 1.0f;
-	m_fY = 1.0f;
-	//}}AFX_DATA_INIT
+    //{{AFX_DATA_INIT(CScaleDialog)
+    m_fZ = 1.0f;
+    m_fX = 1.0f;
+    m_fY = 1.0f;
+    //}}AFX_DATA_INIT
 }
 
 
 void CScaleDialog::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CScaleDialog)
-	DDX_Text(pDX, IDC_EDIT_Z, m_fZ);
-	DDX_Text(pDX, IDC_EDIT_X, m_fX);
-	DDX_Text(pDX, IDC_EDIT_Y, m_fY);
-	//}}AFX_DATA_MAP
+    CDialog::DoDataExchange(pDX);
+    //{{AFX_DATA_MAP(CScaleDialog)
+    DDX_Text(pDX, IDC_EDIT_Z, m_fZ);
+    DDX_Text(pDX, IDC_EDIT_X, m_fX);
+    DDX_Text(pDX, IDC_EDIT_Y, m_fY);
+    //}}AFX_DATA_MAP
 }
 
 
 BEGIN_MESSAGE_MAP(CScaleDialog, CDialog)
-	//{{AFX_MSG_MAP(CScaleDialog)
-		// NOTE: the ClassWizard will add message map macros here
-	//}}AFX_MSG_MAP
+    //{{AFX_MSG_MAP(CScaleDialog)
+    // NOTE: the ClassWizard will add message map macros here
+    //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////

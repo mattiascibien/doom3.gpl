@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 GPL Source Code
-Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -38,10 +38,10 @@ If you have questions concerning this license or the applicable additional terms
 
 IMPLEMENT_DYNAMIC(CCommentsDlg, CDialog)
 CCommentsDlg::CCommentsDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CCommentsDlg::IDD, pParent)
-	, strName(_T(""))
-	, strPath(_T(""))
-	, strComments(_T(""))
+    : CDialog(CCommentsDlg::IDD, pParent)
+    , strName(_T(""))
+    , strPath(_T(""))
+    , strComments(_T(""))
 {
 }
 
@@ -51,15 +51,15 @@ CCommentsDlg::~CCommentsDlg()
 
 void CCommentsDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_EDIT_NAME, strName);
-	DDX_Text(pDX, IDC_EDIT_PATH, strPath);
-	DDX_Text(pDX, IDC_EDIT_COMMENTS, strComments);
+    CDialog::DoDataExchange(pDX);
+    DDX_Text(pDX, IDC_EDIT_NAME, strName);
+    DDX_Text(pDX, IDC_EDIT_PATH, strPath);
+    DDX_Text(pDX, IDC_EDIT_COMMENTS, strComments);
 }
 
 
 BEGIN_MESSAGE_MAP(CCommentsDlg, CDialog)
 END_MESSAGE_MAP()
 
-	
+
 // CCommentsDlg message handlers

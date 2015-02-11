@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 GPL Source Code
-Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ If you have questions concerning this license or the applicable additional terms
 
 IMPLEMENT_DYNAMIC(CCurveDlg, CDialog)
 CCurveDlg::CCurveDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CCurveDlg::IDD, pParent)
+    : CDialog(CCurveDlg::IDD, pParent)
 {
 }
 
@@ -48,16 +48,17 @@ CCurveDlg::~CCurveDlg()
 
 void CCurveDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_COMBO_CURVES, comboCurve);
+    CDialog::DoDataExchange(pDX);
+    DDX_Control(pDX, IDC_COMBO_CURVES, comboCurve);
 }
 
-void CCurveDlg::OnOK() {
-	UpdateData(TRUE);
-	CString str;
-	comboCurve.GetWindowText( str );
-	strCurveType = str;
-	CDialog::OnOK();
+void CCurveDlg::OnOK()
+{
+    UpdateData(TRUE);
+    CString str;
+    comboCurve.GetWindowText(str);
+    strCurveType = str;
+    CDialog::OnOK();
 }
 
 BEGIN_MESSAGE_MAP(CCurveDlg, CDialog)

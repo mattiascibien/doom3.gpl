@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 GPL Source Code
-Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -78,46 +78,46 @@ const float	HUGE_DISTANCE = 100000;
 #define myoffsetof(type,identifier) ((size_t)&((type *)0)->identifier)
 
 
-void	Error (char *error, ...);
-void	Warning (char *error, ...);
+void	Error(char *error, ...);
+void	Warning(char *error, ...);
 
 typedef struct
 {
-	int		p1, p2;
-	face_t	*f1, *f2;
+    int		p1, p2;
+    face_t	*f1, *f2;
 } pedge_t;
 
 typedef struct
 {
-	int		iSize;
-	int		iTexMenu;		// nearest, linear, etc
-	float	fGamma;			// gamma for textures
-	char	szProject[256];	// last project loaded
-	idVec3	colors[COLOR_LAST];
-	bool	show_names;
-	bool	show_coordinates;
-	int		exclude;
-	float	m_nTextureTweak;
-	bool	editorExpanded;
-	RECT	oldEditRect;
-	bool	showSoundAlways;
-	bool	showSoundWhenSelected;
+    int		iSize;
+    int		iTexMenu;		// nearest, linear, etc
+    float	fGamma;			// gamma for textures
+    char	szProject[256];	// last project loaded
+    idVec3	colors[COLOR_LAST];
+    bool	show_names;
+    bool	show_coordinates;
+    int		exclude;
+    float	m_nTextureTweak;
+    bool	editorExpanded;
+    RECT	oldEditRect;
+    bool	showSoundAlways;
+    bool	showSoundWhenSelected;
 } SavedInfo_t;
 
 //
 // system functions
 //
 // TTimo NOTE: WINAPI funcs can be accessed by plugins
-void    Sys_UpdateStatusBar( void );
-void    WINAPI Sys_UpdateWindows (int bits);
-void    Sys_Beep (void);
-double	Sys_DoubleTime (void);
-void    Sys_GetCursorPos (int *x, int *y);
-void    Sys_SetCursorPos (int x, int y);
-void    Sys_SetTitle (const char *text);
-void    Sys_BeginWait (void);
+void    Sys_UpdateStatusBar(void);
+void    WINAPI Sys_UpdateWindows(int bits);
+void    Sys_Beep(void);
+double	Sys_DoubleTime(void);
+void    Sys_GetCursorPos(int *x, int *y);
+void    Sys_SetCursorPos(int x, int y);
+void    Sys_SetTitle(const char *text);
+void    Sys_BeginWait(void);
 bool	Sys_Waiting();
-void    Sys_EndWait (void);
+void    Sys_EndWait(void);
 void    Sys_Status(const char *psz, int part = -1);
 
 /*
@@ -125,122 +125,122 @@ void    Sys_Status(const char *psz, int part = -1);
 */
 typedef struct
 {
-	bool d_showgrid;
-	float d_gridsize;
+    bool d_showgrid;
+    float d_gridsize;
 
-	int	rotateAxis;			// 0, 1 or 2
-	int flatRotation;		// 0, 1 or 2, 0 == off, 1 == rotate about the rotation origin, 1 == rotate about the selection mid point
-	
-	int      d_num_entities;
-	
-	entity_t *d_project_entity;
+    int	rotateAxis;			// 0, 1 or 2
+    int flatRotation;		// 0, 1 or 2, 0 == off, 1 == rotate about the rotation origin, 1 == rotate about the selection mid point
 
-	idVec3	d_new_brush_bottom, d_new_brush_top;
-	
-	HINSTANCE d_hInstance;
-	
-	idVec3    d_points[MAX_POINTS];
-	int       d_numpoints;
-	pedge_t   d_edges[MAX_EDGES];
-	int       d_numedges;
-	
-	int       d_num_move_points;
-	idVec3    *d_move_points[MAX_MOVE_POINTS];
+    int      d_num_entities;
 
-	int			d_num_move_planes;
-	idPlane		*d_move_planes[MAX_MOVE_PLANES];
-	
-	qtexture_t	*d_qtextures;
-	
-	texturewin_t d_texturewin;
-	
-	int	         d_pointfile_display_list;
-	
-	LPMRUMENU    d_lpMruMenu;
-	
-	SavedInfo_t  d_savedinfo;
-	
-	int          d_workcount;
-	
-	// connect entities uses the last two brushes selected
-	int			 d_select_count;
-	brush_t		*d_select_order[MAX_MAP_ENTITIES];
-	idVec3       d_select_translate;    // for dragging w/o making new display lists
-	select_t     d_select_mode;
-	idPointListInterface *selectObject;	// 
-	
-	int		     d_font_list;
-	
-	int          d_parsed_brushes;
-	
-	bool	show_blocks;
-	
-	// Timo
-	// tells if we are internally using brush primitive (texture coordinates and map format)
-	// this is a shortcut for IntForKey( g_qeglobals.d_project_entity, "brush_primit" )
-	// NOTE: must keep the two ones in sync
-	BOOL m_bBrushPrimitMode;
+    entity_t *d_project_entity;
 
-	// used while importing brush data from file or memory buffer
-	// tells if conversion between map format and internal preferences ( m_bBrushPrimitMode ) is needed
-	bool	bNeedConvert;
-	bool	bOldBrushes;
-	bool	bPrimitBrushes;
-	float	mapVersion;
-	
-	idVec3  d_vAreaTL;
-	idVec3  d_vAreaBR;
-	
-	// tells if we are using .INI files for prefs instead of registry
-	bool	use_ini;
-	// even in .INI mode we use the registry for all void* prefs
-	char		use_ini_registry[64];
-	
-	//Timo
-	// tells we have surface properties plugin
-	bool	bSurfacePropertiesPlugin;
-	// tells we are using a BSP frontend plugin
-	bool	bBSPFrontendPlugin;
-	
-	// the editor has its own soundWorld and renderWorld, completely distinct from the game
-	idRenderWorld	*rw;
-	idSoundWorld	*sw;
+    idVec3	d_new_brush_bottom, d_new_brush_top;
+
+    HINSTANCE d_hInstance;
+
+    idVec3    d_points[MAX_POINTS];
+    int       d_numpoints;
+    pedge_t   d_edges[MAX_EDGES];
+    int       d_numedges;
+
+    int       d_num_move_points;
+    idVec3    *d_move_points[MAX_MOVE_POINTS];
+
+    int			d_num_move_planes;
+    idPlane		*d_move_planes[MAX_MOVE_PLANES];
+
+    qtexture_t	*d_qtextures;
+
+    texturewin_t d_texturewin;
+
+    int	         d_pointfile_display_list;
+
+    LPMRUMENU    d_lpMruMenu;
+
+    SavedInfo_t  d_savedinfo;
+
+    int          d_workcount;
+
+    // connect entities uses the last two brushes selected
+    int			 d_select_count;
+    brush_t		*d_select_order[MAX_MAP_ENTITIES];
+    idVec3       d_select_translate;    // for dragging w/o making new display lists
+    select_t     d_select_mode;
+    idPointListInterface *selectObject;	//
+
+    int		     d_font_list;
+
+    int          d_parsed_brushes;
+
+    bool	show_blocks;
+
+    // Timo
+    // tells if we are internally using brush primitive (texture coordinates and map format)
+    // this is a shortcut for IntForKey( g_qeglobals.d_project_entity, "brush_primit" )
+    // NOTE: must keep the two ones in sync
+    BOOL m_bBrushPrimitMode;
+
+    // used while importing brush data from file or memory buffer
+    // tells if conversion between map format and internal preferences ( m_bBrushPrimitMode ) is needed
+    bool	bNeedConvert;
+    bool	bOldBrushes;
+    bool	bPrimitBrushes;
+    float	mapVersion;
+
+    idVec3  d_vAreaTL;
+    idVec3  d_vAreaBR;
+
+    // tells if we are using .INI files for prefs instead of registry
+    bool	use_ini;
+    // even in .INI mode we use the registry for all void* prefs
+    char		use_ini_registry[64];
+
+    //Timo
+    // tells we have surface properties plugin
+    bool	bSurfacePropertiesPlugin;
+    // tells we are using a BSP frontend plugin
+    bool	bBSPFrontendPlugin;
+
+    // the editor has its own soundWorld and renderWorld, completely distinct from the game
+    idRenderWorld	*rw;
+    idSoundWorld	*sw;
 } QEGlobals_t;
 
 
-void Pointfile_Delete (void);
-void WINAPI Pointfile_Check (void);
-void Pointfile_Next (void);
-void Pointfile_Prev (void);
-void Pointfile_Clear (void);
-void Pointfile_Draw( void );
-void Pointfile_Load( void );
+void Pointfile_Delete(void);
+void WINAPI Pointfile_Check(void);
+void Pointfile_Next(void);
+void Pointfile_Prev(void);
+void Pointfile_Clear(void);
+void Pointfile_Draw(void);
+void Pointfile_Load(void);
 
 //
 // drag.c
 //
-void Drag_Begin (int x, int y, int buttons,
-		   const idVec3 &xaxis, const idVec3 &yaxis,
-		   const idVec3 &origin, const idVec3 &dir);
-void Drag_MouseMoved (int x, int y, int buttons);
-void Drag_MouseUp (int nButtons = 0);
+void Drag_Begin(int x, int y, int buttons,
+                const idVec3 &xaxis, const idVec3 &yaxis,
+                const idVec3 &origin, const idVec3 &dir);
+void Drag_MouseMoved(int x, int y, int buttons);
+void Drag_MouseUp(int nButtons = 0);
 extern bool g_moveOnly;
 //
 // csg.c
 //
-void CSG_MakeHollow (void);
-void CSG_Subtract (void);
-void CSG_Merge (void);
+void CSG_MakeHollow(void);
+void CSG_Subtract(void);
+void CSG_Merge(void);
 
 //
 // vertsel.c
 //
 
-void SetupVertexSelection (void);
-void SelectEdgeByRay (idVec3 org, idVec3 dir);
-void SelectVertexByRay (idVec3 org, idVec3 dir);
+void SetupVertexSelection(void);
+void SelectEdgeByRay(idVec3 org, idVec3 dir);
+void SelectVertexByRay(idVec3 org, idVec3 dir);
 
-void ConnectEntities (void);
+void ConnectEntities(void);
 
 extern	int	update_bits;
 
@@ -252,14 +252,14 @@ extern HANDLE g_hBSPOutput;
 extern HANDLE g_hBSPInput;
 
 
-char	*TranslateString (char *buf);
+char	*TranslateString(char *buf);
 
-void ProjectDialog (void);
+void ProjectDialog(void);
 
-void FillTextureMenu (CStringArray* pArray = NULL);
-void FillBSPMenu (void);
+void FillTextureMenu(CStringArray* pArray = NULL);
+void FillBSPMenu(void);
 
-BOOL CALLBACK Win_Dialog (
+BOOL CALLBACK Win_Dialog(
     HWND hwndDlg,	// handle to dialog box
     UINT uMsg,	// message
     WPARAM wParam,	// first message parameter
@@ -270,18 +270,18 @@ BOOL CALLBACK Win_Dialog (
 //
 // win_cam.c
 //
-void WCam_Create (HINSTANCE hInstance);
+void WCam_Create(HINSTANCE hInstance);
 
 
 //
 // win_xy.c
 //
-void WXY_Create (HINSTANCE hInstance);
+void WXY_Create(HINSTANCE hInstance);
 
 //
 // win_z.c
 //
-void WZ_Create (HINSTANCE hInstance);
+void WZ_Create(HINSTANCE hInstance);
 
 //
 // win_ent.c
@@ -291,7 +291,7 @@ void WZ_Create (HINSTANCE hInstance);
 //
 // win_main.c
 //
-void Main_Create (HINSTANCE hInstance);
+void Main_Create(HINSTANCE hInstance);
 extern bool SaveWindowState(HWND hWnd, const char *pszName);
 extern bool LoadWindowState(HWND hWnd, const char *pszName);
 
@@ -312,23 +312,23 @@ void DoSurface();
 /*
 ** QE function declarations
 */
-void	QE_CheckAutoSave( void );
-void	QE_CountBrushesAndUpdateStatusBar( void );
+void	QE_CheckAutoSave(void);
+void	QE_CountBrushesAndUpdateStatusBar(void);
 void	WINAPI QE_CheckOpenGLForErrors(void);
-void	QE_ExpandBspString (char *bspaction, char *out, char *mapname, bool useTemps);
-void	QE_Init (void);
-bool	QE_KeyDown (int key, int nFlags = 0);
-bool	QE_LoadProject (char *projectfile);
-bool	QE_SingleBrush (bool bQuiet = false, bool entityOK = false);
+void	QE_ExpandBspString(char *bspaction, char *out, char *mapname, bool useTemps);
+void	QE_Init(void);
+bool	QE_KeyDown(int key, int nFlags = 0);
+bool	QE_LoadProject(char *projectfile);
+bool	QE_SingleBrush(bool bQuiet = false, bool entityOK = false);
 
 
 // sys stuff
-void Sys_MarkMapModified (void);
+void Sys_MarkMapModified(void);
 
 /*
 ** QE Win32 function declarations
 */
-int  WINAPI QEW_SetupPixelFormat(HDC hDC, bool zbuffer );
+int  WINAPI QEW_SetupPixelFormat(HDC hDC, bool zbuffer);
 
 /*
 ** extern declarations
@@ -353,18 +353,18 @@ extern void Brush_FlipTexture_BrushPrimit(brush_t *b, bool y);
 void FaceToBrushPrimitFace(face_t *f);
 void EmitBrushPrimitTextureCoordinates(face_t *, idWinding *, patchMesh_t *patch = NULL);
 // EmitTextureCoordinates, is old code used for brush to brush primitive conversion
-void EmitTextureCoordinates ( idVec5 &xyzst, const idMaterial *q, face_t *f, bool force = false);
+void EmitTextureCoordinates(idVec5 &xyzst, const idMaterial *q, face_t *f, bool force = false);
 void BrushPrimit_Parse(brush_t *, bool newFormat, const idVec3 origin);
 // compute a fake shift scale rot representation from the texture matrix
-void TexMatToFakeTexCoords( float texMat[2][3], float shift[2], float *rot, float scale[2] );
-void FakeTexCoordsToTexMat( float shift[2], float rot, float scale[2], float texMat[2][3] );
-void ConvertTexMatWithQTexture( brushprimit_texdef_t *texMat1, const idMaterial *qtex1, brushprimit_texdef_t *texMat2, const idMaterial *qtex2, float sScale = 1.0, float tScale = 1.0 );
+void TexMatToFakeTexCoords(float texMat[2][3], float shift[2], float *rot, float scale[2]);
+void FakeTexCoordsToTexMat(float shift[2], float rot, float scale[2], float texMat[2][3]);
+void ConvertTexMatWithQTexture(brushprimit_texdef_t *texMat1, const idMaterial *qtex1, brushprimit_texdef_t *texMat2, const idMaterial *qtex2, float sScale = 1.0, float tScale = 1.0);
 // texture locking
 void Face_MoveTexture_BrushPrimit(face_t *f, idVec3 delta);
-void Select_ShiftTexture_BrushPrimit( face_t *f, float x, float y, bool autoAdjust );
-void RotateFaceTexture_BrushPrimit(face_t *f, int nAxis, float fDeg, idVec3 vOrigin );
+void Select_ShiftTexture_BrushPrimit(face_t *f, float x, float y, bool autoAdjust);
+void RotateFaceTexture_BrushPrimit(face_t *f, int nAxis, float fDeg, idVec3 vOrigin);
 // used in CCamWnd::ShiftTexture_BrushPrimit
-void ComputeBest2DVector( idVec3 v, idVec3 X, idVec3 Y, int &x, int &y );
+void ComputeBest2DVector(idVec3 v, idVec3 X, idVec3 Y, int &x, int &y);
 
 void ApplyMatrix_BrushPrimit(face_t *f, idMat3 matrix, idVec3 origin);
 // low level functions .. put in mathlib?
@@ -388,8 +388,8 @@ void BPMatDump(float A[2][3]);
 extern bool parsing_single;
 extern bool eclass_found;
 extern eclass_t *eclass_e;
-void Eclass_ScanFile( char *filename );
-void FillClassList (void);
+void Eclass_ScanFile(char *filename);
+void FillClassList(void);
 
 extern bool g_bShowLightVolumes;
 extern bool g_bShowLightTextures;
@@ -425,7 +425,7 @@ extern qtexture_t	*current_texture;
 extern bool SaveWindowState(HWND hWnd, const char *pszName);
 extern void Map_Snapshot();
 extern void WXY_Print();
-extern void AddProp( void );
+extern void AddProp(void);
 extern int inspector_mode;
 extern bool g_bRotateMode;
 extern bool g_bClipMode;
@@ -438,8 +438,8 @@ extern HINSTANCE g_hOpenGL32;
 extern void FindReplaceTextures(const char* pFind, const char* pReplace, bool bSelected, bool bForce);
 extern void DoProjectSettings();
 extern bool region_active;
-extern void	Texture_ShowDirectory (char* pPath, bool Linked = false);
-extern void Map_ImportFile (char *filename);
+extern void	Texture_ShowDirectory(char* pPath, bool Linked = false);
+extern void Map_ImportFile(char *filename);
 extern void Map_SaveSelected(char* pFilename);
 extern bool g_bNewFace;
 extern bool g_bSwitch;
@@ -460,26 +460,26 @@ extern const char	*bsp_commands[256];
 extern void HandlePopup(CWnd* pWindow, unsigned int uId);
 extern z_t z;
 extern CString g_strProject;
-extern void TextureAxisFromPlane( const idPlane &pln, idVec3 &xv, idVec3 &yv);
-extern bool QE_SaveProject (const char* pProjectFile);
+extern void TextureAxisFromPlane(const idPlane &pln, idVec3 &xv, idVec3 &yv);
+extern bool QE_SaveProject(const char* pProjectFile);
 extern void Clamp(float& f, int nClamp);
-extern bool WriteFileString( FILE *fp, char *string, ... );
+extern bool WriteFileString(FILE *fp, char *string, ...);
 extern void MemFile_fprintf(CMemFile* pMemFile, const char* pText, ...);
 extern void SaveWindowPlacement(HWND hwnd, const char* pName);
 extern bool LoadWindowPlacement(HWND hwnd, const char* pName);
-extern bool ConfirmModified (void);
+extern bool ConfirmModified(void);
 extern void DoPatchInspector();
 void UpdatePatchInspector();
 extern int g_nSmartX;
 extern int g_nSmartY;
 extern brush_t* CreateEntityBrush(int x, int y, CXYWnd* pWnd);
-int PointInMoveList( idVec3 *pf );
+int PointInMoveList(idVec3 *pf);
 
 extern bool ByeByeSurfaceDialog();
 extern void UpdateSurfaceDialog();
 extern void UpdateLightInspector();
 
-BOOL UpdateEntitySel(eclass_t *pec);	
+BOOL UpdateEntitySel(eclass_t *pec);
 void SetInspectorMode(int iType);
 BOOL GetSelectAllCriteria(CString &strKey, CString &strVal);
 
@@ -490,6 +490,6 @@ void SetCvarString(const char *name, const char *value);
 void SetCvarBinary(const char *name, void *pv, int size);
 bool GetCvarBinary(const char *name, void *pv, int size);
 
-void UpdateRadiantColor( float r, float g, float b, float a );
+void UpdateRadiantColor(float r, float g, float b, float a);
 
 #endif /* !__QE3_H__ */

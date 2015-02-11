@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 GPL Source Code
-Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -47,11 +47,11 @@ IMPLEMENT_DYNAMIC(DialogGoToLine, CDialog)
 DialogGoToLine::DialogGoToLine
 ================
 */
-DialogGoToLine::DialogGoToLine( CWnd* pParent /*=NULL*/ )
-	: CDialog(DialogGoToLine::IDD, pParent)
-	, firstLine(0)
-	, lastLine(0)
-	, line(0)
+DialogGoToLine::DialogGoToLine(CWnd* pParent /*=NULL*/)
+    : CDialog(DialogGoToLine::IDD, pParent)
+    , firstLine(0)
+    , lastLine(0)
+    , line(0)
 {
 }
 
@@ -60,7 +60,8 @@ DialogGoToLine::DialogGoToLine( CWnd* pParent /*=NULL*/ )
 DialogGoToLine::~DialogGoToLine
 ================
 */
-DialogGoToLine::~DialogGoToLine() {
+DialogGoToLine::~DialogGoToLine()
+{
 }
 
 /*
@@ -68,11 +69,12 @@ DialogGoToLine::~DialogGoToLine() {
 DialogGoToLine::DoDataExchange
 ================
 */
-void DialogGoToLine::DoDataExchange(CDataExchange* pDX) {
-	CDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(DialogGoToLine)
-	DDX_Control( pDX, IDC_GOTOLINE_EDIT, numberEdit);
-	//}}AFX_DATA_MAP
+void DialogGoToLine::DoDataExchange(CDataExchange* pDX)
+{
+    CDialog::DoDataExchange(pDX);
+    //{{AFX_DATA_MAP(DialogGoToLine)
+    DDX_Control(pDX, IDC_GOTOLINE_EDIT, numberEdit);
+    //}}AFX_DATA_MAP
 }
 
 /*
@@ -80,9 +82,10 @@ void DialogGoToLine::DoDataExchange(CDataExchange* pDX) {
 DialogGoToLine::SetRange
 ================
 */
-void DialogGoToLine::SetRange( int firstLine, int lastLine ) {
+void DialogGoToLine::SetRange(int firstLine, int lastLine)
+{
     this->firstLine = firstLine;
-	this->lastLine = lastLine;
+    this->lastLine = lastLine;
 }
 
 /*
@@ -90,8 +93,9 @@ void DialogGoToLine::SetRange( int firstLine, int lastLine ) {
 DialogGoToLine::GetLine
 ================
 */
-int DialogGoToLine::GetLine( void ) const {
-	return line;
+int DialogGoToLine::GetLine(void) const
+{
+    return line;
 }
 
 /*
@@ -99,23 +103,24 @@ int DialogGoToLine::GetLine( void ) const {
 DialogGoToLine::OnInitDialog
 ================
 */
-BOOL DialogGoToLine::OnInitDialog()  {
+BOOL DialogGoToLine::OnInitDialog()
+{
 
-	CDialog::OnInitDialog();
+    CDialog::OnInitDialog();
 
-	GetDlgItem( IDC_GOTOLINE_STATIC )->SetWindowText( va( "&Line number (%d - %d):", firstLine, lastLine ) );
+    GetDlgItem(IDC_GOTOLINE_STATIC)->SetWindowText(va("&Line number (%d - %d):", firstLine, lastLine));
 
-	numberEdit.SetWindowText( va( "%d", firstLine ) );
-	numberEdit.SetSel( 0, -1 );
-	numberEdit.SetFocus();
+    numberEdit.SetWindowText(va("%d", firstLine));
+    numberEdit.SetSel(0, -1);
+    numberEdit.SetFocus();
 
-	return FALSE; // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
+    return FALSE; // return TRUE unless you set the focus to a control
+    // EXCEPTION: OCX Property Pages should return FALSE
 }
 
 
 BEGIN_MESSAGE_MAP(DialogGoToLine, CDialog)
-	ON_BN_CLICKED(IDOK, OnBnClickedOk)
+    ON_BN_CLICKED(IDOK, OnBnClickedOk)
 END_MESSAGE_MAP()
 
 
@@ -126,9 +131,10 @@ END_MESSAGE_MAP()
 DialogGoToLine::OnBnClickedOk
 ================
 */
-void DialogGoToLine::OnBnClickedOk() {
-	CString text;
-	numberEdit.GetWindowText( text );
-	line = idMath::ClampInt( firstLine, lastLine, atoi( text ) );
-	OnOK();
+void DialogGoToLine::OnBnClickedOk()
+{
+    CString text;
+    numberEdit.GetWindowText(text);
+    line = idMath::ClampInt(firstLine, lastLine, atoi(text));
+    OnOK();
 }

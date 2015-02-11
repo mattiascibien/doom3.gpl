@@ -24,7 +24,8 @@ void Sys_AnnoyingBanner();
 bool Sys_Hide();
 bool Sys_Unhide();
 
-typedef struct {
+typedef struct
+{
     CGDirectDisplayID     display;
     CGTableCount          tableSize;
     CGGammaValue	 *red;
@@ -42,14 +43,14 @@ typedef struct
     glwgamma_t			*originalDisplayGammaTables;
     glwgamma_t			inGameTable;
     glwgamma_t			tempTable;
-    
+
     NSOpenGLContext		*_ctx;
     CGLContextObj		_cgl_ctx;
     bool				_ctx_is_current;
     NSWindow			*window;
-    
+
     FILE				*log_fp;
-    
+
     unsigned int		bufferSwapCount;
     unsigned int		glPauseCount;
 } glwstate_t;

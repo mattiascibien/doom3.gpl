@@ -4,7 +4,7 @@
 
 @interface DOOMController : NSObject
 {
-	//    IBOutlet NSPanel *bannerPanel;
+    //    IBOutlet NSPanel *bannerPanel;
 }
 
 //- (IBAction)paste:(id)sender;

@@ -17,14 +17,16 @@
 #define X_nvCtrlSelectNotify              6
 #define X_nvCtrlLastRequest              (X_nvCtrlSelectNotify + 1)
 
-typedef struct {
+typedef struct
+{
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
 } xnvCtrlQueryExtensionReq;
 #define sz_xnvCtrlQueryExtensionReq 4
 
-typedef struct {
+typedef struct
+{
     BYTE type;   /* X_Reply */
     CARD8 padb1;
     CARD16 sequenceNumber B16;
@@ -39,7 +41,8 @@ typedef struct {
 } xnvCtrlQueryExtensionReply;
 #define sz_xnvCtrlQueryExtensionReply 32
 
-typedef struct {
+typedef struct
+{
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
@@ -47,7 +50,8 @@ typedef struct {
 } xnvCtrlIsNvReq;
 #define sz_xnvCtrlIsNvReq 8
 
-typedef struct {
+typedef struct
+{
     BYTE type;   /* X_Reply */
     CARD8 padb1;
     CARD16 sequenceNumber B16;
@@ -61,7 +65,8 @@ typedef struct {
 } xnvCtrlIsNvReply;
 #define sz_xnvCtrlIsNvReply 32
 
-typedef struct {
+typedef struct
+{
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
@@ -71,7 +76,8 @@ typedef struct {
 } xnvCtrlQueryAttributeReq;
 #define sz_xnvCtrlQueryAttributeReq 16
 
-typedef struct {
+typedef struct
+{
     BYTE type;
     BYTE pad0;
     CARD16 sequenceNumber B16;
@@ -85,7 +91,8 @@ typedef struct {
 } xnvCtrlQueryAttributeReply;
 #define sz_xnvCtrlQueryAttributeReply 32
 
-typedef struct {
+typedef struct
+{
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
@@ -96,7 +103,8 @@ typedef struct {
 } xnvCtrlSetAttributeReq;
 #define sz_xnvCtrlSetAttributeReq 20
 
-typedef struct {
+typedef struct
+{
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
@@ -110,7 +118,8 @@ typedef struct {
  * CtrlQueryStringAttribute reply struct
  * n indicates the length of the string.
  */
-typedef struct {
+typedef struct
+{
     BYTE type;
     BYTE pad0;
     CARD16 sequenceNumber B16;
@@ -124,7 +133,8 @@ typedef struct {
 } xnvCtrlQueryStringAttributeReply;
 #define sz_xnvCtrlQueryStringAttributeReply 32
 
-typedef struct {
+typedef struct
+{
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
@@ -134,7 +144,8 @@ typedef struct {
 } xnvCtrlQueryValidAttributeValuesReq;
 #define sz_xnvCtrlQueryValidAttributeValuesReq 16
 
-typedef struct {
+typedef struct
+{
     BYTE type;
     BYTE pad0;
     CARD16 sequenceNumber B16;
@@ -148,7 +159,8 @@ typedef struct {
 } xnvCtrlQueryValidAttributeValuesReply;
 #define sz_xnvCtrlQueryValidAttributeValuesReply 32
 
-typedef struct {
+typedef struct
+{
     CARD8 reqType;
     CARD8 nvReqType;
     CARD16 length B16;
@@ -158,14 +170,18 @@ typedef struct {
 } xnvCtrlSelectNotifyReq;
 #define sz_xnvCtrlSelectNotifyReq 12
 
-typedef struct {
-    union {
-        struct {
+typedef struct
+{
+    union
+    {
+        struct
+        {
             BYTE type;
             BYTE detail;
             CARD16 sequenceNumber B16;
         } u;
-        struct {
+        struct
+        {
             BYTE type;
             BYTE detail;
             CARD16 sequenceNumber B16;

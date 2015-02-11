@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 GPL Source Code
-Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -42,91 +42,95 @@ class StageView : public ToggleListView, public MaterialView
 {
 
 public:
-	virtual ~StageView();
+    virtual ~StageView();
 
-	/** 
-	* Defines the type of stages
-	*/
-	enum {
-		STAGE_TYPE_MATERIAL,
-		STAGE_TYPE_STAGE,
-		STAGE_TYPE_SPECIAL_MAP_STAGE
-	};
+    /**
+    * Defines the type of stages
+    */
+    enum
+    {
+        STAGE_TYPE_MATERIAL,
+        STAGE_TYPE_STAGE,
+        STAGE_TYPE_SPECIAL_MAP_STAGE
+    };
 
-	//Associates a property view with this stage view
-	void					SetMaterialPropertyView(MaterialPropTreeView* propView) { m_propView = propView; };
+    //Associates a property view with this stage view
+    void					SetMaterialPropertyView(MaterialPropTreeView* propView)
+    {
+        m_propView = propView;
+    };
 
-	//MaterialView Interface
-	virtual void			MV_OnMaterialSelectionChange(MaterialDoc* pMaterial);
-	virtual void			MV_OnMaterialStageAdd(MaterialDoc* pMaterial, int stageNum);
-	virtual void			MV_OnMaterialStageDelete(MaterialDoc* pMaterial, int stageNum);
-	virtual void			MV_OnMaterialStageMove(MaterialDoc* pMaterial, int from, int to);
-	virtual void			MV_OnMaterialAttributeChanged(MaterialDoc* pMaterial, int stage, const char* attribName);
-	virtual void			MV_OnMaterialSaved(MaterialDoc* pMaterial);
+    //MaterialView Interface
+    virtual void			MV_OnMaterialSelectionChange(MaterialDoc* pMaterial);
+    virtual void			MV_OnMaterialStageAdd(MaterialDoc* pMaterial, int stageNum);
+    virtual void			MV_OnMaterialStageDelete(MaterialDoc* pMaterial, int stageNum);
+    virtual void			MV_OnMaterialStageMove(MaterialDoc* pMaterial, int from, int to);
+    virtual void			MV_OnMaterialAttributeChanged(MaterialDoc* pMaterial, int stage, const char* attribName);
+    virtual void			MV_OnMaterialSaved(MaterialDoc* pMaterial);
 
-	//Edit Operation Tests
-	bool					CanCopy();
-	bool					CanPaste();
-	bool					CanCut();
-	bool					CanDelete();
-	bool					CanRename();
+    //Edit Operation Tests
+    bool					CanCopy();
+    bool					CanPaste();
+    bool					CanCut();
+    bool					CanDelete();
+    bool					CanRename();
 
-	//Refresh the stage list
-	void					RefreshStageList();
-
-protected:
-	StageView();
-	DECLARE_DYNCREATE(StageView)
-
-	afx_msg int				OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void 			OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void 			OnLvnDeleteallitems(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void 			OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void 			OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void 			OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void 			OnNMRclick(NMHDR *pNMHDR, LRESULT *pResult);
-
-	afx_msg void 			OnRenameStage();
-	afx_msg void 			OnDeleteStage();
-	afx_msg void 			OnDeleteAllStages();
-	afx_msg void 			OnAddStage();
-	afx_msg void 			OnAddBumpmapStage();
-	afx_msg void 			OnAddDiffuseStage();
-	afx_msg void 			OnAddSpecualarStage();
-
-	afx_msg void 			OnCopy();
-	afx_msg void 			OnPaste();
-	
-	afx_msg void 			OnLvnBeginlabeledit(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void 			OnLvnEndlabeledit(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void 			OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-	DECLARE_MESSAGE_MAP()
-	
-	//Overrides
-	virtual BOOL			PreTranslateMessage(MSG* pMsg);
-	virtual BOOL			PreCreateWindow(CREATESTRUCT& cs);
-
-	//Toggle List View Interface
-	virtual void			OnStateChanged(int index, int toggleState);
-
-	void					PopupMenu(CPoint* pt);
-
-	void					DropItemOnList();
+    //Refresh the stage list
+    void					RefreshStageList();
 
 protected:
+    StageView();
+    DECLARE_DYNCREATE(StageView)
 
-	MaterialPropTreeView*	m_propView;
-	MaterialDoc*			currentMaterial;
-	
-	//Manual handing of the row dragging
-	CImageList*				dragImage;
-	bool					bDragging;
-	int						dragIndex;
-	int						dropIndex;
-	CWnd*					dropWnd;
-	CPoint					dropPoint;
+    afx_msg int				OnCreate(LPCREATESTRUCT lpCreateStruct);
+    afx_msg void 			OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult);
+    afx_msg void 			OnLvnDeleteallitems(NMHDR *pNMHDR, LRESULT *pResult);
+    afx_msg void 			OnLvnBegindrag(NMHDR *pNMHDR, LRESULT *pResult);
+    afx_msg void 			OnLButtonUp(UINT nFlags, CPoint point);
+    afx_msg void 			OnMouseMove(UINT nFlags, CPoint point);
+    afx_msg void 			OnNMRclick(NMHDR *pNMHDR, LRESULT *pResult);
 
-	bool					internalChange;
+    afx_msg void 			OnRenameStage();
+    afx_msg void 			OnDeleteStage();
+    afx_msg void 			OnDeleteAllStages();
+    afx_msg void 			OnAddStage();
+    afx_msg void 			OnAddBumpmapStage();
+    afx_msg void 			OnAddDiffuseStage();
+    afx_msg void 			OnAddSpecualarStage();
+
+    afx_msg void 			OnCopy();
+    afx_msg void 			OnPaste();
+
+    afx_msg void 			OnLvnBeginlabeledit(NMHDR *pNMHDR, LRESULT *pResult);
+    afx_msg void 			OnLvnEndlabeledit(NMHDR *pNMHDR, LRESULT *pResult);
+    afx_msg void 			OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
+    DECLARE_MESSAGE_MAP()
+
+    //Overrides
+    virtual BOOL			PreTranslateMessage(MSG* pMsg);
+    virtual BOOL			PreCreateWindow(CREATESTRUCT& cs);
+
+    //Toggle List View Interface
+    virtual void			OnStateChanged(int index, int toggleState);
+
+    void					PopupMenu(CPoint* pt);
+
+    void					DropItemOnList();
+
+protected:
+
+    MaterialPropTreeView*	m_propView;
+    MaterialDoc*			currentMaterial;
+
+    //Manual handing of the row dragging
+    CImageList*				dragImage;
+    bool					bDragging;
+    int						dragIndex;
+    int						dropIndex;
+    CWnd*					dropWnd;
+    CPoint					dropPoint;
+
+    bool					internalChange;
 };
 
 

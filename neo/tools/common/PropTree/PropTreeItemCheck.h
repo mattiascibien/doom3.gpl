@@ -8,13 +8,13 @@
 //
 //  This material is provided "as is", with absolutely no warranty expressed
 //  or implied. Any use is at your own risk.
-// 
-//  Permission to use or copy this software for any purpose is hereby granted 
+//
+//  Permission to use or copy this software for any purpose is hereby granted
 //  without fee, provided the above notices are retained on all copies.
 //  Permission to modify the code and to distribute modified code is granted,
 //  provided the above notices are retained, and a notice that the code was
 //  modified is included with the above copyright notice.
-// 
+//
 //	If you use this code, drop me an email.  I'd like to know if you find the code
 //	useful.
 
@@ -27,66 +27,69 @@ class PROPTREE_API CPropTreeItemCheck : public CButton, public CPropTreeItem
 {
 // Construction
 public:
-	CPropTreeItemCheck();
-	virtual ~CPropTreeItemCheck();
+    CPropTreeItemCheck();
+    virtual ~CPropTreeItemCheck();
 
 // Attributes
 public:
-	// The attribute area needs drawing
-	virtual void DrawAttribute(CDC* pDC, const RECT& rc);
+    // The attribute area needs drawing
+    virtual void DrawAttribute(CDC* pDC, const RECT& rc);
 
-	// Retrieve the item's attribute value
-	virtual LPARAM GetItemValue();
+    // Retrieve the item's attribute value
+    virtual LPARAM GetItemValue();
 
-	// Set the item's attribute value
-	virtual void SetItemValue(LPARAM lParam);
+    // Set the item's attribute value
+    virtual void SetItemValue(LPARAM lParam);
 
-	// Called when attribute area has changed size
-	virtual void OnMove();
+    // Called when attribute area has changed size
+    virtual void OnMove();
 
-	// Called when the item needs to refresh its data
-	virtual void OnRefresh();
+    // Called when the item needs to refresh its data
+    virtual void OnRefresh();
 
-	// Called when the item needs to commit its changes
-	virtual void OnCommit();
+    // Called when the item needs to commit its changes
+    virtual void OnCommit();
 
-	// Called to activate the item
-	virtual void OnActivate(int activateType, CPoint point);
+    // Called to activate the item
+    virtual void OnActivate(int activateType, CPoint point);
 
-	bool HitCheckBoxTest(const POINT& pt);
+    bool HitCheckBoxTest(const POINT& pt);
 
-	bool CreateCheckBox();
+    bool CreateCheckBox();
 
-	BOOL		GetCheckState() { return checkState; };
-	void	SetCheckState(BOOL state);
+    BOOL		GetCheckState()
+    {
+        return checkState;
+    };
+    void	SetCheckState(BOOL state);
 
 
 protected:
-	BOOL checkState;
-	CRect checkRect;
-	
+    BOOL checkState;
+    CRect checkRect;
+
 // Operations
 public:
 
 // Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CPropTreeItemCheck)
-	//}}AFX_VIRTUAL
+    // ClassWizard generated virtual function overrides
+    //{{AFX_VIRTUAL(CPropTreeItemCheck)
+    //}}AFX_VIRTUAL
 
 // Implementation
 public:
 
-	// Generated message map functions
+    // Generated message map functions
 protected:
-	//{{AFX_MSG(CPropTreeItemCheck)
-	//}}AFX_MSG
+    //{{AFX_MSG(CPropTreeItemCheck)
+    //}}AFX_MSG
 
-	DECLARE_MESSAGE_MAP()
-	
+    DECLARE_MESSAGE_MAP()
+
 public:
-	
-	afx_msg void OnBnKillfocus();
-	afx_msg void OnBnClicked();
+
+    afx_msg void OnBnKillfocus();
+    afx_msg void OnBnClicked();
 };
 
 /////////////////////////////////////////////////////////////////////////////

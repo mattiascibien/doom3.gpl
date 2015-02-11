@@ -2,9 +2,9 @@
 ===========================================================================
 
 Doom 3 GPL Source Code
-Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company. 
+Copyright (C) 1999-2011 id Software LLC, a ZeniMax Media company.
 
-This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).  
+This file is part of the Doom 3 GPL Source Code (?Doom 3 Source Code?).
 
 Doom 3 Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -140,21 +140,22 @@ If you have questions concerning this license or the applicable additional terms
 #define	W_ALL			0xFFFFFFFF
 */
 
-enum {
-	COLOR_TEXTUREBACK,
-	COLOR_GRIDBACK,
-	COLOR_GRIDMINOR,
-	COLOR_GRIDMAJOR,
-	COLOR_CAMERABACK,
-	COLOR_ENTITY,
-	COLOR_GRIDBLOCK,
-	COLOR_GRIDTEXT,
-	COLOR_BRUSHES,
-	COLOR_SELBRUSHES,
-	COLOR_CLIPPER,
-	COLOR_VIEWNAME,
-	COLOR_PRECISION_CROSSHAIR,
-	COLOR_LAST
+enum
+{
+    COLOR_TEXTUREBACK,
+    COLOR_GRIDBACK,
+    COLOR_GRIDMINOR,
+    COLOR_GRIDMAJOR,
+    COLOR_CAMERABACK,
+    COLOR_ENTITY,
+    COLOR_GRIDBLOCK,
+    COLOR_GRIDTEXT,
+    COLOR_BRUSHES,
+    COLOR_SELBRUSHES,
+    COLOR_CLIPPER,
+    COLOR_VIEWNAME,
+    COLOR_PRECISION_CROSSHAIR,
+    COLOR_LAST
 };
 
 // classes
