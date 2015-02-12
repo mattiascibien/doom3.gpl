@@ -1,0 +1,1739 @@
+diff -r 8aac9cb1ba58 idTech4/iodoom3/neo/framework/Common.cpp
+--- a/idTech4/iodoom3/neo/framework/Common.cpp	Mon Aug 20 12:33:21 2012 +0200
++++ b/idTech4/iodoom3/neo/framework/Common.cpp	Mon Oct 29 17:48:01 2012 +0100
+@@ -31,6 +31,8 @@
+ 
+ #include "../renderer/Image.h"
+ 
++#include <semaphore.h>
++
+ #define	MAX_PRINT_MSG_SIZE	4096
+ #define MAX_WARNING_LIST	256
+ 
+@@ -158,6 +160,8 @@
+ 
+ 	void						SetMachineSpec( void );
+ 
++        vf_sem_t alloc_mutex; ///////// VF R_FrameAlloc semaphore
++
+ private:
+ 	void						InitCommands( void );
+ 	void						InitRenderSystem( void );
+@@ -200,6 +204,7 @@
+ #ifdef ID_WRITE_VERSION
+ 	idCompressor *				config_compressor;
+ #endif
++
+ };
+ 
+ idCommonLocal	commonLocal;
+diff -r 8aac9cb1ba58 idTech4/iodoom3/neo/framework/Common.h
+--- a/idTech4/iodoom3/neo/framework/Common.h	Mon Aug 20 12:33:21 2012 +0200
++++ b/idTech4/iodoom3/neo/framework/Common.h	Mon Oct 29 17:48:01 2012 +0100
+@@ -37,6 +37,8 @@
+ ==============================================================
+ */
+ 
++#include <semaphore.h>
++
+ typedef enum {
+ 	EDITOR_NONE					= 0,
+ 	EDITOR_RADIANT				= BIT(1),
+@@ -208,6 +210,8 @@
+ 
+ 								// Directly sample a keystate.
+ 	virtual int					KeyState( int key ) = 0;
++
++        vf_sem_t alloc_mutex; ///////// VF R_FrameAlloc semaphore
+ };
+ 
+ extern idCommon *		common;
+diff -r 8aac9cb1ba58 idTech4/iodoom3/neo/idlib/Heap.cpp
+--- a/idTech4/iodoom3/neo/idlib/Heap.cpp	Mon Aug 20 12:33:21 2012 +0200
++++ b/idTech4/iodoom3/neo/idlib/Heap.cpp	Mon Oct 29 17:48:01 2012 +0100
+@@ -29,6 +29,8 @@
+ #include "../idlib/precompiled.h"
+ #pragma hdrstop
+ 
++#include "../vfext/vfsemaphore.h"
++
+ #ifndef USE_LIBC_MALLOC
+ 	#define USE_LIBC_MALLOC		0
+ #endif
+@@ -988,6 +990,8 @@
+ static memoryStats_t	mem_frame_allocs;
+ static memoryStats_t	mem_frame_frees;
+ 
++static vf_sem_t alloc_mutex; ///////// VF thread safe allocation scheme
++
+ /*
+ ==================
+ Mem_ClearFrameStats
+@@ -1068,6 +1072,9 @@
+ 	if ( !size ) {
+ 		return NULL;
+ 	}
++
++        VF_SEM_WAIT (&alloc_mutex); /////////////// VF alloc thread safe
++
+ 	if ( !mem_heap ) {
+ #ifdef CRASH_ON_STATIC_ALLOCATION
+ 		*((int*)0x0) = 1;
+@@ -1076,6 +1083,8 @@
+ 	}
+ 	void *mem = mem_heap->Allocate( size );
+ 	Mem_UpdateAllocStats( mem_heap->Msize( mem ) );
++
++        VF_SEM_POST (&alloc_mutex); /////////////// VF alloc thread safe
+ 	return mem;
+ }
+ 
+@@ -1088,6 +1097,8 @@
+ 	if ( !ptr ) {
+ 		return;
+ 	}
++        VF_SEM_WAIT (&alloc_mutex); /////////////// VF alloc thread safe
++
+ 	if ( !mem_heap ) {
+ #ifdef CRASH_ON_STATIC_ALLOCATION
+ 		*((int*)0x0) = 1;
+@@ -1097,6 +1108,8 @@
+ 	}
+ 	Mem_UpdateFreeStats( mem_heap->Msize( ptr ) );
+  	mem_heap->Free( ptr );
++
++        VF_SEM_POST (&alloc_mutex); /////////////// VF alloc thread safe
+ }
+ 
+ /*
+@@ -1108,6 +1121,8 @@
+ 	if ( !size ) {
+ 		return NULL;
+ 	}
++
++        VF_SEM_WAIT (&alloc_mutex); /////////////// VF alloc thread safe
+ 	if ( !mem_heap ) {
+ #ifdef CRASH_ON_STATIC_ALLOCATION
+ 		*((int*)0x0) = 1;
+@@ -1117,6 +1132,8 @@
+ 	void *mem = mem_heap->Allocate16( size );
+ 	// make sure the memory is 16 byte aligned
+ 	assert( ( ((int)mem) & 15) == 0 );
++
++        VF_SEM_POST (&alloc_mutex); /////////////// VF alloc thread safe
+ 	return mem;
+ }
+ 
+@@ -1129,6 +1146,8 @@
+ 	if ( !ptr ) {
+ 		return;
+ 	}
++
++        VF_SEM_WAIT (&alloc_mutex); /////////////// VF alloc thread safe
+ 	if ( !mem_heap ) {
+ #ifdef CRASH_ON_STATIC_ALLOCATION
+ 		*((int*)0x0) = 1;
+@@ -1139,6 +1158,7 @@
+ 	// make sure the memory is 16 byte aligned
+ 	assert( ( ((int)ptr) & 15) == 0 );
+  	mem_heap->Free16( ptr );
++        VF_SEM_POST (&alloc_mutex); /////////////// VF alloc thread safe
+ }
+ 
+ /*
+@@ -1158,7 +1178,9 @@
+ ==================
+ */
+ void Mem_AllocDefragBlock( void ) {
++        VF_SEM_WAIT (&alloc_mutex); /////////////// VF alloc thread safe
+ 	mem_heap->AllocDefragBlock();
++        VF_SEM_POST (&alloc_mutex); /////////////// VF alloc thread safe
+ }
+ 
+ /*
+@@ -1196,6 +1218,7 @@
+ ==================
+ */
+ void Mem_Init( void ) {
++        VF_SEM_INIT(&alloc_mutex, 0, 1); /////////////// VF alloc thread safe
+ 	mem_heap = new idHeap;
+ 	Mem_ClearFrameStats();
+ }
+@@ -1206,6 +1229,7 @@
+ ==================
+ */
+ void Mem_Shutdown( void ) {
++        VF_SEM_INIT(&alloc_mutex, 0, 1); /////////////// VF alloc thread safe
+ 	idHeap *m = mem_heap;
+ 	mem_heap = NULL;
+ 	delete m;
+@@ -1568,6 +1592,8 @@
+ 		return NULL;
+ 	}
+ 
++        VF_SEM_WAIT (&alloc_mutex); /////////////// VF alloc thread safe
++
+ 	if ( !mem_heap ) {
+ #ifdef CRASH_ON_STATIC_ALLOCATION
+ 		*((int*)0x0) = 1;
+@@ -1598,6 +1624,8 @@
+ 	mem_debugMemory = m;
+ 	idLib::sys->GetCallStack( m->callStack, MAX_CALLSTACK_DEPTH );
+ 
++        VF_SEM_POST (&alloc_mutex); /////////////// VF alloc thread safe
++
+ 	return ( ( (byte *) p ) + sizeof( debugMemory_t ) );
+ }
+ 
+@@ -1613,6 +1641,8 @@
+ 		return;
+ 	}
+ 
++        VF_SEM_WAIT (&alloc_mutex); /////////////// VF alloc thread safe
++
+ 	if ( !mem_heap ) {
+ #ifdef CRASH_ON_STATIC_ALLOCATION
+ 		*((int*)0x0) = 1;
+@@ -1652,6 +1682,8 @@
+ 	else {
+  		mem_heap->Free( m );
+ 	}
++
++        VF_SEM_POST (&alloc_mutex); /////////////// VF alloc thread safe
+ }
+ 
+ /*
+@@ -1737,6 +1769,7 @@
+ ==================
+ */
+ void Mem_Init( void ) {
++        VF_SEM_INIT(&alloc_mutex, 0, 1); /////////////// VF alloc thread safe
+ 	mem_heap = new idHeap;
+ }
+ 
+@@ -1746,6 +1779,7 @@
+ ==================
+ */
+ void Mem_Shutdown( void ) {
++        VF_SEM_INIT(&alloc_mutex, 0, 1); /////////////// VF alloc thread safe
+ 
+ 	if ( mem_leakName[0] != '\0' ) {
+ 		Mem_DumpCompressed( va( "%s_leak_size.txt", mem_leakName ), MEMSORT_SIZE, 0, 0 );
+diff -r 8aac9cb1ba58 idTech4/iodoom3/neo/idlib/Heap.h
+--- a/idTech4/iodoom3/neo/idlib/Heap.h	Mon Aug 20 12:33:21 2012 +0200
++++ b/idTech4/iodoom3/neo/idlib/Heap.h	Mon Oct 29 17:48:01 2012 +0100
+@@ -29,6 +29,8 @@
+ #ifndef __HEAP_H__
+ #define __HEAP_H__
+ 
++#include "../vfext/vfsemaphore.h"
++
+ /*
+ ===============================================================================
+ 
+@@ -179,6 +181,8 @@
+ 	element_t *				free;
+ 	int						total;
+ 	int						active;
++
++        vf_sem_t alloc_mutex; ///////// VF thread safe allocation scheme
+ };
+ 
+ template<class type, int blockSize>
+@@ -186,6 +190,8 @@
+ 	blocks = NULL;
+ 	free = NULL;
+ 	total = active = 0;
++        //printf("idBlockAlloc::idBlockAlloc %p: VF_SEM_INIT\n", this);
++        VF_SEM_INIT(&alloc_mutex, 0, 1); /////////////// VF alloc thread safe
+ }
+ 
+ template<class type, int blockSize>
+@@ -195,6 +201,8 @@
+ 
+ template<class type, int blockSize>
+ type *idBlockAlloc<type,blockSize>::Alloc( void ) {
++        //printf("idBlockAlloc::Alloc %p: VF_SEM_WAIT\n", this);
++        VF_SEM_WAIT (&alloc_mutex); /////////////// VF alloc thread safe
+ 	if ( !free ) {
+ 		block_t *block = new block_t;
+ 		block->next = blocks;
+@@ -209,19 +217,28 @@
+ 	element_t *element = free;
+ 	free = free->next;
+ 	element->next = NULL;
++
++        //printf("idBlockAlloc::Alloc %p: VF_SEM_POST\n", this);
++        VF_SEM_POST (&alloc_mutex); /////////////// VF alloc thread safe
+ 	return &element->t;
+ }
+ 
+ template<class type, int blockSize>
+ void idBlockAlloc<type,blockSize>::Free( type *t ) {
++        //printf("idBlockAlloc::Free %p: VF_SEM_WAIT\n", this);
++        VF_SEM_WAIT (&alloc_mutex); /////////////// VF alloc thread safe
+ 	element_t *element = (element_t *)( ( (unsigned char *) t ) - ( (int) &((element_t *)0)->t ) );
+ 	element->next = free;
+ 	free = element;
+ 	active--;
++        //printf("idBlockAlloc::Free %p: VF_SEM_POST\n", this);
++        VF_SEM_POST (&alloc_mutex); /////////////// VF alloc thread safe
+ }
+ 
+ template<class type, int blockSize>
+ void idBlockAlloc<type,blockSize>::Shutdown( void ) {
++        //printf("idBlockAlloc::Shutdown %p: VF_SEM_INIT\n", this);
++        VF_SEM_INIT(&alloc_mutex, 0, 1); /////////////// VF alloc thread safe
+ 	while( blocks ) {
+ 		block_t *block = blocks;
+ 		blocks = blocks->next;
+@@ -418,6 +435,9 @@
+ 	bool							allowAllocs;			// allow base block allocations
+ 	bool							lockMemory;				// lock memory so it cannot get swapped out
+ 
++        vf_sem_t alloc_mutex; ///////// VF thread safe allocation scheme};
++
++
+ #ifdef DYNAMIC_BLOCK_ALLOC_CHECK
+ 	int								blockId[3];
+ #endif
+@@ -454,11 +474,15 @@
+ 
+ template<class type, int baseBlockSize, int minBlockSize>
+ void idDynamicBlockAlloc<type, baseBlockSize, minBlockSize>::Init( void ) {
++        //printf("idDynamicBlockAlloc::Init %p: VF_SEM_INIT\n", this);
++        VF_SEM_INIT(&alloc_mutex, 0, 1); /////////////// VF alloc thread safe
+ 	freeTree.Init();
+ }
+ 
+ template<class type, int baseBlockSize, int minBlockSize>
+ void idDynamicBlockAlloc<type, baseBlockSize, minBlockSize>::Shutdown( void ) {
++        //printf("idDynamicBlockAlloc::Shutdown %p: VF_SEM_INIT\n", this);
++        VF_SEM_INIT(&alloc_mutex, 0, 1); /////////////// VF alloc thread safe
+ 	idDynamicBlock<type> *block;
+ 
+ 	for ( block = firstBlock; block != NULL; block = block->next ) {
+@@ -485,6 +509,8 @@
+ void idDynamicBlockAlloc<type, baseBlockSize, minBlockSize>::SetFixedBlocks( int numBlocks ) {
+ 	idDynamicBlock<type> *block;
+ 
++        VF_SEM_WAIT (&alloc_mutex); /////////////// VF alloc thread safe
++
+ 	for ( int i = numBaseBlocks; i < numBlocks; i++ ) {
+ 		block = ( idDynamicBlock<type> * ) Mem_Alloc16( baseBlockSize );
+ 		if ( lockMemory ) {
+@@ -512,6 +538,8 @@
+ 	}
+ 
+ 	allowAllocs = false;
++
++        VF_SEM_POST (&alloc_mutex); /////////////// VF alloc thread safe
+ }
+ 
+ template<class type, int baseBlockSize, int minBlockSize>
+@@ -523,6 +551,8 @@
+ void idDynamicBlockAlloc<type, baseBlockSize, minBlockSize>::FreeEmptyBaseBlocks( void ) {
+ 	idDynamicBlock<type> *block, *next;
+ 
++        VF_SEM_WAIT (&alloc_mutex); /////////////// VF alloc thread safe
++
+ 	for ( block = firstBlock; block != NULL; block = next ) {
+ 		next = block->next;
+ 
+@@ -550,6 +580,7 @@
+ #ifdef DYNAMIC_BLOCK_ALLOC_CHECK
+ 	CheckMemory();
+ #endif
++        VF_SEM_POST (&alloc_mutex); /////////////// VF alloc thread safe
+ }
+ 
+ template<class type, int baseBlockSize, int minBlockSize>
+@@ -557,12 +588,15 @@
+ 	int numEmptyBaseBlocks;
+ 	idDynamicBlock<type> *block;
+ 
++        VF_SEM_WAIT (&alloc_mutex); /////////////// VF alloc thread safe
++
+ 	numEmptyBaseBlocks = 0;
+ 	for ( block = firstBlock; block != NULL; block = block->next ) {
+ 		if ( block->IsBaseBlock() && block->node != NULL && ( block->next == NULL || block->next->IsBaseBlock() ) ) {
+ 			numEmptyBaseBlocks++;
+ 		}
+ 	}
++        VF_SEM_POST (&alloc_mutex); /////////////// VF alloc thread safe
+ 	return numEmptyBaseBlocks;
+ }
+ 
+@@ -570,18 +604,26 @@
+ type *idDynamicBlockAlloc<type, baseBlockSize, minBlockSize>::Alloc( const int num ) {
+ 	idDynamicBlock<type> *block;
+ 
+-	numAllocs++;
++	//numAllocs++;
++        __sync_fetch_and_add(&numAllocs, 1);
+ 
+ 	if ( num <= 0 ) {
+ 		return NULL;
+ 	}
+ 
++        //printf("idDynamicBlockAlloc::Alloc %p: VF_SEM_WAIT\n", this);
++        VF_SEM_WAIT (&alloc_mutex); /////////////// VF alloc thread safe
++
+ 	block = AllocInternal( num );
+ 	if ( block == NULL ) {
++                //printf("idDynamicBlockAlloc::Alloc %p: VF_SEM_POST\n", this);
++                VF_SEM_POST (&alloc_mutex); /////////////// VF alloc thread safe
+ 		return NULL;
+ 	}
+ 	block = ResizeInternal( block, num );
+ 	if ( block == NULL ) {
++                //printf("idDynamicBlockAlloc::Alloc %p: VF_SEM_POST\n", this);
++                VF_SEM_POST (&alloc_mutex); /////////////// VF alloc thread safe
+ 		return NULL;
+ 	}
+ 
+@@ -592,16 +634,21 @@
+ 	numUsedBlocks++;
+ 	usedBlockMemory += block->GetSize();
+ 
++        //printf("idDynamicBlockAlloc::Alloc %p: VF_SEM_POST\n", this);
++        VF_SEM_POST (&alloc_mutex); /////////////// VF alloc thread safe
++
+ 	return block->GetMemory();
+ }
+ 
+ template<class type, int baseBlockSize, int minBlockSize>
+ type *idDynamicBlockAlloc<type, baseBlockSize, minBlockSize>::Resize( type *ptr, const int num ) {
+ 
+-	numResizes++;
++	//numResizes++;
++  __sync_fetch_and_add(&numResizes, 1);
+ 
+ 	if ( ptr == NULL ) {
+-		return Alloc( num );
++                type *block = Alloc( num );
++                return block;
+ 	}
+ 
+ 	if ( num <= 0 ) {
+@@ -611,10 +658,15 @@
+ 
+ 	idDynamicBlock<type> *block = ( idDynamicBlock<type> * ) ( ( (byte *) ptr ) - (int)sizeof( idDynamicBlock<type> ) );
+ 
++        //printf("idDynamicBlockAlloc::Resize %p: VF_SEM_WAIT\n", this);
++        VF_SEM_WAIT (&alloc_mutex); /////////////// VF alloc thread safe
++
+ 	usedBlockMemory -= block->GetSize();
+ 
+ 	block = ResizeInternal( block, num );
+ 	if ( block == NULL ) {
++                //printf("idDynamicBlockAlloc::Resize %p: VF_SEM_POST\n", this);
++                VF_SEM_POST (&alloc_mutex); /////////////// VF alloc thread safe
+ 		return NULL;
+ 	}
+ 
+@@ -624,18 +676,24 @@
+ 
+ 	usedBlockMemory += block->GetSize();
+ 
++        //printf("idDynamicBlockAlloc::Resize %p: VF_SEM_POST\n", this);
++        VF_SEM_POST (&alloc_mutex); /////////////// VF alloc thread safe
++
+ 	return block->GetMemory();
+ }
+ 
+ template<class type, int baseBlockSize, int minBlockSize>
+ void idDynamicBlockAlloc<type, baseBlockSize, minBlockSize>::Free( type *ptr ) {
+ 
+-	numFrees++;
++        __sync_fetch_and_add(&numFrees, 1);
+ 
+ 	if ( ptr == NULL ) {
+ 		return;
+ 	}
+ 
++        //printf("idDynamicBlockAlloc::Free %p: VF_SEM_WAIT\n", this);
++        VF_SEM_WAIT (&alloc_mutex); /////////////// VF alloc thread safe
++
+ 	idDynamicBlock<type> *block = ( idDynamicBlock<type> * ) ( ( (byte *) ptr ) - (int)sizeof( idDynamicBlock<type> ) );
+ 
+ 	numUsedBlocks--;
+@@ -646,6 +704,8 @@
+ #ifdef DYNAMIC_BLOCK_ALLOC_CHECK
+ 	CheckMemory();
+ #endif
++        //printf("idDynamicBlockAlloc::Free %p: VF_SEM_POST\n", this);
++        VF_SEM_POST (&alloc_mutex); /////////////// VF alloc thread safe
+ }
+ 
+ template<class type, int baseBlockSize, int minBlockSize>
+diff -r 8aac9cb1ba58 idTech4/iodoom3/neo/renderer/Interaction.cpp
+--- a/idTech4/iodoom3/neo/renderer/Interaction.cpp	Mon Aug 20 12:33:21 2012 +0200
++++ b/idTech4/iodoom3/neo/renderer/Interaction.cpp	Mon Oct 29 17:48:01 2012 +0100
+@@ -63,9 +63,11 @@
+ 
+ 	int numFaces = tri->numIndexes / 3;
+ 
++        VF_SEM_WAIT(&face_planes_mutex);  /////////////// VF alloc thread safe
+ 	if ( !tri->facePlanes || !tri->facePlanesCalculated ) {
+ 		R_DeriveFacePlanes( const_cast<srfTriangles_t *>(tri) );
+ 	}
++        VF_SEM_POST(&face_planes_mutex);  /////////////// VF alloc thread safe
+ 
+ 	cullInfo.facing = (byte *) R_StaticAlloc( ( numFaces + 1 ) * sizeof( cullInfo.facing[0] ) );
+ 
+@@ -449,6 +451,8 @@
+ 	dynamicModelFrameCount	= 0;
+ 	frustumState			= FRUSTUM_UNINITIALIZED;
+ 	frustumAreas			= NULL;
++
++        VF_SEM_INIT(&entityDefDynModel, 0, 1);
+ }
+ 
+ /*
+@@ -622,6 +626,8 @@
+ */
+ void idInteraction::MakeEmpty( void ) {
+ 
++        VF_SEM_WAIT(&make_empty_mutex);  /////////////// VF alloc thread safe
++
+ 	// an empty interaction has no surfaces
+ 	numSurfaces = 0;
+ 
+@@ -646,6 +652,8 @@
+ 	} else {
+ 		this->lightDef->firstInteraction = this;
+ 	}
++
++        VF_SEM_POST(&make_empty_mutex);  /////////////// VF alloc thread safe
+ }
+ 
+ /*
+@@ -1021,10 +1029,10 @@
+ instantiate the dynamic model to find out
+ ==================
+ */
+-void idInteraction::AddActiveInteraction( void ) {
++bool idInteraction::AddActiveInteraction( bool phase1, idScreenRect *shadowScissor, idRenderModel **modelRef ) {
+ 	viewLight_t *	vLight;
+ 	viewEntity_t *	vEntity;
+-	idScreenRect	shadowScissor;
++	//idScreenRect	shadowScissor;
+ 	idScreenRect	lightScissor;
+ 	idVec3			localLightOrigin;
+ 	idVec3			localViewOrigin;
+@@ -1032,17 +1040,22 @@
+ 	vLight = lightDef->viewLight;
+ 	vEntity = entityDef->viewEntity;
+ 
++        if (phase1)
++          {
++
++	*modelRef = NULL;
++
+ 	// do not waste time culling the interaction frustum if there will be no shadows
+ 	if ( !HasShadows() ) {
+ 
+ 		// use the entity scissor rectangle
+-		shadowScissor = vEntity->scissorRect;
++		*shadowScissor = vEntity->scissorRect;
+ 
+ 	// culling does not seem to be worth it for static world models
+ 	} else if ( entityDef->parms.hModel->IsStaticWorldModel() ) {
+ 
+ 		// use the light scissor rectangle
+-		shadowScissor = vLight->scissorRect;
++		*shadowScissor = vLight->scissorRect;
+ 
+ 	} else {
+ 
+@@ -1050,24 +1063,27 @@
+ 		// this will also cull the case where the light origin is inside the
+ 		// view frustum and the entity bounds are outside the view frustum
+ 		if ( CullInteractionByViewFrustum( tr.viewDef->viewFrustum ) ) {
+-			return;
++			return false;
+ 		}
+ 
+ 		// calculate the shadow scissor rectangle
+-		shadowScissor = CalcInteractionScissorRectangle( tr.viewDef->viewFrustum );
++		*shadowScissor = CalcInteractionScissorRectangle( tr.viewDef->viewFrustum );
+ 	}
+ 
+ 	// get out before making the dynamic model if the shadow scissor rectangle is empty
+-	if ( shadowScissor.IsEmpty() ) {
+-		return;
++	if ( (*shadowScissor).IsEmpty() ) {
++		return false;
+ 	}
+ 
++        VF_SEM_WAIT(&entityDefDynModel);
++
+ 	// We will need the dynamic surface created to make interactions, even if the
+ 	// model itself wasn't visible.  This just returns a cached value after it
+ 	// has been generated once in the view.
+ 	idRenderModel *model = R_EntityDefDynamicModel( entityDef );
+ 	if ( model == NULL || model->NumSurfaces() <= 0 ) {
+-		return;
++                VF_SEM_POST(&entityDefDynModel);
++		return false;
+ 	}
+ 
+ 	// the dynamic model may have changed since we built the surface list
+@@ -1076,11 +1092,18 @@
+ 	}
+ 	dynamicModelFrameCount = entityDef->dynamicModelFrameCount;
+ 
++        VF_SEM_POST(&entityDefDynModel);
++
+ 	// actually create the interaction if needed, building light and shadow surfaces as needed
+-	if ( IsDeferred() ) {
+-		CreateInteraction( model );
++        if ( IsDeferred() ) {
++          //CreateInteraction( model );
++          *modelRef = model;
+ 	}
+ 
++        return true;
++          }
++        ///////// VF SPLIT HERE
++
+ 	R_GlobalPointToLocal( vEntity->modelMatrix, lightDef->globalLightOrigin, localLightOrigin );
+ 	R_GlobalPointToLocal( vEntity->modelMatrix, tr.viewDef->renderView.vieworg, localViewOrigin );
+ 
+@@ -1116,6 +1139,7 @@
+ 
+ 					// make sure the original surface has its ambient cache created
+ 					srfTriangles_t *tri = sint->ambientTris;
++
+ 					if ( !tri->ambientCache ) {
+ 						if ( !R_CreateAmbientCache( tri, sint->shader->ReceivesLighting() ) ) {
+ 							// skip if we were out of vertex memory
+@@ -1133,7 +1157,7 @@
+ 					if ( !lightTris->lightingCache ) {
+ 						if ( !R_CreateLightingCache( entityDef, lightDef, lightTris ) ) {
+ 							// skip if we are out of vertex memory
+-							continue;
++                                                        continue;
+ 						}
+ 					}
+ 					// touch the light surface so it won't get purged
+@@ -1228,19 +1252,21 @@
+ 				vertexCache.Alloc( shadowTris->indexes, shadowTris->numIndexes * sizeof( shadowTris->indexes[0] ), &shadowTris->indexCache, true );
+ 				vertexCache.Touch( shadowTris->indexCache );
+ 			}
++                        
+ 
+ 			// see if we can avoid using the shadow volume caps
+ 			bool inside = R_PotentiallyInsideInfiniteShadow( sint->ambientTris, localViewOrigin, localLightOrigin );
+ 
+ 			if ( sint->shader->TestMaterialFlag( MF_NOSELFSHADOW ) ) {
+ 				R_LinkLightSurf( &vLight->localShadows,
+-					shadowTris, vEntity, lightDef, NULL, shadowScissor, inside );
++					shadowTris, vEntity, lightDef, NULL, *shadowScissor, inside );
+ 			} else {
+ 				R_LinkLightSurf( &vLight->globalShadows,
+-					shadowTris, vEntity, lightDef, NULL, shadowScissor, inside );
++					shadowTris, vEntity, lightDef, NULL, *shadowScissor, inside );
+ 			}
+ 		}
+ 	}
++        return true;
+ }
+ 
+ /*
+diff -r 8aac9cb1ba58 idTech4/iodoom3/neo/renderer/Interaction.h
+--- a/idTech4/iodoom3/neo/renderer/Interaction.h	Mon Aug 20 12:33:21 2012 +0200
++++ b/idTech4/iodoom3/neo/renderer/Interaction.h	Mon Oct 29 17:48:01 2012 +0100
+@@ -29,6 +29,8 @@
+ #ifndef __INTERACTION_H__
+ #define __INTERACTION_H__
+ 
++#include "../vfext/vfsemaphore.h"
++
+ /*
+ ===============================================================================
+ 
+@@ -144,7 +146,10 @@
+ 
+ 	// makes sure all necessary light surfaces and shadow surfaces are created, and
+ 	// calls R_LinkLightSurf() for each one
+-	void					AddActiveInteraction( void );
++	bool					AddActiveInteraction( bool, idScreenRect *, idRenderModel ** );
++
++	// actually create the interaction
++	void					CreateInteraction( const idRenderModel *model );
+ 
+ private:
+ 	enum {
+@@ -159,8 +164,6 @@
+ 	int						dynamicModelFrameCount;	// so we can tell if a callback model animated
+ 
+ private:
+-	// actually create the interaction
+-	void					CreateInteraction( const idRenderModel *model );
+ 
+ 	// unlink from entity and light lists
+ 	void					Unlink( void );
+@@ -172,6 +175,8 @@
+ 	// determine the minimum scissor rect that will include the interaction shadows
+ 	// projected to the bounds of the light
+ 	idScreenRect			CalcInteractionScissorRectangle( const idFrustum &viewFrustum );
++
++        vf_sem_t entityDefDynModel;
+ };
+ 
+ 
+diff -r 8aac9cb1ba58 idTech4/iodoom3/neo/renderer/tr_light.cpp
+--- a/idTech4/iodoom3/neo/renderer/tr_light.cpp	Mon Aug 20 12:33:21 2012 +0200
++++ b/idTech4/iodoom3/neo/renderer/tr_light.cpp	Mon Oct 29 17:48:01 2012 +0100
+@@ -34,6 +34,13 @@
+ static const float CHECK_BOUNDS_EPSILON = 1.0f;
+ 
+ 
++#include "../vfext/vfsemaphore.h"
++vf_sem_t drawsurf_mutex; ///////// VF thread safe
++vf_sem_t ambient_viewcount_mutex; ///////// VF thread safe
++vf_sem_t vertex_cache_mutex; ///////// VF thread safe
++vf_sem_t make_empty_mutex; ///////// VF thread safe allocation scheme;
++
++
+ /*
+ ===========================================================================================
+ 
+@@ -701,8 +708,10 @@
+ 	}
+ 
+ 	// actually link it in
++        VF_SEM_WAIT(&linklight_mutex);  /////////////// VF thread safe
+ 	drawSurf->nextOnLight = *link;
+ 	*link = drawSurf;
++        VF_SEM_POST(&linklight_mutex);  /////////////// VF thread safe
+ }
+ 
+ /*
+@@ -1358,6 +1367,7 @@
+ 		}
+ 
+ 		tri = surf->geometry;
++
+ 		if ( !tri ) {
+ 			continue;
+ 		}
+@@ -1417,12 +1427,16 @@
+ 				vertexCache.Touch( tri->indexCache );
+ 			}
+ 
++                        VF_SEM_WAIT(&drawsurf_mutex);  /////////////// VF thread safe
+ 			// add the surface for drawing
+ 			R_AddDrawSurf( tri, vEntity, &vEntity->entityDef->parms, shader, vEntity->scissorRect );
++                        VF_SEM_POST(&drawsurf_mutex);  /////////////// VF thread safe
+ 
+ 			// ambientViewCount is used to allow light interactions to be rejected
+ 			// if the ambient surface isn't visible at all
++                        VF_SEM_WAIT(&ambient_viewcount_mutex);  /////////////// VF thread safe
+ 			tri->ambientViewCount = tr.viewCount;
++                        VF_SEM_POST(&ambient_viewcount_mutex);  /////////////// VF thread safe
+ 		}
+ 	}
+ 
+@@ -1457,18 +1471,28 @@
+ two or more lights.
+ ===================
+ */
++#define MAX_INTER 1000
+ void R_AddModelSurfaces( void ) {
+ 	viewEntity_t		*vEntity;
+ 	idInteraction		*inter, *next;
+ 	idRenderModel		*model;
+ 
++        VF_SEM_INIT(&drawsurf_mutex, 0, 1); /////////////// VF thread safe
++        VF_SEM_INIT(&ambient_viewcount_mutex, 0, 1); /////////////// VF thread safe
++        VF_SEM_INIT(&face_planes_mutex, 0, 1); /////////////// VF thread safe
++
+ 	// clear the ambient surface list
+ 	tr.viewDef->numDrawSurfs = 0;
+ 	tr.viewDef->maxDrawSurfs = 0;	// will be set to INITIAL_DRAWSURFS on R_AddDrawSurf
+ 
+ 	// go through each entity that is either visible to the view, or to
+ 	// any light that intersects the view (for shadows)
+-	for ( vEntity = tr.viewDef->viewEntitys; vEntity; vEntity = vEntity->next ) {
++
++        int i;
++        idInteraction *interactions[MAX_INTER];
++        int nInteractions = 0;
++
++        for ( vEntity = tr.viewDef->viewEntitys; vEntity; vEntity = vEntity->next ) {
+ 
+ 		if ( r_useEntityScissors.GetBool() ) {
+ 			// calculate the screen area covered by the entity
+@@ -1535,7 +1559,9 @@
+ 					if ( inter->lightDef->viewCount != tr.viewCount ) {
+ 						continue;
+ 					}
+-					inter->AddActiveInteraction();
++					//inter->AddActiveInteraction();
++                                        interactions[nInteractions++] = inter;
++                                        assert (nInteractions <= MAX_INTER);
+ 				}
+ 			}
+ 		} else {
+@@ -1550,7 +1576,9 @@
+ 				if ( inter->lightDef->viewCount != tr.viewCount ) {
+ 					continue;
+ 				}
+-				inter->AddActiveInteraction();
++				//inter->AddActiveInteraction();
++                                interactions[nInteractions++] = inter;
++                                assert (nInteractions < MAX_INTER);
+ 			}
+ 		}
+ 
+@@ -1558,8 +1586,45 @@
+ 			tr.viewDef->floatTime = oldFloatTime;
+ 			tr.viewDef->renderView.time = oldTime;
+ 		}
++        }
+ 
+-	}
++        int nCreateInteractions = 0;
++        int createInteractionId[MAX_INTER];
++        idRenderModel *createInteractionModel[MAX_INTER];
++
++        idRenderModel *modelPtr[MAX_INTER];
++        bool phase2[MAX_INTER];
++	idScreenRect shadowScissor[MAX_INTER];;
++
++        //        printf("NEW FRAME\n");
++
++#pragma omp parallel for default(shared) schedule(dynamic)
++        for (i = 0; i < nInteractions; i++) {
++          //          printf("phase1 i=%d\n", i);
++          phase2[i] = interactions[i]->AddActiveInteraction(true, &shadowScissor[i], &modelPtr[i]);
++        }
++
++        for (i = 0; i < nInteractions; i++) {
++          if (modelPtr[i]) {
++            createInteractionId[nCreateInteractions] = i;
++            createInteractionModel[nCreateInteractions] = modelPtr[i];
++            nCreateInteractions++;
++          }
++        }
++
++#ifdef VF_DEBUG
++        printf("NumInteractions=%d\n", nCreateInteractions);
++#endif
++
++#pragma omp parallel for shared(interactions,createInteractionId,createInteractionModel) schedule(dynamic)
++        for (i = 0; i < nCreateInteractions; i++) {
++          //          printf("CreateInteraction i=%d\n", i);
++          interactions[createInteractionId[i]]->CreateInteraction(createInteractionModel[i]);
++        }
++
++        for (i = 0; i < nInteractions; i++)
++          if (phase2[i])
++            interactions[i]->AddActiveInteraction(false, &shadowScissor[i], &modelPtr[i]);
+ }
+ 
+ /*
+diff -r 8aac9cb1ba58 idTech4/iodoom3/neo/renderer/tr_local.h
+--- a/idTech4/iodoom3/neo/renderer/tr_local.h	Mon Aug 20 12:33:21 2012 +0200
++++ b/idTech4/iodoom3/neo/renderer/tr_local.h	Mon Oct 29 17:48:01 2012 +0100
+@@ -1130,6 +1130,11 @@
+ ====================================================================
+ */
+ 
++extern vf_sem_t linklight_mutex; ///////// VF thread safe
++extern vf_sem_t face_planes_mutex; ///////// VF thread safe
++extern vf_sem_t make_empty_mutex; ///////// VF thread safe
++extern vf_sem_t vertex_cache_mutex; ///////// VF thread safe
++
+ void R_RenderView( viewDef_t *parms );
+ 
+ // performs radius cull first, then corner cull
+diff -r 8aac9cb1ba58 idTech4/iodoom3/neo/renderer/tr_main.cpp
+--- a/idTech4/iodoom3/neo/renderer/tr_main.cpp	Mon Aug 20 12:33:21 2012 +0200
++++ b/idTech4/iodoom3/neo/renderer/tr_main.cpp	Mon Oct 29 17:48:01 2012 +0100
+@@ -366,7 +366,9 @@
+ 	frameData_t		*frame;
+ 	frameMemoryBlock_t	*block;
+ 	void			*buf;
+-    
++
++        VF_SEM_WAIT (&common->alloc_mutex); /////////////// VF alloc thread safe
++
+ 	bytes = (bytes+16)&~15;
+ 	// see if it can be satisfied in the current block
+ 	frame = frameData;
+@@ -375,6 +377,7 @@
+ 	if ( block->size - block->used >= bytes ) {
+ 		buf = block->base + block->used;
+ 		block->used += bytes;
++                VF_SEM_POST (&common->alloc_mutex); /////////////// VF alloc thread safe
+ 		return buf;
+ 	}
+ 
+@@ -406,6 +409,8 @@
+ 
+ 	block->used = bytes;
+ 
++        VF_SEM_POST (&common->alloc_mutex); /////////////// VF alloc thread safe
++
+ 	return block->base;
+ }
+ 
+@@ -1080,7 +1085,9 @@
+ 
+ //==============================================================================
+ 
+-
++#include "../vfext/vfsemaphore.h"
++vf_sem_t linklight_mutex; ///////// VF thread safe
++vf_sem_t face_planes_mutex; ///////// VF thread safe
+ 
+ /*
+ ================
+@@ -1095,6 +1102,9 @@
+ void R_RenderView( viewDef_t *parms ) {
+ 	viewDef_t		*oldView;
+ 
++        VF_SEM_INIT(&linklight_mutex, 0, 1); /////////////// VF thread safe
++        VF_SEM_INIT(&make_empty_mutex, 0, 1); /////////////// VF thread safe
++
+ 	if ( parms->renderView.width <= 0 || parms->renderView.height <= 0 ) {
+ 		return;
+ 	}
+diff -r 8aac9cb1ba58 idTech4/iodoom3/neo/renderer/tr_stencilshadow.cpp
+--- a/idTech4/iodoom3/neo/renderer/tr_stencilshadow.cpp	Mon Aug 20 12:33:21 2012 +0200
++++ b/idTech4/iodoom3/neo/renderer/tr_stencilshadow.cpp	Mon Oct 29 17:48:01 2012 +0100
+@@ -126,28 +126,6 @@
+ //#define	LIGHT_CLIP_EPSILON	0.001f
+ #define	LIGHT_CLIP_EPSILON		0.1f
+ 
+-#define	MAX_CLIP_SIL_EDGES		2048
+-static int	numClipSilEdges;
+-static int	clipSilEdges[MAX_CLIP_SIL_EDGES][2];
+-
+-// facing will be 0 if forward facing, 1 if backwards facing
+-// grabbed with alloca
+-static byte	*globalFacing;
+-
+-// faceCastsShadow will be 1 if the face is in the projection
+-// and facing the apropriate direction
+-static byte	*faceCastsShadow;
+-
+-static int	*remap;
+-
+-#define	MAX_SHADOW_INDEXES		0x18000
+-#define	MAX_SHADOW_VERTS		0x18000
+-static int	numShadowIndexes;
+-static glIndex_t	shadowIndexes[MAX_SHADOW_INDEXES];
+-static int	numShadowVerts;
+-static idVec4	shadowVerts[MAX_SHADOW_VERTS];
+-static bool overflowed;
+-
+ idPlane	pointLightFrustums[6][6] = {
+ 	{
+ 		idPlane( 1,0,0,0 ),
+@@ -203,16 +181,43 @@
+ 
+ int	c_caps, c_sils;
+ 
+-static bool	callOptimizer;			// call the preprocessor optimizer after clipping occluders
+-
+ typedef struct {
+ 	int		frontCapStart;
+ 	int		rearCapStart;
+ 	int		silStart;
+ 	int		end;
+ } indexRef_t;
+-static indexRef_t	indexRef[6];
+-static int indexFrustumNumber;		// which shadow generating side of a light the indexRef is for
++
++// VF: Encapsulated all static variables into a struct
++// to pass as a state during shadow calculation
++typedef struct {
++#define	MAX_CLIP_SIL_EDGES		2048
++  int	numClipSilEdges;
++  int	clipSilEdges[MAX_CLIP_SIL_EDGES][2];
++
++  // facing will be 0 if forward facing, 1 if backwards facing
++  // grabbed with alloca
++  byte	*globalFacing;
++
++  // faceCastsShadow will be 1 if the face is in the projection
++  // and facing the apropriate direction
++  byte	*faceCastsShadow;
++
++  int	*remap;
++
++#define	MAX_SHADOW_INDEXES		0x18000
++#define	MAX_SHADOW_VERTS		0x18000
++  int numShadowIndexes;
++  glIndex_t shadowIndexes[MAX_SHADOW_INDEXES];
++  int numShadowVerts;
++  idVec4	shadowVerts[MAX_SHADOW_VERTS];
++  bool overflowed;
++  bool callOptimizer;			// call the preprocessor optimizer after clipping occluders
++  indexRef_t	indexRef[6];
++  int indexFrustumNumber;		// which shadow generating side of a light the indexRef is for
++} stencil_shadow_st_t;
++
++
+ 
+ /*
+ ===============
+@@ -296,7 +301,7 @@
+ that is on the far light clip plane
+ ===================
+ */
+-static void R_ProjectPointsToFarPlane( const idRenderEntityLocal *ent, const idRenderLightLocal *light,
++static void R_ProjectPointsToFarPlane( stencil_shadow_st_t *st, const idRenderEntityLocal *ent, const idRenderLightLocal *light,
+ 									const idPlane &lightPlaneLocal,
+ 									int firstShadowVert, int numShadowVerts ) {
+ 	idVec3		lv;
+@@ -309,7 +314,7 @@
+ 
+ #if 1
+ 	// make a projected copy of the even verts into the odd spots
+-	in = &shadowVerts[firstShadowVert];
++	in = &st->shadowVerts[firstShadowVert];
+ 	for ( i = firstShadowVert ; i < numShadowVerts ; i+= 2, in += 2 ) {
+ 		float	w, oow;
+ 
+@@ -332,7 +337,7 @@
+ 	// messing with W seems to cause some depth precision problems
+ 
+ 	// make a projected copy of the even verts into the odd spots
+-	in = &shadowVerts[firstShadowVert];
++	in = &st->shadowVerts[firstShadowVert];
+ 	for ( i = firstShadowVert ; i < numShadowVerts ; i+= 2, in += 2 ) {
+ 		in[0].w = 1;
+ 		in[1].x = *in * mat[0].ToVec3() + mat[0][3];
+@@ -454,7 +459,7 @@
+ Returns false if nothing is left after clipping
+ ===================
+ */
+-static bool	R_ClipTriangleToLight( const idVec3 &a, const idVec3 &b, const idVec3 &c, int planeBits,
++static bool	R_ClipTriangleToLight( stencil_shadow_st_t *st, const idVec3 &a, const idVec3 &b, const idVec3 &c, int planeBits,
+ 							  const idPlane frustum[6] ) {
+ 	int			i;
+ 	int			base;
+@@ -481,26 +486,26 @@
+ 	ct = &pingPong[p];
+ 
+ 	// copy the clipped points out to shadowVerts
+-	if ( numShadowVerts + ct->numVerts * 2 > MAX_SHADOW_VERTS ) {
+-		overflowed = true;
++	if ( st->numShadowVerts + ct->numVerts * 2 > MAX_SHADOW_VERTS ) {
++		st->overflowed = true;
+ 		return false;
+ 	}
+ 
+-	base = numShadowVerts;
++	base = st->numShadowVerts;
+ 	for ( i = 0 ; i < ct->numVerts ; i++ ) {
+-		shadowVerts[ base + i*2 ].ToVec3() = ct->verts[i];
++		st->shadowVerts[ base + i*2 ].ToVec3() = ct->verts[i];
+ 	}
+-	numShadowVerts += ct->numVerts * 2;
++	st->numShadowVerts += ct->numVerts * 2;
+ 
+-	if ( numShadowIndexes + 3 * ( ct->numVerts - 2 ) > MAX_SHADOW_INDEXES ) {
+-		overflowed = true;
++	if ( st->numShadowIndexes + 3 * ( ct->numVerts - 2 ) > MAX_SHADOW_INDEXES ) {
++		st->overflowed = true;
+ 		return false;
+ 	}
+ 
+ 	for ( i = 2 ; i < ct->numVerts ; i++ ) {
+-		shadowIndexes[numShadowIndexes++] = base + i * 2;
+-		shadowIndexes[numShadowIndexes++] = base + ( i - 1 ) * 2;
+-		shadowIndexes[numShadowIndexes++] = base;
++		st->shadowIndexes[st->numShadowIndexes++] = base + i * 2;
++		st->shadowIndexes[st->numShadowIndexes++] = base + ( i - 1 ) * 2;
++		st->shadowIndexes[st->numShadowIndexes++] = base;
+ 	}
+ 
+ 	// any edges that were created by the clipping process will
+@@ -508,16 +513,16 @@
+ 	// of the exterior bounds of the shadow volume
+ 	for ( i = 0 ; i < ct->numVerts ; i++ ) {
+ 		if ( ct->edgeFlags[i] ) {
+-			if ( numClipSilEdges == MAX_CLIP_SIL_EDGES ) {
++			if ( st->numClipSilEdges == MAX_CLIP_SIL_EDGES ) {
+ 				break;
+ 			}
+-			clipSilEdges[ numClipSilEdges ][0] = base + i * 2;
++			st->clipSilEdges[ st->numClipSilEdges ][0] = base + i * 2;
+ 			if ( i == ct->numVerts - 1 ) {
+-				clipSilEdges[ numClipSilEdges ][1] = base;
++				st->clipSilEdges[ st->numClipSilEdges ][1] = base;
+ 			} else {
+-				clipSilEdges[ numClipSilEdges ][1] = base + ( i + 1 ) * 2;
++				st->clipSilEdges[ st->numClipSilEdges ][1] = base + ( i + 1 ) * 2;
+ 			}
+-			numClipSilEdges++;
++			st->numClipSilEdges++;
+ 		}
+ 	}
+ 
+@@ -597,36 +602,36 @@
+ Only done for simple projected lights, not point lights.
+ ==================
+ */
+-static void R_AddClipSilEdges( void ) {
++static void R_AddClipSilEdges( stencil_shadow_st_t *st ) {
+ 	int		v1, v2;
+ 	int		v1_back, v2_back;
+ 	int		i;
+ 
+ 	// don't allow it to overflow
+-	if ( numShadowIndexes + numClipSilEdges * 6 > MAX_SHADOW_INDEXES ) {
+-		overflowed = true;
++	if ( st->numShadowIndexes + st->numClipSilEdges * 6 > MAX_SHADOW_INDEXES ) {
++		st->overflowed = true;
+ 		return;
+ 	}
+ 
+-	for ( i = 0 ; i < numClipSilEdges ; i++ ) {
+-		v1 = clipSilEdges[i][0];
+-		v2 = clipSilEdges[i][1];
++	for ( i = 0 ; i < st->numClipSilEdges ; i++ ) {
++		v1 = st->clipSilEdges[i][0];
++		v2 = st->clipSilEdges[i][1];
+ 		v1_back = v1 + 1;
+ 		v2_back = v2 + 1;
+-		if ( PointsOrdered( shadowVerts[ v1 ].ToVec3(), shadowVerts[ v2 ].ToVec3() ) ) {
+-			shadowIndexes[numShadowIndexes++] = v1;
+-			shadowIndexes[numShadowIndexes++] = v2;
+-			shadowIndexes[numShadowIndexes++] = v1_back;
+-			shadowIndexes[numShadowIndexes++] = v2;
+-			shadowIndexes[numShadowIndexes++] = v2_back;
+-			shadowIndexes[numShadowIndexes++] = v1_back;
++		if ( PointsOrdered( st->shadowVerts[ v1 ].ToVec3(), st->shadowVerts[ v2 ].ToVec3() ) ) {
++			st->shadowIndexes[st->numShadowIndexes++] = v1;
++			st->shadowIndexes[st->numShadowIndexes++] = v2;
++			st->shadowIndexes[st->numShadowIndexes++] = v1_back;
++			st->shadowIndexes[st->numShadowIndexes++] = v2;
++			st->shadowIndexes[st->numShadowIndexes++] = v2_back;
++			st->shadowIndexes[st->numShadowIndexes++] = v1_back;
+ 		} else {
+-			shadowIndexes[numShadowIndexes++] = v1;
+-			shadowIndexes[numShadowIndexes++] = v2;
+-			shadowIndexes[numShadowIndexes++] = v2_back;
+-			shadowIndexes[numShadowIndexes++] = v1;
+-			shadowIndexes[numShadowIndexes++] = v2_back;
+-			shadowIndexes[numShadowIndexes++] = v1_back;
++			st->shadowIndexes[st->numShadowIndexes++] = v1;
++			st->shadowIndexes[st->numShadowIndexes++] = v2;
++			st->shadowIndexes[st->numShadowIndexes++] = v2_back;
++			st->shadowIndexes[st->numShadowIndexes++] = v1;
++			st->shadowIndexes[st->numShadowIndexes++] = v2_back;
++			st->shadowIndexes[st->numShadowIndexes++] = v1_back;
+ 		}
+ 	}
+ }
+@@ -639,7 +644,7 @@
+ for each silhouette edge in the light
+ =================
+ */
+-static void R_AddSilEdges( const srfTriangles_t *tri, unsigned short *pointCull, const idPlane frustum[6] ) {
++static void R_AddSilEdges( stencil_shadow_st_t *st, const srfTriangles_t *tri, unsigned short *pointCull, const idPlane frustum[6] ) {
+ 	int		v1, v2;
+ 	int		i;
+ 	silEdge_t	*sil;
+@@ -660,7 +665,7 @@
+ 		// not just that it has the correct facing direction
+ 		// This will cause edges that are exactly on the frustum plane
+ 		// to be considered sil edges if the face inside casts a shadow.
+-		if ( !( faceCastsShadow[ sil->p1 ] ^ faceCastsShadow[ sil->p2 ] ) ) {
++		if ( !( st->faceCastsShadow[ sil->p1 ] ^ st->faceCastsShadow[ sil->p2 ] ) ) {
+ 			continue;
+ 		}
+ 
+@@ -674,30 +679,30 @@
+ 
+ 		// see if the edge needs to be clipped
+ 		if ( EDGE_CLIPPED( sil->v1, sil->v2 ) ) {
+-			if ( numShadowVerts + 4 > MAX_SHADOW_VERTS ) {
+-				overflowed = true;
++			if ( st->numShadowVerts + 4 > MAX_SHADOW_VERTS ) {
++				st->overflowed = true;
+ 				return;
+ 			}
+-			v1 = numShadowVerts;
++			v1 = st->numShadowVerts;
+ 			v2 = v1 + 2;
+ 			if ( !R_ClipLineToLight( tri->verts[ sil->v1 ].xyz, tri->verts[ sil->v2 ].xyz, 
+-				frustum, shadowVerts[v1].ToVec3(), shadowVerts[v2].ToVec3() ) ) {
++				frustum, st->shadowVerts[v1].ToVec3(), st->shadowVerts[v2].ToVec3() ) ) {
+ 				continue;	// clipped away
+ 			}
+ 
+-			numShadowVerts += 4;
++			st->numShadowVerts += 4;
+ 		} else {
+ 			// use the entire edge
+-			v1 = remap[ sil->v1 ];
+-			v2 = remap[ sil->v2 ];
++			v1 = st->remap[ sil->v1 ];
++			v2 = st->remap[ sil->v2 ];
+ 			if ( v1 < 0 || v2 < 0 ) {
+ 				common->Error( "R_AddSilEdges: bad remap[]" );
+ 			}
+ 		}
+ 
+ 		// don't overflow
+-		if ( numShadowIndexes + 6 > MAX_SHADOW_INDEXES ) {
+-			overflowed = true;
++		if ( st->numShadowIndexes + 6 > MAX_SHADOW_INDEXES ) {
++			st->overflowed = true;
+ 			return;
+ 		}
+ 
+@@ -705,37 +710,37 @@
+ 		// consistantly between any two points, no matter which order they are specified.
+ 		// If this wasn't done, slight rasterization cracks would show in the shadow
+ 		// volume when two sil edges were exactly coincident
+-		if ( faceCastsShadow[ sil->p2 ] ) {
+-			if ( PointsOrdered( shadowVerts[ v1 ].ToVec3(), shadowVerts[ v2 ].ToVec3() ) ) {
+-				shadowIndexes[numShadowIndexes++] = v1;
+-				shadowIndexes[numShadowIndexes++] = v1+1;
+-				shadowIndexes[numShadowIndexes++] = v2;
+-				shadowIndexes[numShadowIndexes++] = v2;
+-				shadowIndexes[numShadowIndexes++] = v1+1;
+-				shadowIndexes[numShadowIndexes++] = v2+1;
++		if ( st->faceCastsShadow[ sil->p2 ] ) {
++			if ( PointsOrdered( st->shadowVerts[ v1 ].ToVec3(), st->shadowVerts[ v2 ].ToVec3() ) ) {
++				st->shadowIndexes[st->numShadowIndexes++] = v1;
++				st->shadowIndexes[st->numShadowIndexes++] = v1+1;
++				st->shadowIndexes[st->numShadowIndexes++] = v2;
++				st->shadowIndexes[st->numShadowIndexes++] = v2;
++				st->shadowIndexes[st->numShadowIndexes++] = v1+1;
++				st->shadowIndexes[st->numShadowIndexes++] = v2+1;
+ 			} else {
+-				shadowIndexes[numShadowIndexes++] = v1;
+-				shadowIndexes[numShadowIndexes++] = v2+1;
+-				shadowIndexes[numShadowIndexes++] = v2;
+-				shadowIndexes[numShadowIndexes++] = v1;
+-				shadowIndexes[numShadowIndexes++] = v1+1;
+-				shadowIndexes[numShadowIndexes++] = v2+1;
++				st->shadowIndexes[st->numShadowIndexes++] = v1;
++				st->shadowIndexes[st->numShadowIndexes++] = v2+1;
++				st->shadowIndexes[st->numShadowIndexes++] = v2;
++				st->shadowIndexes[st->numShadowIndexes++] = v1;
++				st->shadowIndexes[st->numShadowIndexes++] = v1+1;
++				st->shadowIndexes[st->numShadowIndexes++] = v2+1;
+ 			}
+ 		} else { 
+-			if ( PointsOrdered( shadowVerts[ v1 ].ToVec3(), shadowVerts[ v2 ].ToVec3() ) ) {
+-				shadowIndexes[numShadowIndexes++] = v1;
+-				shadowIndexes[numShadowIndexes++] = v2;
+-				shadowIndexes[numShadowIndexes++] = v1+1;
+-				shadowIndexes[numShadowIndexes++] = v2;
+-				shadowIndexes[numShadowIndexes++] = v2+1;
+-				shadowIndexes[numShadowIndexes++] = v1+1;
++			if ( PointsOrdered( st->shadowVerts[ v1 ].ToVec3(), st->shadowVerts[ v2 ].ToVec3() ) ) {
++				st->shadowIndexes[st->numShadowIndexes++] = v1;
++				st->shadowIndexes[st->numShadowIndexes++] = v2;
++				st->shadowIndexes[st->numShadowIndexes++] = v1+1;
++				st->shadowIndexes[st->numShadowIndexes++] = v2;
++				st->shadowIndexes[st->numShadowIndexes++] = v2+1;
++				st->shadowIndexes[st->numShadowIndexes++] = v1+1;
+ 			} else {
+-				shadowIndexes[numShadowIndexes++] = v1;
+-				shadowIndexes[numShadowIndexes++] = v2;
+-				shadowIndexes[numShadowIndexes++] = v2+1;
+-				shadowIndexes[numShadowIndexes++] = v1;
+-				shadowIndexes[numShadowIndexes++] = v2+1;
+-				shadowIndexes[numShadowIndexes++] = v1+1;
++				st->shadowIndexes[st->numShadowIndexes++] = v1;
++				st->shadowIndexes[st->numShadowIndexes++] = v2;
++				st->shadowIndexes[st->numShadowIndexes++] = v2+1;
++				st->shadowIndexes[st->numShadowIndexes++] = v1;
++				st->shadowIndexes[st->numShadowIndexes++] = v2+1;
++				st->shadowIndexes[st->numShadowIndexes++] = v1+1;
+ 			}
+ 		}
+ 	}
+@@ -748,13 +753,13 @@
+ Also inits the remap[] array to all -1
+ ================
+ */
+-static void R_CalcPointCull( const srfTriangles_t *tri, const idPlane frustum[6], unsigned short *pointCull ) {
++static void R_CalcPointCull( stencil_shadow_st_t *st, const srfTriangles_t *tri, const idPlane frustum[6], unsigned short *pointCull ) {
+ 	int i;
+ 	int frontBits;
+ 	float *planeSide;
+ 	byte *side1, *side2;
+ 
+-	SIMDProcessor->Memset( remap, -1, tri->numVerts * sizeof( remap[0] ) );
++	SIMDProcessor->Memset( st->remap, -1, tri->numVerts * sizeof( st->remap[0] ) );
+ 
+ 	for ( frontBits = 0, i = 0; i < 6; i++ ) {
+ 		// get front bits for the whole surface
+@@ -808,7 +813,7 @@
+ need to be added.
+ =================
+ */
+-static void R_CreateShadowVolumeInFrustum( const idRenderEntityLocal *ent, 
++static void R_CreateShadowVolumeInFrustum( stencil_shadow_st_t *st, const idRenderEntityLocal *ent, 
+ 										  const srfTriangles_t *tri,
+ 										  const idRenderLightLocal *light,									
+ 										  const idVec3 lightOrigin,
+@@ -827,23 +832,23 @@
+ 
+ 	// test the vertexes for inside the light frustum, which will allow
+ 	// us to completely cull away some triangles from consideration.
+-	R_CalcPointCull( tri, frustum, pointCull );
++	R_CalcPointCull( st, tri, frustum, pointCull );
+ 
+ 	// this may not be the first frustum added to the volume
+-	firstShadowIndex = numShadowIndexes;
+-	firstShadowVert = numShadowVerts;
++	firstShadowIndex = st->numShadowIndexes;
++	firstShadowVert = st->numShadowVerts;
+ 
+ 	// decide which triangles front shadow volumes, clipping as needed
+-	numClipSilEdges = 0;
++	st->numClipSilEdges = 0;
+ 	numTris = tri->numIndexes / 3;
+ 	for ( i = 0 ; i < numTris ; i++ ) {
+ 		int		i1, i2, i3;
+ 
+-		faceCastsShadow[i] = 0;	// until shown otherwise
++		st->faceCastsShadow[i] = 0;	// until shown otherwise
+ 
+ 		// if it isn't facing the right way, don't add it
+ 		// to the shadow volume
+-		if ( globalFacing[i] ) {
++		if ( st->globalFacing[i] ) {
+ 			continue;
+ 		}
+ 
+@@ -862,25 +867,25 @@
+ 		// we need to get the original verts even from clipped triangles
+ 		// so the edges reference correctly, because an edge may be unclipped
+ 		// even when a triangle is clipped.
+-		if ( numShadowVerts + 6 > MAX_SHADOW_VERTS ) {
+-			overflowed = true;
++		if ( st->numShadowVerts + 6 > MAX_SHADOW_VERTS ) {
++			st->overflowed = true;
+ 			return;
+ 		}
+ 
+-		if ( !POINT_CULLED(i1) && remap[i1] == -1 ) {
+-			remap[i1] = numShadowVerts;
+-			shadowVerts[ numShadowVerts ].ToVec3() = tri->verts[i1].xyz;
+-			numShadowVerts+=2;
++		if ( !POINT_CULLED(i1) && st->remap[i1] == -1 ) {
++			st->remap[i1] = st->numShadowVerts;
++			st->shadowVerts[ st->numShadowVerts ].ToVec3() = tri->verts[i1].xyz;
++			st->numShadowVerts+=2;
+ 		}
+-		if ( !POINT_CULLED(i2) && remap[i2] == -1 ) {
+-			remap[i2] = numShadowVerts;
+-			shadowVerts[ numShadowVerts ].ToVec3() = tri->verts[i2].xyz;
+-			numShadowVerts+=2;
++		if ( !POINT_CULLED(i2) && st->remap[i2] == -1 ) {
++			st->remap[i2] = st->numShadowVerts;
++			st->shadowVerts[ st->numShadowVerts ].ToVec3() = tri->verts[i2].xyz;
++			st->numShadowVerts+=2;
+ 		}
+-		if ( !POINT_CULLED(i3) && remap[i3] == -1 ) {
+-			remap[i3] = numShadowVerts;
+-			shadowVerts[ numShadowVerts ].ToVec3() = tri->verts[i3].xyz;
+-			numShadowVerts+=2;
++		if ( !POINT_CULLED(i3) && st->remap[i3] == -1 ) {
++			st->remap[i3] = st->numShadowVerts;
++			st->shadowVerts[ st->numShadowVerts ].ToVec3() = tri->verts[i3].xyz;
++			st->numShadowVerts+=2;
+ 		}
+ 
+ 		// clip the triangle if any points are on the negative sides
+@@ -888,29 +893,29 @@
+ 			cullBits = ( ( pointCull[ i1 ] ^ 0xfc0 ) | ( pointCull[ i2 ] ^ 0xfc0 ) | ( pointCull[ i3 ] ^ 0xfc0 ) ) >> 6;
+ 			// this will also define clip edges that will become
+ 			// silhouette planes
+-			if ( R_ClipTriangleToLight( tri->verts[i1].xyz, tri->verts[i2].xyz, 
++			if ( R_ClipTriangleToLight( st, tri->verts[i1].xyz, tri->verts[i2].xyz, 
+ 				tri->verts[i3].xyz, cullBits, frustum ) ) {
+-				faceCastsShadow[i] = 1;
++				st->faceCastsShadow[i] = 1;
+ 			}
+ 		} else {
+ 			// instead of overflowing or drawing a streamer shadow, don't draw a shadow at all
+-			if ( numShadowIndexes + 3 > MAX_SHADOW_INDEXES ) {
+-				overflowed = true;
++			if ( st->numShadowIndexes + 3 > MAX_SHADOW_INDEXES ) {
++				st->overflowed = true;
+ 				return;
+ 			}
+-			if ( remap[i1] == -1 || remap[i2] == -1 || remap[i3] == -1 ) {
++			if ( st->remap[i1] == -1 || st->remap[i2] == -1 || st->remap[i3] == -1 ) {
+ 				common->Error( "R_CreateShadowVolumeInFrustum: bad remap[]" );
+ 			}
+-			shadowIndexes[numShadowIndexes++] = remap[i3];
+-			shadowIndexes[numShadowIndexes++] = remap[i2];
+-			shadowIndexes[numShadowIndexes++] = remap[i1];
+-			faceCastsShadow[i] = 1;
++			st->shadowIndexes[st->numShadowIndexes++] = st->remap[i3];
++			st->shadowIndexes[st->numShadowIndexes++] = st->remap[i2];
++			st->shadowIndexes[st->numShadowIndexes++] = st->remap[i1];
++			st->faceCastsShadow[i] = 1;
+ 		}
+ 	}
+ 
+ 	// add indexes for the back caps, which will just be reversals of the
+ 	// front caps using the back vertexes
+-	numCapIndexes = numShadowIndexes - firstShadowIndex;
++	numCapIndexes = st->numShadowIndexes - firstShadowIndex;
+ 
+ 	// if no faces have been defined for the shadow volume,
+ 	// there won't be anything at all
+@@ -922,23 +927,23 @@
+ 
+ 	// if we are running from dmap, perform the (very) expensive shadow optimizations
+ 	// to remove internal sil edges and optimize the caps
+-	if ( callOptimizer ) {
++	if ( st->callOptimizer ) {
+ 		optimizedShadow_t opt;
+ 		
+ 		// project all of the vertexes to the shadow plane, generating
+ 		// an equal number of back vertexes
+ //		R_ProjectPointsToFarPlane( ent, light, farPlane, firstShadowVert, numShadowVerts );
+ 
+-		opt = SuperOptimizeOccluders( shadowVerts, shadowIndexes + firstShadowIndex, numCapIndexes, farPlane, lightOrigin );
++		opt = SuperOptimizeOccluders( st->shadowVerts, st->shadowIndexes + firstShadowIndex, numCapIndexes, farPlane, lightOrigin );
+ 
+ 		// pull off the non-optimized data
+-		numShadowIndexes = firstShadowIndex;
+-		numShadowVerts = firstShadowVert;
++		st->numShadowIndexes = firstShadowIndex;
++		st->numShadowVerts = firstShadowVert;
+ 
+ 		// add the optimized data
+-		if ( numShadowIndexes + opt.totalIndexes > MAX_SHADOW_INDEXES 
+-			|| numShadowVerts + opt.numVerts > MAX_SHADOW_VERTS ) {
+-			overflowed = true;
++		if ( st->numShadowIndexes + opt.totalIndexes > MAX_SHADOW_INDEXES 
++			|| st->numShadowVerts + opt.numVerts > MAX_SHADOW_VERTS ) {
++			st->overflowed = true;
+ 			common->Printf( "WARNING: overflowed MAX_SHADOW tables, shadow discarded\n" );
+ 			Mem_Free( opt.verts );
+ 			Mem_Free( opt.indexes );
+@@ -946,28 +951,28 @@
+ 		}
+ 
+ 		for ( i = 0 ; i < opt.numVerts ; i++ ) {
+-			shadowVerts[numShadowVerts+i][0] = opt.verts[i][0];
+-			shadowVerts[numShadowVerts+i][1] = opt.verts[i][1];
+-			shadowVerts[numShadowVerts+i][2] = opt.verts[i][2];
+-			shadowVerts[numShadowVerts+i][3] = 1;
++			st->shadowVerts[st->numShadowVerts+i][0] = opt.verts[i][0];
++			st->shadowVerts[st->numShadowVerts+i][1] = opt.verts[i][1];
++			st->shadowVerts[st->numShadowVerts+i][2] = opt.verts[i][2];
++			st->shadowVerts[st->numShadowVerts+i][3] = 1;
+ 		}
+ 		for ( i = 0 ; i < opt.totalIndexes ; i++ ) {
+ 			int	index = opt.indexes[i];
+ 			if ( index < 0 || index > opt.numVerts ) {
+ 				common->Error( "optimized shadow index out of range" );
+ 			}
+-			shadowIndexes[numShadowIndexes+i] = index + numShadowVerts;
++			st->shadowIndexes[st->numShadowIndexes+i] = index + st->numShadowVerts;
+ 		}
+ 
+-		numShadowVerts += opt.numVerts;
+-		numShadowIndexes += opt.totalIndexes;
++		st->numShadowVerts += opt.numVerts;
++		st->numShadowIndexes += opt.totalIndexes;
+ 
+ 		// note the index distribution so we can sort all the caps after all the sils
+-		indexRef[indexFrustumNumber].frontCapStart = firstShadowIndex;
+-		indexRef[indexFrustumNumber].rearCapStart = firstShadowIndex+opt.numFrontCapIndexes;
+-		indexRef[indexFrustumNumber].silStart = firstShadowIndex+opt.numFrontCapIndexes+opt.numRearCapIndexes;
+-		indexRef[indexFrustumNumber].end = numShadowIndexes;
+-		indexFrustumNumber++;
++		st->indexRef[st->indexFrustumNumber].frontCapStart = firstShadowIndex;
++		st->indexRef[st->indexFrustumNumber].rearCapStart = firstShadowIndex+opt.numFrontCapIndexes;
++		st->indexRef[st->indexFrustumNumber].silStart = firstShadowIndex+opt.numFrontCapIndexes+opt.numRearCapIndexes;
++		st->indexRef[st->indexFrustumNumber].end = st->numShadowIndexes;
++		st->indexFrustumNumber++;
+ 
+ 		Mem_Free( opt.verts );
+ 		Mem_Free( opt.indexes );
+@@ -979,47 +984,47 @@
+ 	// the dangling edge "face" is never considered to cast a shadow,
+ 	// so any face with dangling edges that casts a shadow will have
+ 	// it's dangling sil edge trigger a sil plane
+-	faceCastsShadow[numTris] = 0;
++	st->faceCastsShadow[numTris] = 0;
+ 
+ 	// instead of overflowing or drawing a streamer shadow, don't draw a shadow at all
+ 	// if we ran out of space
+-	if ( numShadowIndexes + numCapIndexes > MAX_SHADOW_INDEXES ) {
+-		overflowed = true;
++	if ( st->numShadowIndexes + numCapIndexes > MAX_SHADOW_INDEXES ) {
++		st->overflowed = true;
+ 		return;
+ 	}
+ 	for ( i = 0 ; i < numCapIndexes ; i += 3 ) {
+-		shadowIndexes[ numShadowIndexes + i + 0 ] = shadowIndexes[ firstShadowIndex + i + 2 ] + 1;
+-		shadowIndexes[ numShadowIndexes + i + 1 ] = shadowIndexes[ firstShadowIndex + i + 1 ] + 1;
+-		shadowIndexes[ numShadowIndexes + i + 2 ] = shadowIndexes[ firstShadowIndex + i + 0 ] + 1;
++		st->shadowIndexes[ st->numShadowIndexes + i + 0 ] = st->shadowIndexes[ firstShadowIndex + i + 2 ] + 1;
++		st->shadowIndexes[ st->numShadowIndexes + i + 1 ] = st->shadowIndexes[ firstShadowIndex + i + 1 ] + 1;
++		st->shadowIndexes[ st->numShadowIndexes + i + 2 ] = st->shadowIndexes[ firstShadowIndex + i + 0 ] + 1;
+ 	}
+-	numShadowIndexes += numCapIndexes;
++	st->numShadowIndexes += numCapIndexes;
+ 
+ c_caps += numCapIndexes * 2;
+ 
+-int preSilIndexes = numShadowIndexes;
++int preSilIndexes = st->numShadowIndexes;
+ 
+ 	// if any triangles were clipped, we will have a list of edges
+ 	// on the frustum which must now become sil edges
+ 	if ( makeClippedPlanes ) {
+-		R_AddClipSilEdges();
++		R_AddClipSilEdges(st);
+ 	}
+ 
+ 	// any edges that are a transition between a shadowing and
+ 	// non-shadowing triangle will cast a silhouette edge
+-	R_AddSilEdges( tri, pointCull, frustum );
++	R_AddSilEdges( st, tri, pointCull, frustum );
+ 
+-c_sils += numShadowIndexes - preSilIndexes;
++c_sils += st->numShadowIndexes - preSilIndexes;
+ 
+ 	// project all of the vertexes to the shadow plane, generating
+ 	// an equal number of back vertexes
+-	R_ProjectPointsToFarPlane( ent, light, farPlane, firstShadowVert, numShadowVerts );
++	R_ProjectPointsToFarPlane( st, ent, light, farPlane, firstShadowVert, st->numShadowVerts );
+ 
+ 	// note the index distribution so we can sort all the caps after all the sils
+-	indexRef[indexFrustumNumber].frontCapStart = firstShadowIndex;
+-	indexRef[indexFrustumNumber].rearCapStart = firstShadowIndex+numCapIndexes;
+-	indexRef[indexFrustumNumber].silStart = preSilIndexes;
+-	indexRef[indexFrustumNumber].end = numShadowIndexes;
+-	indexFrustumNumber++;
++	st->indexRef[st->indexFrustumNumber].frontCapStart = firstShadowIndex;
++	st->indexRef[st->indexFrustumNumber].rearCapStart = firstShadowIndex+numCapIndexes;
++	st->indexRef[st->indexFrustumNumber].silStart = preSilIndexes;
++	st->indexRef[st->indexFrustumNumber].end = st->numShadowIndexes;
++	st->indexFrustumNumber++;
+ }
+ 
+ /*
+@@ -1221,6 +1226,7 @@
+ 	idVec3	lightOrigin;
+ 	srfTriangles_t	*newTri;
+ 	int		capPlaneBits;
++        assert(light != NULL);
+ 
+ 	if ( !r_shadows.GetBool() ) {
+ 		return NULL;
+@@ -1263,19 +1269,24 @@
+ 		return NULL;
+ 	}
+ 
++        // Setup the shadow calculation state
++        stencil_shadow_st_t * st;
++        st = (stencil_shadow_st_t *)alloca(sizeof(stencil_shadow_st_t));
++        assert(st!=NULL);
++
+ 	// clear the shadow volume
+-	numShadowIndexes = 0;
+-	numShadowVerts = 0;
+-	overflowed = false;
+-	indexFrustumNumber = 0;
++	st->numShadowIndexes = 0;
++	st->numShadowVerts = 0;
++	st->overflowed = false;
++	st->indexFrustumNumber = 0;
+ 	capPlaneBits = 0;
+-	callOptimizer = (optimize == SG_OFFLINE);
++	st->callOptimizer = (optimize == SG_OFFLINE);
+ 
+ 	// the facing information will be the same for all six projections
+ 	// from a point light, as well as for any directed lights
+-	globalFacing = cullInfo.facing;
+-	faceCastsShadow = (byte *)_alloca16( tri->numIndexes / 3 + 1 );	// + 1 for fake dangling edge face
+-	remap = (int *)_alloca16( tri->numVerts * sizeof( remap[0] ) );
++	st->globalFacing = cullInfo.facing;
++	st->faceCastsShadow = (byte *)_alloca16( tri->numIndexes / 3 + 1 );	// + 1 for fake dangling edge face
++	st->remap = (int *)_alloca16( tri->numVerts * sizeof( st->remap[0] ) );
+ 
+ 	R_GlobalPointToLocal( ent->modelMatrix, light->globalLightOrigin, lightOrigin );
+ 
+@@ -1306,17 +1317,17 @@
+ 			continue;
+ 		}
+ 		// we need to check all the triangles
+-		int		oldFrustumNumber = indexFrustumNumber;
++		int		oldFrustumNumber = st->indexFrustumNumber;
+ 
+-		R_CreateShadowVolumeInFrustum( ent, tri, light, lightOrigin, frustum, frustum[5], frust->makeClippedPlanes );
++		R_CreateShadowVolumeInFrustum( st, ent, tri, light, lightOrigin, frustum, frustum[5], frust->makeClippedPlanes );
+ 
+ 		// if we couldn't make a complete shadow volume, it is better to
+ 		// not draw one at all, avoiding streamer problems
+-		if ( overflowed ) {
++		if ( st->overflowed ) {
+ 			return NULL;
+ 		}
+ 
+-		if ( indexFrustumNumber != oldFrustumNumber ) {
++		if ( st->indexFrustumNumber != oldFrustumNumber ) {
+ 			// note that we have caps projected against this frustum,
+ 			// which may allow us to skip drawing the caps if all projected
+ 			// planes face away from the viewer and the viewer is outside the light volume
+@@ -1326,13 +1337,13 @@
+ 
+ 	// if no faces have been defined for the shadow volume,
+ 	// there won't be anything at all
+-	if ( numShadowIndexes == 0 ) {
++	if ( st->numShadowIndexes == 0 ) {
+ 		return NULL;
+ 	}
+ 
+ 	// this should have been prevented by the overflowed flag, so if it ever happens,
+ 	// it is a code error
+-	if ( numShadowVerts > MAX_SHADOW_VERTS || numShadowIndexes > MAX_SHADOW_INDEXES ) {
++	if ( st->numShadowVerts > MAX_SHADOW_VERTS || st->numShadowIndexes > MAX_SHADOW_INDEXES ) {
+ 		common->FatalError( "Shadow volume exceeded allocation" );
+ 	}
+ 
+@@ -1344,13 +1355,13 @@
+ 	newTri->bounds.Clear();
+ 
+ 	// copy off the verts and indexes
+-	newTri->numVerts = numShadowVerts;
+-	newTri->numIndexes = numShadowIndexes;
++	newTri->numVerts = st->numShadowVerts;
++	newTri->numIndexes = st->numShadowIndexes;
+ 
+ 	// the shadow verts will go into a main memory buffer as well as a vertex
+ 	// cache buffer, so they can be copied back if they are purged
+ 	R_AllocStaticTriSurfShadowVerts( newTri, newTri->numVerts );
+-	SIMDProcessor->Memcpy( newTri->shadowVertexes, shadowVerts, newTri->numVerts * sizeof( newTri->shadowVertexes[0] ) );
++	SIMDProcessor->Memcpy( newTri->shadowVertexes, st->shadowVerts, newTri->numVerts * sizeof( newTri->shadowVertexes[0] ) );
+ 
+ 	R_AllocStaticTriSurfIndexes( newTri, newTri->numIndexes );
+ 
+@@ -1359,32 +1370,32 @@
+ 
+ 		// copy the sil indexes first
+ 		newTri->numShadowIndexesNoCaps = 0;
+-		for ( i = 0 ; i < indexFrustumNumber ; i++ ) {
+-			int	c = indexRef[i].end - indexRef[i].silStart;
++		for ( i = 0 ; i < st->indexFrustumNumber ; i++ ) {
++			int	c = st->indexRef[i].end - st->indexRef[i].silStart;
+ 			SIMDProcessor->Memcpy( newTri->indexes+newTri->numShadowIndexesNoCaps, 
+-									shadowIndexes+indexRef[i].silStart, c * sizeof( newTri->indexes[0] ) );
++									st->shadowIndexes+st->indexRef[i].silStart, c * sizeof( newTri->indexes[0] ) );
+ 			newTri->numShadowIndexesNoCaps += c;
+ 		}
+ 		// copy rear cap indexes next
+ 		newTri->numShadowIndexesNoFrontCaps = newTri->numShadowIndexesNoCaps;
+-		for ( i = 0 ; i < indexFrustumNumber ; i++ ) {
+-			int	c = indexRef[i].silStart - indexRef[i].rearCapStart;
++		for ( i = 0 ; i < st->indexFrustumNumber ; i++ ) {
++			int	c = st->indexRef[i].silStart - st->indexRef[i].rearCapStart;
+ 			SIMDProcessor->Memcpy( newTri->indexes+newTri->numShadowIndexesNoFrontCaps, 
+-									shadowIndexes+indexRef[i].rearCapStart, c * sizeof( newTri->indexes[0] ) );
++									st->shadowIndexes+st->indexRef[i].rearCapStart, c * sizeof( newTri->indexes[0] ) );
+ 			newTri->numShadowIndexesNoFrontCaps += c;
+ 		}
+ 		// copy front cap indexes last
+ 		newTri->numIndexes = newTri->numShadowIndexesNoFrontCaps;
+-		for ( i = 0 ; i < indexFrustumNumber ; i++ ) {
+-			int	c = indexRef[i].rearCapStart - indexRef[i].frontCapStart;
++		for ( i = 0 ; i < st->indexFrustumNumber ; i++ ) {
++			int	c = st->indexRef[i].rearCapStart - st->indexRef[i].frontCapStart;
+ 			SIMDProcessor->Memcpy( newTri->indexes+newTri->numIndexes, 
+-									shadowIndexes+indexRef[i].frontCapStart, c * sizeof( newTri->indexes[0] ) );
++									st->shadowIndexes+st->indexRef[i].frontCapStart, c * sizeof( newTri->indexes[0] ) );
+ 			newTri->numIndexes += c;
+ 		}
+ 
+ 	} else {
+ 		newTri->shadowCapPlaneBits = 63;	// we don't have optimized index lists
+-		SIMDProcessor->Memcpy( newTri->indexes, shadowIndexes, newTri->numIndexes * sizeof( newTri->indexes[0] ) );
++		SIMDProcessor->Memcpy( newTri->indexes, st->shadowIndexes, newTri->numIndexes * sizeof( newTri->indexes[0] ) );
+ 	}
+ 
+ 	if ( optimize == SG_OFFLINE ) {
+diff -r 8aac9cb1ba58 idTech4/iodoom3/neo/sys/linux/main.cpp
+--- a/idTech4/iodoom3/neo/sys/linux/main.cpp	Mon Aug 20 12:33:21 2012 +0200
++++ b/idTech4/iodoom3/neo/sys/linux/main.cpp	Mon Oct 29 17:48:01 2012 +0100
+@@ -540,6 +540,8 @@
+ 
+ #endif
+ 
++#include "../../vfext/vfsemaphore.h"
++
+ /*
+ ===============
+ main
+@@ -551,6 +553,9 @@
+ 	mcheck( abrt_func );
+ 	Sys_Printf( "memory consistency checking enabled\n" );
+ #endif
++
++        //printf("VF_SEM_INIT\n");
++        VF_SEM_INIT(&common->alloc_mutex, 0, 1);
+ 	
+ 	Posix_EarlyInit( );
+ 
+diff -r 8aac9cb1ba58 idTech4/iodoom3/neo/sys/scons/SConscript.game
+--- a/idTech4/iodoom3/neo/sys/scons/SConscript.game	Mon Aug 20 12:33:21 2012 +0200
++++ b/idTech4/iodoom3/neo/sys/scons/SConscript.game	Mon Oct 29 17:48:01 2012 +0100
+@@ -92,6 +92,8 @@
+ 	game_list[ i ] = '../../' + game_list[ i ]
+ 
+ local_env = g_game_env.Clone()
++local_env.Append( LIBS = [ 'pthread', 'dl', 'gomp' ] )
++
+ if ( local_d3xp ):
+ 	local_env.Append( CPPDEFINES = [ '_D3XP', 'CTF' ] )
+ 
+diff -r 8aac9cb1ba58 idTech4/iodoom3/neo/sys/scons/SConscript.core
+--- a/idTech4/iodoom3/neo/sys/scons/SConscript.core	Mon Aug 20 12:33:21 2012 +0200
++++ b/idTech4/iodoom3/neo/sys/scons/SConscript.core	Mon Oct 29 17:48:01 2012 +0100
+@@ -336,7 +336,7 @@
+ 	sound_env.Append( CPPDEFINES = 'NO_ALSA' )
+ sound_lib = sound_env.StaticLibrary( 'sound', sound_list )
+ 
+-local_env.Append( LIBS = [ 'pthread', 'dl' ] )
++local_env.Append( LIBS = [ 'pthread', 'dl', 'gomp' ] )
+ if ( local_dedicated == 0 ):
+ 	local_env.Append( LIBS = [ 'X11', 'Xext', 'Xxf86vm' ] ) # 'Xxf86dga', 
+ 	local_env.Append( LIBPATH = [ '/usr/X11R6/lib' ] )
+diff -r 8aac9cb1ba58 idTech4/iodoom3/neo/vfext/vfsemaphore.h
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/idTech4/iodoom3/neo/vfext/vfsemaphore.h	Mon Oct 29 17:48:01 2012 +0100
+@@ -0,0 +1,7 @@
++
++#include <omp.h>
++
++typedef omp_lock_t vf_sem_t;
++#define VF_SEM_INIT(mutex_addr,pshared,value) omp_init_lock(mutex_addr);
++#define VF_SEM_WAIT(mutex_addr) while (!omp_test_lock(mutex_addr))
++#define VF_SEM_POST(mutex_addr) omp_unset_lock(mutex_addr)
+diff -r 8aac9cb1ba58 idTech4/iodoom3/neo/SConstruct
+--- a/idTech4/iodoom3/neo/SConstruct	Mon Aug 20 12:33:21 2012 +0200
++++ b/idTech4/iodoom3/neo/SConstruct	Mon Oct 29 17:48:01 2012 +0100
+@@ -289,6 +289,8 @@
+ # gcc 4.0
+ BASECPPFLAGS.append( '-fpermissive' )
+ 
++BASECPPFLAGS.append( '-fopenmp' )
++
+ if ( g_os == 'Linux' ):
+ 	# gcc 4.x option only - only export what we mean to from the game SO
+ 	BASECPPFLAGS.append( '-fvisibility=hidden' )
