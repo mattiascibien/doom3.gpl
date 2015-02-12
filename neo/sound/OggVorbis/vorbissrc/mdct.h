@@ -5,20 +5,20 @@
  * GOVERNED BY A BSD-STYLE SOURCE LICENSE INCLUDED WITH THIS SOURCE *
  * IN 'COPYING'. PLEASE READ THESE TERMS BEFORE DISTRIBUTING.       *
  *                                                                  *
- * THE OggVorbis SOURCE CODE IS (C) COPYRIGHT 1994-2002             *
- * by the XIPHOPHORUS Company http://www.xiph.org/                  *
+ * THE OggVorbis SOURCE CODE IS (C) COPYRIGHT 1994-2009             *
+ * by the Xiph.Org Foundation http://www.xiph.org/                  *
  *                                                                  *
  ********************************************************************
 
  function: modified discrete cosine transform prototypes
- last mod: $Id: mdct.h,v 1.20 2002/01/22 11:59:00 xiphmont Exp $
+ last mod: $Id: mdct.h 16227 2009-07-08 06:58:46Z xiphmont $
 
  ********************************************************************/
 
 #ifndef _OGG_mdct_H_
 #define _OGG_mdct_H_
 
-#include "../vorbis/codec.h"
+#include "vorbis/codec.h"
 
 
 
@@ -53,15 +53,14 @@
 #endif
 
 
-typedef struct
-{
-    int n;
-    int log2n;
+typedef struct {
+  int n;
+  int log2n;
 
-    DATA_TYPE *trig;
-    int       *bitrev;
+  DATA_TYPE *trig;
+  int       *bitrev;
 
-    DATA_TYPE scale;
+  DATA_TYPE scale;
 } mdct_lookup;
 
 extern void mdct_init(mdct_lookup *lookup,int n);
@@ -70,15 +69,3 @@ extern void mdct_forward(mdct_lookup *init, DATA_TYPE *in, DATA_TYPE *out);
 extern void mdct_backward(mdct_lookup *init, DATA_TYPE *in, DATA_TYPE *out);
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
