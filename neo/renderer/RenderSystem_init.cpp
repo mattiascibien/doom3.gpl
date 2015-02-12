@@ -42,7 +42,7 @@ glconfig_t	glConfig;
 
 static void GfxInfo_f(void);
 
-const char *r_rendererArgs[] = { "best", "arb", "arb2", "Cg", "exp", "nv10", "nv20", "r200", NULL };
+const char *r_rendererArgs[] = { "best", "arb", "arb2", "Cg", "exp", NULL };
 
 idCVar r_inhibitFragmentProgram("r_inhibitFragmentProgram", "0", CVAR_RENDERER | CVAR_BOOL, "ignore the fragment program extension");
 idCVar r_glDriver("r_glDriver", "", CVAR_RENDERER, "\"opengl32\", etc.");
@@ -737,9 +737,6 @@ void R_InitOpenGL(void)
 
     // parse our vertex and fragment programs, possibly disably support for
     // one of the paths if there was an error
-    R_NV10_Init();
-    R_NV20_Init();
-    R_R200_Init();
     R_ARB2_Init();
 
     cmdSystem->AddCommand("reloadARBprograms", R_ReloadARBPrograms_f, CMD_FL_RENDERER, "reloads ARB programs");
@@ -2009,33 +2006,6 @@ void GfxInfo_f(const idCmdArgs &args)
 
     const char *active[2] = { "", " (ACTIVE)" };
     common->Printf("ARB path ENABLED%s\n", active[tr.backEndRenderer == BE_ARB]);
-
-    if (glConfig.allowNV10Path)
-    {
-        common->Printf("NV10 path ENABLED%s\n", active[tr.backEndRenderer == BE_NV10]);
-    }
-    else
-    {
-        common->Printf("NV10 path disabled\n");
-    }
-
-    if (glConfig.allowNV20Path)
-    {
-        common->Printf("NV20 path ENABLED%s\n", active[tr.backEndRenderer == BE_NV20]);
-    }
-    else
-    {
-        common->Printf("NV20 path disabled\n");
-    }
-
-    if (glConfig.allowR200Path)
-    {
-        common->Printf("R200 path ENABLED%s\n", active[tr.backEndRenderer == BE_R200]);
-    }
-    else
-    {
-        common->Printf("R200 path disabled\n");
-    }
 
     if (glConfig.allowARB2Path)
     {
