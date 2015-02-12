@@ -340,6 +340,7 @@
     <ClInclude Include="sound\OggVorbis\ogg\os_types.h" />
     <ClInclude Include="sys\sys_local.h" />
     <ClInclude Include="sys\sys_public.h" />
+    <ClInclude Include="sys\win32\dxerr\dxerr.h" />
     <ClInclude Include="sys\win32\win_local.h" />
     <ClInclude Include="sys\win32\rc\AFEditor_resource.h" />
     <ClInclude Include="sys\win32\rc\Common_resource.h" />
@@ -1399,6 +1400,7 @@
     <ClCompile Include="sound\OggVorbis\oggsrc\bitwise.c" />
     <ClCompile Include="sound\OggVorbis\oggsrc\framing.c" />
     <ClCompile Include="sys\sys_local.cpp" />
+    <ClCompile Include="sys\win32\dxerr\dxerr.cpp" />
     <ClCompile Include="sys\win32\win_cpu.cpp" />
     <ClCompile Include="sys\win32\win_glimp.cpp" />
     <ClCompile Include="sys\win32\win_input.cpp" />

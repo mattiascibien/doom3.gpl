@@ -106,6 +106,9 @@
     <Filter Include="Ui">
       <UniqueIdentifier>{b3166d25-0562-49da-bc8d-961006fe1785}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sys\dxerr">
+      <UniqueIdentifier>{61f5670f-f22f-46b1-bc4c-64c55d9f66bf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cm\CollisionModel.h">
@@ -620,6 +623,9 @@
     </ClInclude>
     <ClInclude Include="ui\Winvar.h">
       <Filter>Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\win32\dxerr\dxerr.h">
+      <Filter>Sys\dxerr</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1822,6 +1828,9 @@
     </ClCompile>
     <ClCompile Include="ui\Winvar.cpp">
       <Filter>Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="sys\win32\dxerr\dxerr.cpp">
+      <Filter>Sys\dxerr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
