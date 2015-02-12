@@ -1739,17 +1739,14 @@ __declspec(naked) void clrstk(void)
     __asm
     {
         mov		[parmBytes],eax
-        neg     eax                     ;
-        compute new stack pointer in eax
+        neg     eax                     ; compute new stack pointer in eax
         add     eax,esp
         add     eax,4
         xchg    eax,esp
-        mov     eax,dword ptr [eax]		;
-        copy the return address
+        mov     eax,dword ptr [eax]		; copy the return address
         push    eax
 
-        ;
-        clear to zero
+        ; clear to zero
         push	edi
         push	ecx
         mov		edi,esp
