@@ -33,7 +33,8 @@ If you have questions concerning this license or the applicable additional terms
 #include "quaddefs.h"
 #define JPEG_INTERNALS
 extern "C" {
-#include "../../../renderer/jpeg-6/jpeglib.h"
+//mattiascibien: jpeg-9a
+#include "../../../renderer/jpeg-9a/jpeglib.h"
 }
 #pragma once
 

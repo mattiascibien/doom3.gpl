@@ -13,9 +13,6 @@
     <Filter Include="Renderer">
       <UniqueIdentifier>{19b363f5-76a7-4256-b7f0-7a6ec012d09d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Renderer\JPeg-6">
-      <UniqueIdentifier>{7fdc46b4-13a1-46c2-9be6-af8a85990431}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sound">
       <UniqueIdentifier>{2b6b512d-2388-41b9-8880-402e156ec20b}</UniqueIdentifier>
     </Filter>
@@ -108,6 +105,9 @@
     </Filter>
     <Filter Include="Sys\dxerr">
       <UniqueIdentifier>{61f5670f-f22f-46b1-bc4c-64c55d9f66bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderer\JPeg-9a">
+      <UniqueIdentifier>{ee5fa1f1-d4a2-4093-8397-de05cec49ca3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -290,39 +290,6 @@
     </ClInclude>
     <ClInclude Include="renderer\wglext.h">
       <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\jpeg-6\jchuff.h">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\jpeg-6\jconfig.h">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\jpeg-6\jdct.h">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\jpeg-6\jdhuff.h">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\jpeg-6\jerror.h">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\jpeg-6\jinclude.h">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\jpeg-6\jmemsys.h">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\jpeg-6\jmorecfg.h">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\jpeg-6\jpegint.h">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\jpeg-6\jpeglib.h">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\jpeg-6\jversion.h">
-      <Filter>Renderer\JPeg-6</Filter>
     </ClInclude>
     <ClInclude Include="sound\snd_local.h">
       <Filter>Sound</Filter>
@@ -627,6 +594,39 @@
     <ClInclude Include="sys\win32\dxerr\dxerr.h">
       <Filter>Sys\dxerr</Filter>
     </ClInclude>
+    <ClInclude Include="renderer\jpeg-9a\cderror.h">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\jpeg-9a\jdct.h">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\jpeg-9a\jerror.h">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\jpeg-9a\jinclude.h">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\jpeg-9a\jmemsys.h">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\jpeg-9a\jmorecfg.h">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\jpeg-9a\jpegint.h">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\jpeg-9a\jpeglib.h">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\jpeg-9a\jversion.h">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\jpeg-9a\transupp.h">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\jpeg-9a\jconfig.h">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cm\CollisionModel_contacts.cpp">
@@ -892,138 +892,6 @@
     </ClCompile>
     <ClCompile Include="renderer\VertexCache.cpp">
       <Filter>Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jcapimin.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jccoefct.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jccolor.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jcdctmgr.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jchuff.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jcinit.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jcmainct.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jcmarker.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jcmaster.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jcomapi.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jcparam.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jcphuff.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jcprepct.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jcsample.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jdapimin.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jdapistd.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jdatadst.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jdatasrc.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jdcoefct.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jdcolor.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jddctmgr.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jdhuff.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jdinput.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jdmainct.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jdmarker.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jdmaster.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jdmerge.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jdphuff.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jdpostct.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jdsample.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jdtrans.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jerror.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jfdctflt.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jfdctfst.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jfdctint.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jidctflt.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jidctfst.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jidctint.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jidctred.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jmemmgr.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jmemnobs.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jquant1.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jquant2.c">
-      <Filter>Renderer\JPeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer\jpeg-6\jutils.c">
-      <Filter>Renderer\JPeg-6</Filter>
     </ClCompile>
     <ClCompile Include="sound\snd_cache.cpp">
       <Filter>Sound</Filter>
@@ -1822,6 +1690,147 @@
     </ClCompile>
     <ClCompile Include="sys\win32\dxerr\dxerr.cpp">
       <Filter>Sys\dxerr</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jaricom.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jcapimin.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jcapistd.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jcarith.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jccoefct.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jccolor.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jcdctmgr.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jchuff.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jcinit.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jcmainct.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jcmarker.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jcmaster.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jcomapi.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jcparam.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jcprepct.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jcsample.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jctrans.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jdapimin.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jdapistd.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jdarith.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jdatadst.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jdatasrc.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jdcoefct.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jdcolor.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jddctmgr.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jdhuff.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jdinput.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jdmainct.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jdmarker.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jdmaster.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jdmerge.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jdpostct.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jdsample.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jdtrans.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jerror.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jfdctflt.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jfdctfst.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jfdctint.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jidctflt.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jidctfst.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jidctint.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jmemansi.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jmemmgr.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jquant1.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jquant2.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\jutils.c">
+      <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\jpeg-9a\transupp.c">
+      <Filter>Renderer\JPeg-9a</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

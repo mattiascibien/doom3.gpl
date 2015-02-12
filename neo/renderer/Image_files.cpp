@@ -48,7 +48,8 @@ void R_LoadImage( const char *name, byte **pic, int *width, int *height, bool ma
  */
 
 extern "C" {
-#include "jpeg-6/jpeglib.h"
+//mattiascibien: jpeg-9a
+#include "jpeg-9a/jpeglib.h"
 
     // hooks from jpeg lib to our system
 
@@ -873,6 +874,9 @@ static void LoadJPG(const char *filename, unsigned char **pic, int *width, int *
     byte	*fbuffer;
     byte  *bbuf;
 
+	//mattiascibien: jpeg-9a
+	int		len;
+
     /* In this example we want to open the input file before doing anything else,
      * so that the setjmp() error recovery below can assume the file is open.
      * VERY IMPORTANT: use "b" option to fopen() if you are on a machine that
@@ -886,7 +890,7 @@ static void LoadJPG(const char *filename, unsigned char **pic, int *width, int *
         *pic = NULL;		// until proven otherwise
     }
     {
-        int		len;
+
         idFile *f;
 
         f = fileSystem->OpenFileRead(filename);
@@ -924,7 +928,9 @@ static void LoadJPG(const char *filename, unsigned char **pic, int *width, int *
 
     /* Step 2: specify data source (eg, a file) */
 
-    jpeg_stdio_src(&cinfo, fbuffer);
+    //mattiascibien: jpeg-9a
+	//jpeg_stdio_src(&cinfo, fbuffer);
+	jpeg_mem_src(&cinfo, fbuffer, len);
 
     /* Step 3: read file parameters with jpeg_read_header() */
 
