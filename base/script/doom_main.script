@@ -1,0 +1,3 @@
+#include "script/player.script"
+#include "script/weapon_base.script"
+#include "script/weapon_fists.script"

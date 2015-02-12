@@ -1,0 +1,22 @@
+model model_player {
+	mesh			"models/player/player.md5mesh"
+}
+
+entityDef worldspawn {
+	"spawnclass"		"idWorldspawn"
+	"name"				"world"
+}
+
+entityDef player_doommarine {
+	"spawnclass"		"idPlayer"
+	"scriptobject"		"player"
+
+	"def_weapon0"		"weapon_fists"
+	"def_weapon1"		"weapon_fists"
+
+	"bone_hips"		"Hips"
+	"bone_chest"		"Shoulders"
+	"bone_head"		"headcontrol"
+
+	"model"			"model_player"
+}

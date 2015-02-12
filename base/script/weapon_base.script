@@ -1,0 +1,12 @@
+object weapon_base{
+	void init(){};
+
+	boolean WEAPON_ATTACK;
+	boolean WEAPON_RELOAD;
+	boolean WEAPON_NETRELOAD;
+	boolean WEAPON_NETENDRELOAD;
+	boolean WEAPON_NETFIRING;
+	boolean WEAPON_RAISEWEAPON;
+	boolean WEAPON_LOWERWEAPON;
+	boolean WEAPON_RAISEWEAPON;
+};

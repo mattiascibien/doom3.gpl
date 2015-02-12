@@ -164,7 +164,7 @@ int Sys_GetVideoRam(void)
         hr = spInstance->Get(CComBSTR(_T("AdapterRAM")), 0, &varSize, 0, 0);
         if (hr == S_OK)
         {
-            retSize = varSize.intVal / (1024 * 1024);
+            retSize = varSize.uintVal / (1024 * 1024);
             if (retSize == 0)
             {
                 retSize = 64;

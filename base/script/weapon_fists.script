@@ -1,0 +1,3 @@
+object weapon_fists : weapon_base {
+	void init(){};
+};

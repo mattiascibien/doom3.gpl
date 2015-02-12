@@ -1,0 +1,18 @@
+{
+"mapspath" "D:\repos\doom3gpl\build\Win32\Debug\base\maps"
+"bsp" ""
+"bsp noflood" ""
+"bsp shadowOpt 2" ""
+"bsp noaas" ""
+"bspext" ""
+"bspext noflood" ""
+"autosave" "D:\repos\doom3gpl\build\Win32\Debug\autosave\autosave.map"
+"autosave1" "D:\repos\doom3gpl\build\Win32\Debug\autosave\autosave1.map"
+"autosave2" "D:\repos\doom3gpl\build\Win32\Debug\autosave\autosave2.map"
+"texturepath" "D:\repos\doom3gpl\build\Win32\Debug\base\textures"
+"entitypath" "D:\repos\doom3gpl\build\Win32\Debug\base\scripts\*.def"
+"remotebasepath" "D:\repos\doom3gpl\build\Win32\Debug\base"
+"rshcmd" ""
+"basepath" "D:\repos\doom3gpl\build\Win32\Debug\base"
+"brush_primit" "1"
+}
