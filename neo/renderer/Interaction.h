@@ -154,7 +154,10 @@ public:
 
     // makes sure all necessary light surfaces and shadow surfaces are created, and
     // calls R_LinkLightSurf() for each one
-    void					AddActiveInteraction(void);
+	bool               AddActiveInteraction(bool interactionPhase1, idScreenRect *shadowScissor, idRenderModel **modelRef);
+
+	// actually create the interaction
+	void					CreateInteraction(const idRenderModel *model);
 
 private:
     enum
@@ -170,9 +173,6 @@ private:
     int						dynamicModelFrameCount;	// so we can tell if a callback model animated
 
 private:
-    // actually create the interaction
-    void					CreateInteraction(const idRenderModel *model);
-
     // unlink from entity and light lists
     void					Unlink(void);
 
