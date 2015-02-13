@@ -225,6 +225,7 @@
     </Link>
     <ClCompile>
       <AdditionalIncludeDirectories>sound/OggVorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug With Tools|Win32'">
@@ -234,6 +235,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories>sound/OggVorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>ID_ALLOW_TOOLS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dedicated Debug with inlines|Win32'">
@@ -266,6 +268,7 @@
     </Link>
     <ClCompile>
       <AdditionalIncludeDirectories>sound/OggVorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release with Tools|Win32'">
@@ -275,6 +278,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories>sound/OggVorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>ID_ALLOW_TOOLS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>

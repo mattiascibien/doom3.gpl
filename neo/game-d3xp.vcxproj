@@ -197,6 +197,9 @@
 "build\Win32\$(Configuration)\TypeInfo.exe" d3xp
 </Command>
     </PreBuildEvent>
+    <ClCompile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug With Tools|Win32'">
     <PreBuildEvent>
@@ -204,6 +207,9 @@
 "build\Win32\$(Configuration)\TypeInfo.exe" d3xp
 </Command>
     </PreBuildEvent>
+    <ClCompile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug with inlines and memory log|Win32'">
     <PreBuildEvent>
@@ -246,6 +252,9 @@
 "build\Win32\$(Configuration)\TypeInfo.exe" d3xp
 </Command>
     </PreBuildEvent>
+    <ClCompile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release with Tools|Win32'">
     <PreBuildEvent>
@@ -253,6 +262,9 @@
 "build\Win32\$(Configuration)\TypeInfo.exe" d3xp
 </Command>
     </PreBuildEvent>
+    <ClCompile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="d3xp\ai\AAS.cpp" />
