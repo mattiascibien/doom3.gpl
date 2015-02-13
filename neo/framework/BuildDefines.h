@@ -110,13 +110,15 @@ If you have questions concerning this license or the applicable additional terms
 #endif
 #endif
 
-#ifndef ID_ENFORCE_KEY
-#	if !defined( ID_DEDICATED ) && !defined( ID_DEMO_BUILD )
-#		define ID_ENFORCE_KEY 1
-#	else
-#		define ID_ENFORCE_KEY 0
-#	endif
-#endif
+//#ifndef ID_ENFORCE_KEY
+//#	if !defined( ID_DEDICATED ) && !defined( ID_DEMO_BUILD )
+//#		define ID_ENFORCE_KEY 1
+//#	else
+//#		define ID_ENFORCE_KEY 0
+//#	endif
+//#endif
+//disable cd-key check
+#define ID_ENFORCE_KEY 0
 
 #ifndef ID_OPENAL
 #	if ( defined(_WIN32) || defined(MACOS_X) ) && !defined( ID_DEDICATED )
