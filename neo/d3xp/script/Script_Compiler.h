@@ -200,7 +200,7 @@ class idCompiler
 {
 private:
     static bool		punctuationValid[ 256 ];
-    static const char	*punctuation[];
+    static char	*punctuation[];
 
     idParser		parser;
     idParser		*parserPtr;

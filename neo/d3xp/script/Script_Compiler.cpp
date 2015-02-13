@@ -38,7 +38,7 @@ If you have questions concerning this license or the applicable additional terms
 #define TOP_PRIORITY		7
 
 bool idCompiler::punctuationValid[ 256 ];
-const char *idCompiler::punctuation[] =
+char *idCompiler::punctuation[] =
 {
     "+=", "-=", "*=", "/=", "%=", "&=", "|=", "++", "--",
     "&&", "||", "<=", ">=", "==", "!=", "::", ";",  ",",
