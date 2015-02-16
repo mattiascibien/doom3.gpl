@@ -44,7 +44,7 @@ glconfig_t	glConfig;
 
 static void GfxInfo_f(void);
 
-const char *r_rendererArgs[] = { "best", "arb", "arb2", "Cg", "exp", NULL };
+const char *r_rendererArgs[] = { "best", "arb", "arb2", "glsl", "exp", NULL };
 
 idCVar r_inhibitFragmentProgram("r_inhibitFragmentProgram", "0", CVAR_RENDERER | CVAR_BOOL, "ignore the fragment program extension");
 idCVar r_glDriver("r_glDriver", "", CVAR_RENDERER, "\"opengl32\", etc.");
@@ -211,9 +211,6 @@ idCVar r_showSkel("r_showSkel", "0", CVAR_RENDERER | CVAR_INTEGER, "draw the ske
 idCVar r_jointNameScale("r_jointNameScale", "0.02", CVAR_RENDERER | CVAR_FLOAT, "size of joint names when r_showskel is set to 1");
 idCVar r_jointNameOffset("r_jointNameOffset", "0.5", CVAR_RENDERER | CVAR_FLOAT, "offset of joint names when r_showskel is set to 1");
 
-idCVar r_cgVertexProfile("r_cgVertexProfile", "best", CVAR_RENDERER | CVAR_ARCHIVE, "arbvp1, vp20, vp30");
-idCVar r_cgFragmentProfile("r_cgFragmentProfile", "best", CVAR_RENDERER | CVAR_ARCHIVE, "arbfp1, fp30");
-
 idCVar r_debugLineDepthTest("r_debugLineDepthTest", "0", CVAR_RENDERER | CVAR_ARCHIVE | CVAR_BOOL, "perform depth test on debug lines");
 idCVar r_debugLineWidth("r_debugLineWidth", "1", CVAR_RENDERER | CVAR_ARCHIVE | CVAR_BOOL, "width of debug lines");
 idCVar r_debugArrowStep("r_debugArrowStep", "120", CVAR_RENDERER | CVAR_ARCHIVE | CVAR_INTEGER, "step size of arrow cone line rotation in degrees", 0, 120);
@@ -290,6 +287,7 @@ static void R_CheckPortableExtensions(void)
 
 	}
 
+	glConfig.GLSLAvailable = R_DoubleCheckExtension("GL_ARB_shading_language_100");
 
 	// GL_ARB_texture_env_combine
 	glConfig.textureEnvCombineAvailable = R_DoubleCheckExtension("GL_ARB_texture_env_combine");
@@ -563,6 +561,7 @@ void R_InitOpenGL(void)
 	// parse our vertex and fragment programs, possibly disably support for
 	// one of the paths if there was an error
 	R_ARB2_Init();
+	R_GLSL_Init();
 
 	cmdSystem->AddCommand("reloadARBprograms", R_ReloadARBPrograms_f, CMD_FL_RENDERER, "reloads ARB programs");
 	R_ReloadARBPrograms_f(idCmdArgs());
@@ -1839,6 +1838,16 @@ void GfxInfo_f(const idCmdArgs &args)
 	else
 	{
 		common->Printf("ARB2 path disabled\n");
+	}
+
+	if (glConfig.allowGLSLPath) 
+	{
+		common->Printf("GLSL path ENABLED%s\n", active[tr.backEndRenderer == BE_GLSL]);
+		
+	}
+	else {
+		common->Printf("GLSL path disabled\n");
+		
 	}
 
 	//=============================

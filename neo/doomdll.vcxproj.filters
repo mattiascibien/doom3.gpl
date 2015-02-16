@@ -1847,6 +1847,9 @@
     <ClCompile Include="glew\glew.c">
       <Filter>glew</Filter>
     </ClCompile>
+    <ClCompile Include="renderer\draw_glsl.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="openal\idal.py">

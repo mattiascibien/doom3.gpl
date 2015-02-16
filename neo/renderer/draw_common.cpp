@@ -1176,7 +1176,12 @@ static void RB_T_Shadow(const drawSurf_t *surf)
 
         R_GlobalPointToLocal(surf->space->modelMatrix, backEnd.vLight->globalLightOrigin, localLight.ToVec3());
         localLight.w = 0.0f;
-        glProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_LIGHT_ORIGIN, localLight.ToFloatPtr());
+		if (tr.backEndRenderer == BE_ARB2) {
+			glProgramEnvParameter4fvARB(GL_VERTEX_PROGRAM_ARB, PP_LIGHT_ORIGIN, localLight.ToFloatPtr());
+		}
+		else if (tr.backEndRenderer == BE_GLSL) {
+			glUniform4fvARB(stencilShadowShader.localLightOrigin, 1, localLight.ToFloatPtr());	
+		}
     }
 
     tri = surf->geo;
@@ -1892,6 +1897,9 @@ void	RB_STD_DrawView(void)
     case BE_ARB2:
         RB_ARB2_DrawInteractions();
         break;
+	case BE_GLSL:
+		RB_GLSL_DrawInteractions();
+		break;
     }
 
     // disable stencil shadow test
