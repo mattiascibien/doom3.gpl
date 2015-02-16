@@ -317,8 +317,10 @@
     <ClInclude Include="framework\async\MsgChannel.h" />
     <ClInclude Include="framework\async\NetworkSystem.h" />
     <ClInclude Include="framework\async\ServerScan.h" />
+    <ClInclude Include="glew\GL\glew.h" />
+    <ClInclude Include="glew\GL\glxew.h" />
+    <ClInclude Include="glew\GL\wglew.h" />
     <ClInclude Include="renderer\Cinematic.h" />
-    <ClInclude Include="renderer\glext.h" />
     <ClInclude Include="renderer\GuiModel.h" />
     <ClInclude Include="renderer\Image.h" />
     <ClInclude Include="renderer\Interaction.h" />
@@ -1348,6 +1350,7 @@
     <ClCompile Include="framework\async\MsgChannel.cpp" />
     <ClCompile Include="framework\async\NetworkSystem.cpp" />
     <ClCompile Include="framework\async\ServerScan.cpp" />
+    <ClCompile Include="glew\glew.c" />
     <ClCompile Include="renderer\Cinematic.cpp" />
     <ClCompile Include="renderer\draw_arb.cpp" />
     <ClCompile Include="renderer\draw_arb2.cpp" />
@@ -1486,7 +1489,6 @@
     <ClCompile Include="sys\win32\win_input.cpp" />
     <ClCompile Include="sys\win32\win_main.cpp" />
     <ClCompile Include="sys\win32\win_net.cpp" />
-    <ClCompile Include="sys\win32\win_qgl.cpp" />
     <ClCompile Include="sys\win32\win_shared.cpp" />
     <ClCompile Include="sys\win32\win_snd.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

@@ -109,6 +109,12 @@
     <Filter Include="Renderer\JPeg-9a">
       <UniqueIdentifier>{ee5fa1f1-d4a2-4093-8397-de05cec49ca3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="glew">
+      <UniqueIdentifier>{45491660-be14-4c10-83d5-ef6ddd4f1970}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="glew\GL">
+      <UniqueIdentifier>{51710cab-7dcc-4837-b28b-48448bc277ac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cm\CollisionModel.h">
@@ -217,9 +223,6 @@
       <Filter>Framework\Async</Filter>
     </ClInclude>
     <ClInclude Include="renderer\Cinematic.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer\glext.h">
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="renderer\GuiModel.h">
@@ -630,6 +633,15 @@
     <ClInclude Include="sys\win32\win_semaphore.h">
       <Filter>Sys</Filter>
     </ClInclude>
+    <ClInclude Include="glew\GL\glew.h">
+      <Filter>glew\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="glew\GL\glxew.h">
+      <Filter>glew\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="glew\GL\wglew.h">
+      <Filter>glew\GL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cm\CollisionModel_contacts.cpp">
@@ -1011,9 +1023,6 @@
       <Filter>Sys</Filter>
     </ClCompile>
     <ClCompile Include="sys\win32\win_net.cpp">
-      <Filter>Sys</Filter>
-    </ClCompile>
-    <ClCompile Include="sys\win32\win_qgl.cpp">
       <Filter>Sys</Filter>
     </ClCompile>
     <ClCompile Include="sys\win32\win_shared.cpp">
@@ -1834,6 +1843,9 @@
     </ClCompile>
     <ClCompile Include="renderer\jpeg-9a\transupp.c">
       <Filter>Renderer\JPeg-9a</Filter>
+    </ClCompile>
+    <ClCompile Include="glew\glew.c">
+      <Filter>glew</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

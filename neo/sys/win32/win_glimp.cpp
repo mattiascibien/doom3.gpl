@@ -47,7 +47,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "rc/AFEditor_resource.h"
 #include "rc/doom_resource.h"
 #include "../../renderer/tr_local.h"
-
+/*
 static void		GLW_InitExtensions(void);
 
 
@@ -74,7 +74,7 @@ PFNWGLBINDTEXIMAGEARBPROC		wglBindTexImageARB;
 PFNWGLRELEASETEXIMAGEARBPROC	wglReleaseTexImageARB;
 PFNWGLSETPBUFFERATTRIBARBPROC	wglSetPbufferAttribARB;
 
-
+*/
 
 /* ARB_pixel_format */
 #define WGL_NUMBER_PIXEL_FORMATS_ARB       0x2000
@@ -130,15 +130,6 @@ PFNWGLSETPBUFFERATTRIBARBPROC	wglSetPbufferAttribARB;
 /* ARB_multisample */
 #define WGL_SAMPLE_BUFFERS_ARB             0x2041
 #define WGL_SAMPLES_ARB                    0x2042
-
-
-
-//
-// function declaration
-//
-bool QGL_Init(const char *dllname);
-void     QGL_Shutdown(void);
-
 
 
 /*
@@ -281,85 +272,6 @@ LONG WINAPI FakeWndProc(
     ReleaseDC(hWnd, hDC);
 
     return DefWindowProc(hWnd, uMsg, wParam, lParam);
-}
-
-
-/*
-==================
-GLW_GetWGLExtensionsWithFakeWindow
-==================
-*/
-void GLW_CheckWGLExtensions(HDC hDC)
-{
-    wglGetExtensionsStringARB = (PFNWGLGETEXTENSIONSSTRINGARBPROC)
-                                GLimp_ExtensionPointer("wglGetExtensionsStringARB");
-    if (wglGetExtensionsStringARB)
-    {
-        glConfig.wgl_extensions_string = (const char *) wglGetExtensionsStringARB(hDC);
-    }
-    else
-    {
-        glConfig.wgl_extensions_string = "";
-    }
-
-    // WGL_EXT_swap_control
-    wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC) GLimp_ExtensionPointer("wglSwapIntervalEXT");
-    r_swapInterval.SetModified();	// force a set next frame
-
-    // WGL_ARB_pixel_format
-    wglGetPixelFormatAttribivARB = (PFNWGLGETPIXELFORMATATTRIBIVARBPROC)GLimp_ExtensionPointer("wglGetPixelFormatAttribivARB");
-    wglGetPixelFormatAttribfvARB = (PFNWGLGETPIXELFORMATATTRIBFVARBPROC)GLimp_ExtensionPointer("wglGetPixelFormatAttribfvARB");
-    wglChoosePixelFormatARB = (PFNWGLCHOOSEPIXELFORMATARBPROC)GLimp_ExtensionPointer("wglChoosePixelFormatARB");
-
-    // WGL_ARB_pbuffer
-    wglCreatePbufferARB = (PFNWGLCREATEPBUFFERARBPROC)GLimp_ExtensionPointer("wglCreatePbufferARB");
-    wglGetPbufferDCARB = (PFNWGLGETPBUFFERDCARBPROC)GLimp_ExtensionPointer("wglGetPbufferDCARB");
-    wglReleasePbufferDCARB = (PFNWGLRELEASEPBUFFERDCARBPROC)GLimp_ExtensionPointer("wglReleasePbufferDCARB");
-    wglDestroyPbufferARB = (PFNWGLDESTROYPBUFFERARBPROC)GLimp_ExtensionPointer("wglDestroyPbufferARB");
-    wglQueryPbufferARB = (PFNWGLQUERYPBUFFERARBPROC)GLimp_ExtensionPointer("wglQueryPbufferARB");
-
-    // WGL_ARB_render_texture
-    wglBindTexImageARB = (PFNWGLBINDTEXIMAGEARBPROC)GLimp_ExtensionPointer("wglBindTexImageARB");
-    wglReleaseTexImageARB = (PFNWGLRELEASETEXIMAGEARBPROC)GLimp_ExtensionPointer("wglReleaseTexImageARB");
-    wglSetPbufferAttribARB = (PFNWGLSETPBUFFERATTRIBARBPROC)GLimp_ExtensionPointer("wglSetPbufferAttribARB");
-}
-
-/*
-==================
-GLW_GetWGLExtensionsWithFakeWindow
-==================
-*/
-static void GLW_GetWGLExtensionsWithFakeWindow(void)
-{
-    HWND	hWnd;
-    MSG		msg;
-
-    // Create a window for the sole purpose of getting
-    // a valid context to get the wglextensions
-    hWnd = CreateWindow(WIN32_FAKE_WINDOW_CLASS_NAME, GAME_NAME,
-                        WS_OVERLAPPEDWINDOW,
-                        40, 40,
-                        640,
-                        480,
-                        NULL, NULL, win32.hInstance, NULL);
-    if (!hWnd)
-    {
-        common->FatalError("GLW_GetWGLExtensionsWithFakeWindow: Couldn't create fake window");
-    }
-
-    HDC hDC = GetDC(hWnd);
-    HGLRC gRC = wglCreateContext(hDC);
-    wglMakeCurrent(hDC, gRC);
-    GLW_CheckWGLExtensions(hDC);
-    wglDeleteContext(gRC);
-    ReleaseDC(hWnd, hDC);
-
-    DestroyWindow(hWnd);
-    while (GetMessage(&msg, NULL, 0, 0))
-    {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
 }
 
 //=============================================================================
@@ -881,19 +793,10 @@ bool GLimp_Init(glimpParms_t parms)
     // this will load the dll and set all our qgl* function pointers,
     // but doesn't create a window
 
-    // r_glDriver is only intended for using instrumented OpenGL
-    // dlls.  Normal users should never have to use it, and it is
-    // not archived.
-    driverName = r_glDriver.GetString()[0] ? r_glDriver.GetString() : "opengl32";
-    if (!QGL_Init(driverName))
-    {
-        common->Printf("^3GLimp_Init() could not load r_glDriver \"%s\"^0\n", driverName);
-        return false;
-    }
 
     // getting the wgl extensions involves creating a fake window to get a context,
     // which is pretty disgusting, and seems to mess with the AGP VAR allocation
-    GLW_GetWGLExtensionsWithFakeWindow();
+    //GLW_GetWGLExtensionsWithFakeWindow();
 
     // try to change to fullscreen
     if (parms.fullScreen)
@@ -913,11 +816,8 @@ bool GLimp_Init(glimpParms_t parms)
         return false;
     }
 
-    // wglSwapinterval, etc
-    GLW_CheckWGLExtensions(win32.hDC);
-
     // check logging
-    GLimp_EnableLogging((r_logFile.GetInteger() != 0));
+    //GLimp_EnableLogging((r_logFile.GetInteger() != 0));
 
     return true;
 }
@@ -1025,11 +925,8 @@ void GLimp_Shutdown(void)
     common->Printf("Shutting down OpenGL subsystem\n");
 
     // set current context to NULL
-    if (qwglMakeCurrent)
-    {
-        retVal = qwglMakeCurrent(NULL, NULL) != 0;
-        common->Printf("...wglMakeCurrent( NULL, NULL ): %s\n", success[retVal]);
-    }
+	retVal = qwglMakeCurrent(NULL, NULL) != 0;
+	common->Printf("...wglMakeCurrent( NULL, NULL ): %s\n", success[retVal]);
 
     // delete HGLRC
     if (win32.hGLRC)
@@ -1075,8 +972,6 @@ void GLimp_Shutdown(void)
     // restore gamma
     GLimp_RestoreGamma();
 
-    // shutdown QGL subsystem
-    QGL_Shutdown();
 }
 
 
@@ -1321,24 +1216,4 @@ void GLimp_WakeBackEnd(void *data)
 
 //===================================================================
 
-/*
-===================
-GLimp_ExtensionPointer
-
-Returns a function pointer for an OpenGL extension entry point
-===================
-*/
-GLExtension_t GLimp_ExtensionPointer(const char *name)
-{
-    void	(*proc)(void);
-
-    proc = (GLExtension_t)qwglGetProcAddress(name);
-
-    if (!proc)
-    {
-        common->Printf("Couldn't find proc address for: %s\n", name);
-    }
-
-    return proc;
-}
 

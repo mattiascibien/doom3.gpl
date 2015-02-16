@@ -1694,20 +1694,11 @@ void Com_ExecMachineSpec_f(const idCmdArgs &args)
     bool oldCard = false;
     bool nv10or20 = false;
     renderSystem->GetCardCaps(oldCard, nv10or20);
-    if (oldCard)
-    {
-        cvarSystem->SetCVarBool("g_decals", false, CVAR_ARCHIVE);
-        cvarSystem->SetCVarBool("g_projectileLights", false, CVAR_ARCHIVE);
-        cvarSystem->SetCVarBool("g_doubleVision", false, CVAR_ARCHIVE);
-        cvarSystem->SetCVarBool("g_muzzleFlash", false, CVAR_ARCHIVE);
-    }
-    else
-    {
-        cvarSystem->SetCVarBool("g_decals", true, CVAR_ARCHIVE);
-        cvarSystem->SetCVarBool("g_projectileLights", true, CVAR_ARCHIVE);
-        cvarSystem->SetCVarBool("g_doubleVision", true, CVAR_ARCHIVE);
-        cvarSystem->SetCVarBool("g_muzzleFlash", true, CVAR_ARCHIVE);
-    }
+	cvarSystem->SetCVarBool("g_decals", true, CVAR_ARCHIVE);
+	cvarSystem->SetCVarBool("g_projectileLights", true, CVAR_ARCHIVE);
+	cvarSystem->SetCVarBool("g_doubleVision", true, CVAR_ARCHIVE);
+	cvarSystem->SetCVarBool("g_muzzleFlash", true, CVAR_ARCHIVE);
+
     if (nv10or20)
     {
         cvarSystem->SetCVarInteger("image_useNormalCompression", 1, CVAR_ARCHIVE);
