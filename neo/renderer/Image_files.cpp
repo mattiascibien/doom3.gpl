@@ -209,6 +209,29 @@ TGA files are used for 24/32 bit images
 ========================================================================
 */
 
+#define TGA_MAXCOLORS 16384
+
+/* Definitions for image types. */
+#define TGA_Null 0 /* no image data */
+#define TGA_Map 1 /* Uncompressed, color-mapped images. */
+#define TGA_RGB 2 /* Uncompressed, RGB images. */
+#define TGA_Mono 3 /* Uncompressed, black and white images. */
+#define TGA_RLEMap 9 /* Runlength encoded color-mapped images. */
+#define TGA_RLERGB 10 /* Runlength encoded RGB images. */
+#define TGA_RLEMono 11 /* Compressed, black and white images. */
+#define TGA_CompMap 32 /* Compressed color-mapped data, using Huffman, Delta, and runlength encoding. */
+#define TGA_CompMap4 33 /* Compressed color-mapped data, using Huffman, Delta, and runlength encoding. 4-pass quadtree-type process. */
+
+/* Definitions for interleave flag. */
+#define TGA_IL_None 0 /* non-interleaved. */
+#define TGA_IL_Two 1 /* two-way (even/odd) interleaving */
+#define TGA_IL_Four 2 /* four way interleaving */
+#define TGA_IL_Reserved 3 /* reserved */
+
+/* Definitions for origin flag */
+#define TGA_O_UPPER 0 /* Origin in lower left-hand corner. */
+#define TGA_O_LOWER 1 /* Origin in upper left-hand corner. */
+
 typedef struct _TargaHeader
 {
     unsigned char 	id_length, colormap_type, image_type;
@@ -576,262 +599,344 @@ LoadTGA
 */
 static void LoadTGA(const char *name, byte **pic, int *width, int *height, ID_TIME_T *timestamp)
 {
-    int		columns, rows, numPixels, fileSize, numBytes;
-    byte	*pixbuf;
-    int		row, column;
-    byte	*buf_p;
-    byte	*buffer;
-    TargaHeader	targa_header;
-    byte		*targa_rgba;
+	int         w, h, x, y, realrow, truerow, baserow, i, temp1, temp2, fileSize, pixel_size, map_idx;
+	int         RLE_count, RLE_flag, size, interleave, origin;
+	bool      mapped, rlencoded;
+	byte      *data, *dst, r, g, b, a, j, k, l, *ColorMap;
+	byte      *buf_p;
+	byte      *buffer;
+	TargaHeader   header;
 
-    if (!pic)
-    {
-        fileSystem->ReadFile(name, NULL, timestamp);
-        return;	// just getting timestamp
-    }
+	if (!pic)
+	{
+		fileSystem->ReadFile(name, NULL, timestamp);
+		return;   // just getting timestamp
+	}
+	*pic = NULL;
 
-    *pic = NULL;
+	//
+	// load the file
+	//
+	fileSize = fileSystem->ReadFile(name, (void **)&buffer, timestamp);
 
-    //
-    // load the file
-    //
-    fileSize = fileSystem->ReadFile(name, (void **)&buffer, timestamp);
-    if (!buffer)
-    {
-        return;
-    }
+	if (!buffer)
+	{
+		return;
+	}
+	buf_p = buffer;
 
-    buf_p = buffer;
+	header.id_length = *buf_p++;
+	header.colormap_type = *buf_p++;
+	header.image_type = *buf_p++;
 
-    targa_header.id_length = *buf_p++;
-    targa_header.colormap_type = *buf_p++;
-    targa_header.image_type = *buf_p++;
+	header.colormap_index = LittleShort(*(short *)buf_p);
+	buf_p += 2;
+	header.colormap_length = LittleShort(*(short *)buf_p);
+	buf_p += 2;
+	header.colormap_size = *buf_p++;
+	header.x_origin = LittleShort(*(short *)buf_p);
+	buf_p += 2;
+	header.y_origin = LittleShort(*(short *)buf_p);
+	buf_p += 2;
+	header.width = LittleShort(*(short *)buf_p);
+	buf_p += 2;
+	header.height = LittleShort(*(short *)buf_p);
+	buf_p += 2;
+	header.pixel_size = *buf_p++;
+	header.attributes = *buf_p++;
 
-    targa_header.colormap_index = LittleShort(*(short *)buf_p);
-    buf_p += 2;
-    targa_header.colormap_length = LittleShort(*(short *)buf_p);
-    buf_p += 2;
-    targa_header.colormap_size = *buf_p++;
-    targa_header.x_origin = LittleShort(*(short *)buf_p);
-    buf_p += 2;
-    targa_header.y_origin = LittleShort(*(short *)buf_p);
-    buf_p += 2;
-    targa_header.width = LittleShort(*(short *)buf_p);
-    buf_p += 2;
-    targa_header.height = LittleShort(*(short *)buf_p);
-    buf_p += 2;
-    targa_header.pixel_size = *buf_p++;
-    targa_header.attributes = *buf_p++;
+	if (header.id_length != 0)
+		buf_p += header.id_length;
 
-    if (targa_header.image_type != 2 && targa_header.image_type != 10 && targa_header.image_type != 3)
-    {
-        common->Error("LoadTGA( %s ): Only type 2 (RGB), 3 (gray), and 10 (RGB) TGA images supported\n", name);
-    }
+	/* validate TGA type */
+	switch (header.image_type)
+	{
+	case TGA_Map:
+	case TGA_RGB:
+	case TGA_Mono:
+	case TGA_RLEMap:
+	case TGA_RLERGB:
+	case TGA_RLEMono:
+		break;
 
-    if (targa_header.colormap_type != 0)
-    {
-        common->Error("LoadTGA( %s ): colormaps not supported\n", name);
-    }
+	default:
+		common->Printf("%s : Only type 1 (map), 2 (RGB), 3 (mono), 9 (RLEmap), 10 (RLERGB), 11 (RLEmono) TGA images supported\n", name);
+		return;
+	}
 
-    if ((targa_header.pixel_size != 32 && targa_header.pixel_size != 24) && targa_header.image_type != 3)
-    {
-        common->Error("LoadTGA( %s ): Only 32 or 24 bit images supported (no colormaps)\n", name);
-    }
+	/* validate color depth */
+	switch (header.pixel_size)
+	{
+	case 8:
+	case 15:
+	case 16:
+	case 24:
+	case 32:
+		break;
 
-    if (targa_header.image_type == 2 || targa_header.image_type == 3)
-    {
-        numBytes = targa_header.width * targa_header.height * (targa_header.pixel_size >> 3);
-        if (numBytes > fileSize - 18 - targa_header.id_length)
-        {
-            common->Error("LoadTGA( %s ): incomplete file\n", name);
-        }
-    }
+	default:
+		common->Printf("%s : Only 8, 15, 16, 24 or 32 bit images (with colormaps) supported\n", name);
+		return;
+	}
+	r = g = b = a = l = 0;
 
-    columns = targa_header.width;
-    rows = targa_header.height;
-    numPixels = columns * rows;
+	/* if required, read the color map information. */
+	ColorMap = NULL;
+	mapped = (header.image_type == TGA_Map || header.image_type == TGA_RLEMap) && header.colormap_type == 1;
 
-    if (width)
-    {
-        *width = columns;
-    }
-    if (height)
-    {
-        *height = rows;
-    }
+	if (mapped)
+	{
+		/* validate colormap size */
+		switch (header.colormap_size)
+		{
+		case 8:
+		case 15:
+		case 16:
+		case 32:
+		case 24:
+			break;
 
-    targa_rgba = (byte *)R_StaticAlloc(numPixels*4);
-    *pic = targa_rgba;
+		default:
+			common->Printf("%s : Only 8, 15, 16, 24 or 32 bit colormaps supported\n", name);
+			return;
+		}
+		temp1 = header.colormap_index;
+		temp2 = header.colormap_length;
 
-    if (targa_header.id_length != 0)
-    {
-        buf_p += targa_header.id_length;  // skip TARGA image comment
-    }
+		if ((temp1 + temp2 + 1) >= TGA_MAXCOLORS)
+		{
+			return;
+		}
+		ColorMap = (byte *)R_StaticAlloc(TGA_MAXCOLORS * 4);
 
-    if (targa_header.image_type == 2 || targa_header.image_type == 3)
-    {
-        // Uncompressed RGB or gray scale image
-        for (row = rows - 1; row >= 0; row--)
-        {
-            pixbuf = targa_rgba + row*columns*4;
-            for (column = 0; column < columns; column++)
-            {
-                unsigned char red,green,blue,alphabyte;
-                switch (targa_header.pixel_size)
-                {
+		map_idx = 0;
 
-                case 8:
-                    blue = *buf_p++;
-                    green = blue;
-                    red = blue;
-                    *pixbuf++ = red;
-                    *pixbuf++ = green;
-                    *pixbuf++ = blue;
-                    *pixbuf++ = 255;
-                    break;
+		for (i = temp1; i < temp1 + temp2; ++i, map_idx += 4)
+		{
+			/* read appropriate number of bytes, break into rgb & put in map. */
+			switch (header.colormap_size)
+			{
+			case 8:   /* grey scale, read and triplicate. */
+				r = g = b = *buf_p++;
+				a = 255;
+				break;
 
-                case 24:
-                    blue = *buf_p++;
-                    green = *buf_p++;
-                    red = *buf_p++;
-                    *pixbuf++ = red;
-                    *pixbuf++ = green;
-                    *pixbuf++ = blue;
-                    *pixbuf++ = 255;
-                    break;
-                case 32:
-                    blue = *buf_p++;
-                    green = *buf_p++;
-                    red = *buf_p++;
-                    alphabyte = *buf_p++;
-                    *pixbuf++ = red;
-                    *pixbuf++ = green;
-                    *pixbuf++ = blue;
-                    *pixbuf++ = alphabyte;
-                    break;
-                default:
-                    common->Error("LoadTGA( %s ): illegal pixel_size '%d'\n", name, targa_header.pixel_size);
-                    break;
-                }
-            }
-        }
-    }
-    else if (targa_header.image_type == 10)       // Runlength encoded RGB images
-    {
-        unsigned char red,green,blue,alphabyte,packetHeader,packetSize,j;
+			case 15:   /* 5 bits each of red green and blue. */
+				/* watch byte order. */
+				j = *buf_p++;
+				k = *buf_p++;
+				l = ((unsigned int)k << 8) + j;
+				r = (byte)(((k & 0x7C) >> 2) << 3);
+				g = (byte)((((k & 0x03) << 3) + ((j & 0xE0) >> 5)) << 3);
+				b = (byte)((j & 0x1F) << 3);
+				a = 255;
+				break;
 
-        red = 0;
-        green = 0;
-        blue = 0;
-        alphabyte = 0xff;
+			case 16:   /* 5 bits each of red green and blue, 1 alpha bit. */
+				/* watch byte order. */
+				j = *buf_p++;
+				k = *buf_p++;
+				l = ((unsigned int)k << 8) + j;
+				r = (byte)(((k & 0x7C) >> 2) << 3);
+				g = (byte)((((k & 0x03) << 3) + ((j & 0xE0) >> 5)) << 3);
+				b = (byte)((j & 0x1F) << 3);
+				a = (k & 0x80) ? 255 : 0;
+				break;
 
-        for (row = rows - 1; row >= 0; row--)
-        {
-            pixbuf = targa_rgba + row*columns*4;
-            for (column = 0; column < columns;)
-            {
-                packetHeader= *buf_p++;
-                packetSize = 1 + (packetHeader & 0x7f);
-                if (packetHeader & 0x80)            // run-length packet
-                {
-                    switch (targa_header.pixel_size)
-                    {
-                    case 24:
-                        blue = *buf_p++;
-                        green = *buf_p++;
-                        red = *buf_p++;
-                        alphabyte = 255;
-                        break;
-                    case 32:
-                        blue = *buf_p++;
-                        green = *buf_p++;
-                        red = *buf_p++;
-                        alphabyte = *buf_p++;
-                        break;
-                    default:
-                        common->Error("LoadTGA( %s ): illegal pixel_size '%d'\n", name, targa_header.pixel_size);
-                        break;
-                    }
+			case 24:   /* 8 bits each of blue, green and red. */
+				b = *buf_p++;
+				g = *buf_p++;
+				r = *buf_p++;
+				a = 255;
+				l = 0;
+				break;
 
-                    for (j = 0; j < packetSize; j++)
-                    {
-                        *pixbuf++=red;
-                        *pixbuf++=green;
-                        *pixbuf++=blue;
-                        *pixbuf++=alphabyte;
-                        column++;
-                        if (column == columns)     // run spans across rows
-                        {
-                            column = 0;
-                            if (row > 0)
-                            {
-                                row--;
-                            }
-                            else
-                            {
-                                goto breakOut;
-                            }
-                            pixbuf = targa_rgba + row*columns*4;
-                        }
-                    }
-                }
-                else                              // non run-length packet
-                {
-                    for (j = 0; j < packetSize; j++)
-                    {
-                        switch (targa_header.pixel_size)
-                        {
-                        case 24:
-                            blue = *buf_p++;
-                            green = *buf_p++;
-                            red = *buf_p++;
-                            *pixbuf++ = red;
-                            *pixbuf++ = green;
-                            *pixbuf++ = blue;
-                            *pixbuf++ = 255;
-                            break;
-                        case 32:
-                            blue = *buf_p++;
-                            green = *buf_p++;
-                            red = *buf_p++;
-                            alphabyte = *buf_p++;
-                            *pixbuf++ = red;
-                            *pixbuf++ = green;
-                            *pixbuf++ = blue;
-                            *pixbuf++ = alphabyte;
-                            break;
-                        default:
-                            common->Error("LoadTGA( %s ): illegal pixel_size '%d'\n", name, targa_header.pixel_size);
-                            break;
-                        }
-                        column++;
-                        if (column == columns)     // pixel packet run spans across rows
-                        {
-                            column = 0;
-                            if (row > 0)
-                            {
-                                row--;
-                            }
-                            else
-                            {
-                                goto breakOut;
-                            }
-                            pixbuf = targa_rgba + row*columns*4;
-                        }
-                    }
-                }
-            }
-breakOut:
-            ;
-        }
-    }
+			case 32:   /* 8 bits each of blue, green, red and alpha. */
+				b = *buf_p++;
+				g = *buf_p++;
+				r = *buf_p++;
+				a = *buf_p++;
+				l = 0;
+				break;
+			}
+			ColorMap[map_idx + 0] = r;
+			ColorMap[map_idx + 1] = g;
+			ColorMap[map_idx + 2] = b;
+			ColorMap[map_idx + 3] = a;
+		}
+	}
 
-    if ((targa_header.attributes & (1<<5)))  			// image flp bit
-    {
-        R_VerticalFlip(*pic, *width, *height);
-    }
+	/* check run-length encoding. */
+	rlencoded = (header.image_type == TGA_RLEMap || header.image_type == TGA_RLERGB || header.image_type == TGA_RLEMono);
+	RLE_count = RLE_flag = 0;
 
-    fileSystem->FreeFile(buffer);
+	w = header.width;
+	h = header.height;
+
+	if (width)
+	{
+		*width = w;
+	}
+
+	if (height)
+	{
+		*height = h;
+	}
+	size = w * h * 4;
+	data = (byte *)R_StaticAlloc(size);
+	*pic = data;
+
+	/* read the Targa file body and convert to portable format. */
+	pixel_size = header.pixel_size;
+	origin = (header.attributes & 0x20) >> 5;
+	interleave = (header.attributes & 0xC0) >> 6;
+	truerow = 0;
+	baserow = 0;
+
+	for (y = 0; y<h; y++)
+	{
+		realrow = truerow;
+
+		if (origin == TGA_O_UPPER)
+		{
+			realrow = h - realrow - 1;
+		}
+		dst = data + realrow * w * 4;
+
+		for (x = 0; x<w; x++)
+		{
+			/* check if run length encoded. */
+			if (rlencoded)
+			{
+				if (!RLE_count)
+				{
+					/* have to restart run. */
+					i = *buf_p++;
+					RLE_flag = (i & 0x80);
+
+					if (!RLE_flag)   // stream of unencoded pixels
+					{
+						RLE_count = i + 1;
+					}
+					else      // single pixel replicated
+					{
+						RLE_count = i - 127;
+					}
+
+					/* decrement count & get pixel. */
+					--RLE_count;
+				}
+				else
+				{
+					/* have already read count & (at least) first pixel. */
+					--RLE_count;
+
+					if (RLE_flag)
+					{
+						/* replicated pixels. */
+						goto PixEncode;
+					}
+				}
+			}
+
+			/* read appropriate number of bytes, break into RGB. */
+			switch (pixel_size)
+			{
+			case 8:   /* grey scale, read and triplicate. */
+				r = g = b = l = *buf_p++;
+				a = 255;
+				break;
+
+			case 15:   /* 5 bits each of red green and blue. */
+				/* watch byte order. */
+				j = *buf_p++;
+				k = *buf_p++;
+				l = ((unsigned int)k << 8) + j;
+				r = (byte)(((k & 0x7C) >> 2) << 3);
+				g = (byte)((((k & 0x03) << 3) + ((j & 0xE0) >> 5)) << 3);
+				b = (byte)((j & 0x1F) << 3);
+				a = 255;
+				break;
+
+			case 16:   /* 5 bits each of red green and blue, 1 alpha bit. */
+				/* watch byte order. */
+				j = *buf_p++;
+				k = *buf_p++;
+				l = ((unsigned int)k << 8) + j;
+				r = (byte)(((k & 0x7C) >> 2) << 3);
+				g = (byte)((((k & 0x03) << 3) + ((j & 0xE0) >> 5)) << 3);
+				b = (byte)((j & 0x1F) << 3);
+				a = (k & 0x80) ? 255 : 0;
+				break;
+
+			case 24:   /* 8 bits each of blue, green and red. */
+				b = *buf_p++;
+				g = *buf_p++;
+				r = *buf_p++;
+				a = 255;
+				l = 0;
+				break;
+
+			case 32:   /* 8 bits each of blue, green, red and alpha. */
+				b = *buf_p++;
+				g = *buf_p++;
+				r = *buf_p++;
+				a = *buf_p++;
+				l = 0;
+				break;
+
+			default:
+				common->Printf("%s : Illegal pixel_size '%d'\n", name, pixel_size);
+				R_StaticFree(data);
+				if (mapped)
+				{
+					R_StaticFree(ColorMap);
+				}
+				return;
+			}
+
+		PixEncode:
+			if (mapped)
+			{
+				map_idx = l * 4;
+				*dst++ = ColorMap[map_idx + 0];
+				*dst++ = ColorMap[map_idx + 1];
+				*dst++ = ColorMap[map_idx + 2];
+				*dst++ = ColorMap[map_idx + 3];
+			}
+			else
+			{
+				*dst++ = r;
+				*dst++ = g;
+				*dst++ = b;
+				*dst++ = a;
+			}
+		}
+
+		if (interleave == TGA_IL_Four)
+		{
+			truerow += 4;
+		}
+		else if (interleave == TGA_IL_Two)
+		{
+			truerow += 2;
+		}
+		else
+		{
+			truerow++;
+		}
+
+		if (truerow >= h)
+		{
+			truerow = ++baserow;
+		}
+	}
+
+	if (mapped)
+	{
+		R_StaticFree(ColorMap);
+	}
+	fileSystem->FreeFile(buffer);
 }
 
 /*
