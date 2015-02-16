@@ -1,0 +1,309 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Tools">
+      <UniqueIdentifier>{54dbe523-f617-4d51-b311-1f073714f35e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tools\PDA">
+      <UniqueIdentifier>{9b261b37-2709-459f-a491-cf92e9e7a319}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tools\Sound">
+      <UniqueIdentifier>{c4dc6507-2683-4dd3-9ee2-adc4de38f62d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tools\AF">
+      <UniqueIdentifier>{cc289177-56cb-43ba-b2fa-2bec8fa01671}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tools\ComAfx">
+      <UniqueIdentifier>{6cfd5132-bf53-4a86-966a-faae671ca070}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tools\Common">
+      <UniqueIdentifier>{7bd64d85-4cc8-4a72-bcb2-16215130323d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tools\Common\PropTree">
+      <UniqueIdentifier>{fad1748f-b8eb-49e3-abbe-ea6839262681}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="tools\pda\DialogPDAEditor.cpp">
+      <Filter>Tools\PDA</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\sound\DialogSound.cpp">
+      <Filter>Tools\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\sound\DialogSoundGroup.cpp">
+      <Filter>Tools\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\af\DialogAF.cpp">
+      <Filter>Tools\AF</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\af\DialogAFBody.cpp">
+      <Filter>Tools\AF</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\af\DialogAFConstraint.cpp">
+      <Filter>Tools\AF</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\af\DialogAFConstraintBallAndSocket.cpp">
+      <Filter>Tools\AF</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\af\DialogAFConstraintFixed.cpp">
+      <Filter>Tools\AF</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\af\DialogAFConstraintHinge.cpp">
+      <Filter>Tools\AF</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\af\DialogAFConstraintSlider.cpp">
+      <Filter>Tools\AF</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\af\DialogAFConstraintSpring.cpp">
+      <Filter>Tools\AF</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\af\DialogAFConstraintUniversal.cpp">
+      <Filter>Tools\AF</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\af\DialogAFName.cpp">
+      <Filter>Tools\AF</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\af\DialogAFProperties.cpp">
+      <Filter>Tools\AF</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\af\DialogAFView.cpp">
+      <Filter>Tools\AF</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\comafx\CDIB.cpp">
+      <Filter>Tools\ComAfx</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\comafx\CPathTreeCtrl.cpp">
+      <Filter>Tools\ComAfx</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\comafx\CSyntaxRichEditCtrl.cpp">
+      <Filter>Tools\ComAfx</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\comafx\DialogColorPicker.cpp">
+      <Filter>Tools\ComAfx</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\comafx\DialogGoToLine.cpp">
+      <Filter>Tools\ComAfx</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\comafx\DialogName.cpp">
+      <Filter>Tools\ComAfx</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\comafx\StdAfx.cpp">
+      <Filter>Tools\ComAfx</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\comafx\VectorCtl.cpp">
+      <Filter>Tools\ComAfx</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\common\AlphaPopup.cpp">
+      <Filter>Tools\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\common\ColorButton.cpp">
+      <Filter>Tools\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\common\MaskEdit.cpp">
+      <Filter>Tools\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\common\OpenFileDialog.cpp">
+      <Filter>Tools\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\common\PropertyGrid.cpp">
+      <Filter>Tools\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\common\RegistryOptions.cpp">
+      <Filter>Tools\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\common\RenderBumpFlatDialog.cpp">
+      <Filter>Tools\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\common\RollupPanel.cpp">
+      <Filter>Tools\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\common\SpinButton.cpp">
+      <Filter>Tools\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\common\PropTree\PropTree.cpp">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\common\PropTree\PropTreeInfo.cpp">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\common\PropTree\PropTreeItem.cpp">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\common\PropTree\PropTreeItemButton.cpp">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\common\PropTree\PropTreeItemCheck.cpp">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\common\PropTree\PropTreeItemColor.cpp">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\common\PropTree\PropTreeItemCombo.cpp">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\common\PropTree\PropTreeItemEdit.cpp">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\common\PropTree\PropTreeItemEditButton.cpp">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\common\PropTree\PropTreeItemFileEdit.cpp">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\common\PropTree\PropTreeItemStatic.cpp">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\common\PropTree\PropTreeList.cpp">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\common\PropTree\PropTreeView.cpp">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="tools\pda\DialogPDAEditor.h">
+      <Filter>Tools\PDA</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\sound\DialogSound.h">
+      <Filter>Tools\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\sound\DialogSoundGroup.h">
+      <Filter>Tools\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\edit_public.h" />
+    <ClInclude Include="tools\af\DialogAF.h">
+      <Filter>Tools\AF</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\af\DialogAFBody.h">
+      <Filter>Tools\AF</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\af\DialogAFConstraint.h">
+      <Filter>Tools\AF</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\af\DialogAFConstraintBallAndSocket.h">
+      <Filter>Tools\AF</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\af\DialogAFConstraintFixed.h">
+      <Filter>Tools\AF</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\af\DialogAFConstraintHinge.h">
+      <Filter>Tools\AF</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\af\DialogAFConstraintSlider.h">
+      <Filter>Tools\AF</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\af\DialogAFConstraintSpring.h">
+      <Filter>Tools\AF</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\af\DialogAFConstraintUniversal.h">
+      <Filter>Tools\AF</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\af\DialogAFName.h">
+      <Filter>Tools\AF</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\af\DialogAFProperties.h">
+      <Filter>Tools\AF</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\af\DialogAFView.h">
+      <Filter>Tools\AF</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\comafx\CDIB.h">
+      <Filter>Tools\ComAfx</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\comafx\CPathTreeCtrl.h">
+      <Filter>Tools\ComAfx</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\comafx\CSyntaxRichEditCtrl.h">
+      <Filter>Tools\ComAfx</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\comafx\DialogColorPicker.h">
+      <Filter>Tools\ComAfx</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\comafx\DialogGoToLine.h">
+      <Filter>Tools\ComAfx</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\comafx\DialogName.h">
+      <Filter>Tools\ComAfx</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\comafx\StdAfx.h">
+      <Filter>Tools\ComAfx</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\comafx\VectorCtl.h">
+      <Filter>Tools\ComAfx</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\common\ColorButton.h">
+      <Filter>Tools\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\common\DialogHelpers.h">
+      <Filter>Tools\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\common\MaskEdit.h">
+      <Filter>Tools\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\common\OpenFileDialog.h">
+      <Filter>Tools\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\common\PropertyGrid.h">
+      <Filter>Tools\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\common\RegistryOptions.h">
+      <Filter>Tools\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\common\RenderBumpFlatDialog.h">
+      <Filter>Tools\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\common\RollupPanel.h">
+      <Filter>Tools\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\common\SpinButton.h">
+      <Filter>Tools\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\common\PropTree\PropTree.h">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\common\PropTree\PropTreeInfo.h">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\common\PropTree\PropTreeItem.h">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\common\PropTree\PropTreeItemButton.h">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\common\PropTree\PropTreeItemCheck.h">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\common\PropTree\PropTreeItemColor.h">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\common\PropTree\PropTreeItemCombo.h">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\common\PropTree\PropTreeItemEdit.h">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\common\PropTree\PropTreeItemEditButton.h">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\common\PropTree\PropTreeItemFileEdit.h">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\common\PropTree\PropTreeItemStatic.h">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\common\PropTree\PropTreeList.h">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\common\PropTree\PropTreeView.h">
+      <Filter>Tools\Common\PropTree</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="tools\comafx\riched20.tlh">
+      <Filter>Tools\ComAfx</Filter>
+    </None>
+  </ItemGroup>
+</Project>

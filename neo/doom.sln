@@ -20,6 +20,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DOOM3", "doomdll.vcxproj", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game-d3xp", "game-d3xp.vcxproj", "{0BC6FCC9-C65E-4B1F-9A58-0B9399987C9F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "toolsLib", "toolslib.vcxproj", "{6AE3C5D1-A7B5-4AE7-8706-33AA16E50956}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug with inlines and memory log|Win32 = Debug with inlines and memory log|Win32
@@ -141,6 +143,24 @@ Global
 		{0BC6FCC9-C65E-4B1F-9A58-0B9399987C9F}.Release with Tools|Win32.Build.0 = Release with Tools|Win32
 		{0BC6FCC9-C65E-4B1F-9A58-0B9399987C9F}.Release|Win32.ActiveCfg = Release|Win32
 		{0BC6FCC9-C65E-4B1F-9A58-0B9399987C9F}.Release|Win32.Build.0 = Release|Win32
+		{6AE3C5D1-A7B5-4AE7-8706-33AA16E50956}.Debug with inlines and memory log|Win32.ActiveCfg = Debug|Win32
+		{6AE3C5D1-A7B5-4AE7-8706-33AA16E50956}.Debug with inlines and memory log|Win32.Build.0 = Debug|Win32
+		{6AE3C5D1-A7B5-4AE7-8706-33AA16E50956}.Debug with inlines|Win32.ActiveCfg = Debug|Win32
+		{6AE3C5D1-A7B5-4AE7-8706-33AA16E50956}.Debug with inlines|Win32.Build.0 = Debug|Win32
+		{6AE3C5D1-A7B5-4AE7-8706-33AA16E50956}.Debug With Tools|Win32.ActiveCfg = Debug|Win32
+		{6AE3C5D1-A7B5-4AE7-8706-33AA16E50956}.Debug With Tools|Win32.Build.0 = Debug|Win32
+		{6AE3C5D1-A7B5-4AE7-8706-33AA16E50956}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6AE3C5D1-A7B5-4AE7-8706-33AA16E50956}.Debug|Win32.Build.0 = Debug|Win32
+		{6AE3C5D1-A7B5-4AE7-8706-33AA16E50956}.Dedicated Debug with inlines|Win32.ActiveCfg = Debug|Win32
+		{6AE3C5D1-A7B5-4AE7-8706-33AA16E50956}.Dedicated Debug with inlines|Win32.Build.0 = Debug|Win32
+		{6AE3C5D1-A7B5-4AE7-8706-33AA16E50956}.Dedicated Debug|Win32.ActiveCfg = Debug|Win32
+		{6AE3C5D1-A7B5-4AE7-8706-33AA16E50956}.Dedicated Debug|Win32.Build.0 = Debug|Win32
+		{6AE3C5D1-A7B5-4AE7-8706-33AA16E50956}.Dedicated Release|Win32.ActiveCfg = Release|Win32
+		{6AE3C5D1-A7B5-4AE7-8706-33AA16E50956}.Dedicated Release|Win32.Build.0 = Release|Win32
+		{6AE3C5D1-A7B5-4AE7-8706-33AA16E50956}.Release with Tools|Win32.ActiveCfg = Release|Win32
+		{6AE3C5D1-A7B5-4AE7-8706-33AA16E50956}.Release with Tools|Win32.Build.0 = Release|Win32
+		{6AE3C5D1-A7B5-4AE7-8706-33AA16E50956}.Release|Win32.ActiveCfg = Release|Win32
+		{6AE3C5D1-A7B5-4AE7-8706-33AA16E50956}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -152,5 +172,6 @@ Global
 		{6EA6406F-3E65-47D9-8246-D6660A81606F} = {003B01AB-152D-45C8-BF45-E5A035042D7F}
 		{49BEC5C6-B964-417A-851E-808886B57420} = {003B01AB-152D-45C8-BF45-E5A035042D7F}
 		{0BC6FCC9-C65E-4B1F-9A58-0B9399987C9F} = {1E2B3940-65F8-4D8F-9EEE-85E94EBBC6DF}
+		{6AE3C5D1-A7B5-4AE7-8706-33AA16E50956} = {347D107C-D787-4408-A60D-86FA45997F9B}
 	EndGlobalSection
 EndGlobal

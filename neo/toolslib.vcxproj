@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{6AE3C5D1-A7B5-4AE7-8706-33AA16E50956}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>toolslib</RootNamespace>
+    <ProjectName>toolsLib</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="tools\af\DialogAF.cpp" />
+    <ClCompile Include="tools\af\DialogAFBody.cpp" />
+    <ClCompile Include="tools\af\DialogAFConstraint.cpp" />
+    <ClCompile Include="tools\af\DialogAFConstraintBallAndSocket.cpp" />
+    <ClCompile Include="tools\af\DialogAFConstraintFixed.cpp" />
+    <ClCompile Include="tools\af\DialogAFConstraintHinge.cpp" />
+    <ClCompile Include="tools\af\DialogAFConstraintSlider.cpp" />
+    <ClCompile Include="tools\af\DialogAFConstraintSpring.cpp" />
+    <ClCompile Include="tools\af\DialogAFConstraintUniversal.cpp" />
+    <ClCompile Include="tools\af\DialogAFName.cpp" />
+    <ClCompile Include="tools\af\DialogAFProperties.cpp" />
+    <ClCompile Include="tools\af\DialogAFView.cpp" />
+    <ClCompile Include="tools\comafx\CDIB.cpp" />
+    <ClCompile Include="tools\comafx\CPathTreeCtrl.cpp" />
+    <ClCompile Include="tools\comafx\CSyntaxRichEditCtrl.cpp" />
+    <ClCompile Include="tools\comafx\DialogColorPicker.cpp" />
+    <ClCompile Include="tools\comafx\DialogGoToLine.cpp" />
+    <ClCompile Include="tools\comafx\DialogName.cpp" />
+    <ClCompile Include="tools\comafx\StdAfx.cpp" />
+    <ClCompile Include="tools\comafx\VectorCtl.cpp" />
+    <ClCompile Include="tools\common\AlphaPopup.cpp" />
+    <ClCompile Include="tools\common\ColorButton.cpp" />
+    <ClCompile Include="tools\common\MaskEdit.cpp" />
+    <ClCompile Include="tools\common\OpenFileDialog.cpp" />
+    <ClCompile Include="tools\common\PropertyGrid.cpp" />
+    <ClCompile Include="tools\common\PropTree\PropTree.cpp" />
+    <ClCompile Include="tools\common\PropTree\PropTreeInfo.cpp" />
+    <ClCompile Include="tools\common\PropTree\PropTreeItem.cpp" />
+    <ClCompile Include="tools\common\PropTree\PropTreeItemButton.cpp" />
+    <ClCompile Include="tools\common\PropTree\PropTreeItemCheck.cpp" />
+    <ClCompile Include="tools\common\PropTree\PropTreeItemColor.cpp" />
+    <ClCompile Include="tools\common\PropTree\PropTreeItemCombo.cpp" />
+    <ClCompile Include="tools\common\PropTree\PropTreeItemEdit.cpp" />
+    <ClCompile Include="tools\common\PropTree\PropTreeItemEditButton.cpp" />
+    <ClCompile Include="tools\common\PropTree\PropTreeItemFileEdit.cpp" />
+    <ClCompile Include="tools\common\PropTree\PropTreeItemStatic.cpp" />
+    <ClCompile Include="tools\common\PropTree\PropTreeList.cpp" />
+    <ClCompile Include="tools\common\PropTree\PropTreeView.cpp" />
+    <ClCompile Include="tools\common\RegistryOptions.cpp" />
+    <ClCompile Include="tools\common\RenderBumpFlatDialog.cpp" />
+    <ClCompile Include="tools\common\RollupPanel.cpp" />
+    <ClCompile Include="tools\common\SpinButton.cpp" />
+    <ClCompile Include="tools\pda\DialogPDAEditor.cpp" />
+    <ClCompile Include="tools\sound\DialogSound.cpp" />
+    <ClCompile Include="tools\sound\DialogSoundGroup.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="tools\af\DialogAF.h" />
+    <ClInclude Include="tools\af\DialogAFBody.h" />
+    <ClInclude Include="tools\af\DialogAFConstraint.h" />
+    <ClInclude Include="tools\af\DialogAFConstraintBallAndSocket.h" />
+    <ClInclude Include="tools\af\DialogAFConstraintFixed.h" />
+    <ClInclude Include="tools\af\DialogAFConstraintHinge.h" />
+    <ClInclude Include="tools\af\DialogAFConstraintSlider.h" />
+    <ClInclude Include="tools\af\DialogAFConstraintSpring.h" />
+    <ClInclude Include="tools\af\DialogAFConstraintUniversal.h" />
+    <ClInclude Include="tools\af\DialogAFName.h" />
+    <ClInclude Include="tools\af\DialogAFProperties.h" />
+    <ClInclude Include="tools\af\DialogAFView.h" />
+    <ClInclude Include="tools\comafx\CDIB.h" />
+    <ClInclude Include="tools\comafx\CPathTreeCtrl.h" />
+    <ClInclude Include="tools\comafx\CSyntaxRichEditCtrl.h" />
+    <ClInclude Include="tools\comafx\DialogColorPicker.h" />
+    <ClInclude Include="tools\comafx\DialogGoToLine.h" />
+    <ClInclude Include="tools\comafx\DialogName.h" />
+    <ClInclude Include="tools\comafx\StdAfx.h" />
+    <ClInclude Include="tools\comafx\VectorCtl.h" />
+    <ClInclude Include="tools\common\ColorButton.h" />
+    <ClInclude Include="tools\common\DialogHelpers.h" />
+    <ClInclude Include="tools\common\MaskEdit.h" />
+    <ClInclude Include="tools\common\OpenFileDialog.h" />
+    <ClInclude Include="tools\common\PropertyGrid.h" />
+    <ClInclude Include="tools\common\PropTree\PropTree.h" />
+    <ClInclude Include="tools\common\PropTree\PropTreeInfo.h" />
+    <ClInclude Include="tools\common\PropTree\PropTreeItem.h" />
+    <ClInclude Include="tools\common\PropTree\PropTreeItemButton.h" />
+    <ClInclude Include="tools\common\PropTree\PropTreeItemCheck.h" />
+    <ClInclude Include="tools\common\PropTree\PropTreeItemColor.h" />
+    <ClInclude Include="tools\common\PropTree\PropTreeItemCombo.h" />
+    <ClInclude Include="tools\common\PropTree\PropTreeItemEdit.h" />
+    <ClInclude Include="tools\common\PropTree\PropTreeItemEditButton.h" />
+    <ClInclude Include="tools\common\PropTree\PropTreeItemFileEdit.h" />
+    <ClInclude Include="tools\common\PropTree\PropTreeItemStatic.h" />
+    <ClInclude Include="tools\common\PropTree\PropTreeList.h" />
+    <ClInclude Include="tools\common\PropTree\PropTreeView.h" />
+    <ClInclude Include="tools\common\RegistryOptions.h" />
+    <ClInclude Include="tools\common\RenderBumpFlatDialog.h" />
+    <ClInclude Include="tools\common\RollupPanel.h" />
+    <ClInclude Include="tools\common\SpinButton.h" />
+    <ClInclude Include="tools\edit_public.h" />
+    <ClInclude Include="tools\pda\DialogPDAEditor.h" />
+    <ClInclude Include="tools\sound\DialogSound.h" />
+    <ClInclude Include="tools\sound\DialogSoundGroup.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="tools\comafx\riched20.tlh" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -46,18 +46,6 @@
     <Filter Include="Tools">
       <UniqueIdentifier>{af0039d7-487e-4e9c-859d-c7b4c194b985}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Tools\AF">
-      <UniqueIdentifier>{de4b7a7a-3038-4cac-a5d1-95b015b026ec}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Tools\ComAfx">
-      <UniqueIdentifier>{1041a97c-8f17-4731-a48e-a94cf40753fe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Tools\Common">
-      <UniqueIdentifier>{082fe765-698a-408b-ae96-04db4f62a5dc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Tools\Common\PropTree">
-      <UniqueIdentifier>{e51aaa76-0800-450c-9cf5-63484392d7a3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Tools\Compilers">
       <UniqueIdentifier>{83ad091e-339c-4f64-ad0d-e0776c4fe142}</UniqueIdentifier>
     </Filter>
@@ -82,17 +70,11 @@
     <Filter Include="Tools\GuiEd">
       <UniqueIdentifier>{33958bbe-2c45-4c6c-bf13-2bdea604a1f1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Tools\Sound">
-      <UniqueIdentifier>{44a955ea-0e6e-4cd1-aeb0-5e355aabe9bc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Tools\MaterialEditor">
       <UniqueIdentifier>{e245eb22-9902-436d-b292-1bd362aee648}</UniqueIdentifier>
     </Filter>
     <Filter Include="Tools\Particle">
       <UniqueIdentifier>{527cec37-a4ca-4466-9d91-f925361a7aea}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Tools\PDA">
-      <UniqueIdentifier>{06cc72d4-f944-4821-8693-667ae16daaee}</UniqueIdentifier>
     </Filter>
     <Filter Include="Tools\Radiant">
       <UniqueIdentifier>{60417518-1848-4aa4-87d8-b8d81c6c1ac4}</UniqueIdentifier>
@@ -1043,129 +1025,6 @@
     <ClCompile Include="sys\win32\rc\CreateResourceIDs.cpp">
       <Filter>Sys\RC</Filter>
     </ClCompile>
-    <ClCompile Include="tools\af\DialogAF.cpp">
-      <Filter>Tools\AF</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\af\DialogAFBody.cpp">
-      <Filter>Tools\AF</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\af\DialogAFConstraint.cpp">
-      <Filter>Tools\AF</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\af\DialogAFConstraintBallAndSocket.cpp">
-      <Filter>Tools\AF</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\af\DialogAFConstraintFixed.cpp">
-      <Filter>Tools\AF</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\af\DialogAFConstraintHinge.cpp">
-      <Filter>Tools\AF</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\af\DialogAFConstraintSlider.cpp">
-      <Filter>Tools\AF</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\af\DialogAFConstraintSpring.cpp">
-      <Filter>Tools\AF</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\af\DialogAFConstraintUniversal.cpp">
-      <Filter>Tools\AF</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\af\DialogAFName.cpp">
-      <Filter>Tools\AF</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\af\DialogAFProperties.cpp">
-      <Filter>Tools\AF</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\af\DialogAFView.cpp">
-      <Filter>Tools\AF</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\comafx\CDIB.cpp">
-      <Filter>Tools\ComAfx</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\comafx\CPathTreeCtrl.cpp">
-      <Filter>Tools\ComAfx</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\comafx\CSyntaxRichEditCtrl.cpp">
-      <Filter>Tools\ComAfx</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\comafx\DialogColorPicker.cpp">
-      <Filter>Tools\ComAfx</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\comafx\DialogGoToLine.cpp">
-      <Filter>Tools\ComAfx</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\comafx\DialogName.cpp">
-      <Filter>Tools\ComAfx</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\comafx\StdAfx.cpp">
-      <Filter>Tools\ComAfx</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\comafx\VectorCtl.cpp">
-      <Filter>Tools\ComAfx</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\common\AlphaPopup.cpp">
-      <Filter>Tools\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\common\ColorButton.cpp">
-      <Filter>Tools\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\common\MaskEdit.cpp">
-      <Filter>Tools\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\common\OpenFileDialog.cpp">
-      <Filter>Tools\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\common\PropertyGrid.cpp">
-      <Filter>Tools\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\common\RegistryOptions.cpp">
-      <Filter>Tools\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\common\RollupPanel.cpp">
-      <Filter>Tools\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\common\SpinButton.cpp">
-      <Filter>Tools\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\common\PropTree\PropTree.cpp">
-      <Filter>Tools\Common\PropTree</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\common\PropTree\PropTreeInfo.cpp">
-      <Filter>Tools\Common\PropTree</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\common\PropTree\PropTreeItem.cpp">
-      <Filter>Tools\Common\PropTree</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\common\PropTree\PropTreeItemButton.cpp">
-      <Filter>Tools\Common\PropTree</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\common\PropTree\PropTreeItemCheck.cpp">
-      <Filter>Tools\Common\PropTree</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\common\PropTree\PropTreeItemColor.cpp">
-      <Filter>Tools\Common\PropTree</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\common\PropTree\PropTreeItemCombo.cpp">
-      <Filter>Tools\Common\PropTree</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\common\PropTree\PropTreeItemEdit.cpp">
-      <Filter>Tools\Common\PropTree</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\common\PropTree\PropTreeItemEditButton.cpp">
-      <Filter>Tools\Common\PropTree</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\common\PropTree\PropTreeItemFileEdit.cpp">
-      <Filter>Tools\Common\PropTree</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\common\PropTree\PropTreeItemStatic.cpp">
-      <Filter>Tools\Common\PropTree</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\common\PropTree\PropTreeList.cpp">
-      <Filter>Tools\Common\PropTree</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\common\PropTree\PropTreeView.cpp">
-      <Filter>Tools\Common\PropTree</Filter>
-    </ClCompile>
     <ClCompile Include="tools\compilers\aas\AASBuild.cpp">
       <Filter>Tools\Compilers\AAS</Filter>
     </ClCompile>
@@ -1385,12 +1244,6 @@
     <ClCompile Include="tools\guied\guied.cpp">
       <Filter>Tools\GuiEd</Filter>
     </ClCompile>
-    <ClCompile Include="tools\sound\DialogSound.cpp">
-      <Filter>Tools\Sound</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\sound\DialogSoundGroup.cpp">
-      <Filter>Tools\Sound</Filter>
-    </ClCompile>
     <ClCompile Include="tools\materialeditor\ConsoleView.cpp">
       <Filter>Tools\MaterialEditor</Filter>
     </ClCompile>
@@ -1444,9 +1297,6 @@
     </ClCompile>
     <ClCompile Include="tools\particle\DialogParticleEditor.cpp">
       <Filter>Tools\Particle</Filter>
-    </ClCompile>
-    <ClCompile Include="tools\pda\DialogPDAEditor.cpp">
-      <Filter>Tools\PDA</Filter>
     </ClCompile>
     <ClCompile Include="tools\radiant\autocaulk.cpp">
       <Filter>Tools\Radiant</Filter>
@@ -2041,9 +1891,6 @@
     <None Include="sys\win32\rc\res\VIEWOPPO.BMP">
       <Filter>Sys\RC\res</Filter>
     </None>
-    <None Include="tools\comafx\riched20.tlh">
-      <Filter>Tools\ComAfx</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="sys\win32\rc\AFEditor.rc">
@@ -2087,132 +1934,6 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuildStep Include="tools\edit_public.h">
-      <Filter>Tools</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\af\DialogAF.h">
-      <Filter>Tools\AF</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\af\DialogAFBody.h">
-      <Filter>Tools\AF</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\af\DialogAFConstraint.h">
-      <Filter>Tools\AF</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\af\DialogAFConstraintBallAndSocket.h">
-      <Filter>Tools\AF</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\af\DialogAFConstraintFixed.h">
-      <Filter>Tools\AF</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\af\DialogAFConstraintHinge.h">
-      <Filter>Tools\AF</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\af\DialogAFConstraintSlider.h">
-      <Filter>Tools\AF</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\af\DialogAFConstraintSpring.h">
-      <Filter>Tools\AF</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\af\DialogAFConstraintUniversal.h">
-      <Filter>Tools\AF</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\af\DialogAFName.h">
-      <Filter>Tools\AF</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\af\DialogAFProperties.h">
-      <Filter>Tools\AF</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\af\DialogAFView.h">
-      <Filter>Tools\AF</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\comafx\CDIB.h">
-      <Filter>Tools\ComAfx</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\comafx\CPathTreeCtrl.h">
-      <Filter>Tools\ComAfx</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\comafx\CSyntaxRichEditCtrl.h">
-      <Filter>Tools\ComAfx</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\comafx\DialogColorPicker.h">
-      <Filter>Tools\ComAfx</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\comafx\DialogGoToLine.h">
-      <Filter>Tools\ComAfx</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\comafx\DialogName.h">
-      <Filter>Tools\ComAfx</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\comafx\StdAfx.h">
-      <Filter>Tools\ComAfx</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\comafx\VectorCtl.h">
-      <Filter>Tools\ComAfx</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\common\ColorButton.h">
-      <Filter>Tools\Common</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\common\DialogHelpers.h">
-      <Filter>Tools\Common</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\common\MaskEdit.h">
-      <Filter>Tools\Common</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\common\OpenFileDialog.h">
-      <Filter>Tools\Common</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\common\PropertyGrid.h">
-      <Filter>Tools\Common</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\common\RegistryOptions.h">
-      <Filter>Tools\Common</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\common\RollupPanel.h">
-      <Filter>Tools\Common</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\common\SpinButton.h">
-      <Filter>Tools\Common</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\common\PropTree\PropTree.h">
-      <Filter>Tools\Common\PropTree</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\common\PropTree\PropTreeInfo.h">
-      <Filter>Tools\Common\PropTree</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\common\PropTree\PropTreeItem.h">
-      <Filter>Tools\Common\PropTree</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\common\PropTree\PropTreeItemButton.h">
-      <Filter>Tools\Common\PropTree</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\common\PropTree\PropTreeItemCheck.h">
-      <Filter>Tools\Common\PropTree</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\common\PropTree\PropTreeItemColor.h">
-      <Filter>Tools\Common\PropTree</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\common\PropTree\PropTreeItemCombo.h">
-      <Filter>Tools\Common\PropTree</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\common\PropTree\PropTreeItemEdit.h">
-      <Filter>Tools\Common\PropTree</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\common\PropTree\PropTreeItemEditButton.h">
-      <Filter>Tools\Common\PropTree</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\common\PropTree\PropTreeItemFileEdit.h">
-      <Filter>Tools\Common\PropTree</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\common\PropTree\PropTreeItemStatic.h">
-      <Filter>Tools\Common\PropTree</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\common\PropTree\PropTreeList.h">
-      <Filter>Tools\Common\PropTree</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\common\PropTree\PropTreeView.h">
-      <Filter>Tools\Common\PropTree</Filter>
-    </CustomBuildStep>
     <CustomBuildStep Include="tools\debugger\DebuggerApp.h">
       <Filter>Tools\Debugger</Filter>
     </CustomBuildStep>
@@ -2324,12 +2045,6 @@
     <CustomBuildStep Include="tools\guied\GEZOrderModifier.h">
       <Filter>Tools\GuiEd</Filter>
     </CustomBuildStep>
-    <CustomBuildStep Include="tools\sound\DialogSound.h">
-      <Filter>Tools\Sound</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\sound\DialogSoundGroup.h">
-      <Filter>Tools\Sound</Filter>
-    </CustomBuildStep>
     <CustomBuildStep Include="tools\materialeditor\ConsoleView.h">
       <Filter>Tools\MaterialEditor</Filter>
     </CustomBuildStep>
@@ -2383,9 +2098,6 @@
     </CustomBuildStep>
     <CustomBuildStep Include="tools\particle\DialogParticleEditor.h">
       <Filter>Tools\Particle</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="tools\pda\DialogPDAEditor.h">
-      <Filter>Tools\PDA</Filter>
     </CustomBuildStep>
     <CustomBuildStep Include="tools\radiant\autocaulk.h">
       <Filter>Tools\Radiant</Filter>
