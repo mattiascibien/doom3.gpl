@@ -304,6 +304,9 @@ static void R_CheckPortableExtensions(void)
 	// GL_ARB_texture_non_power_of_two
 	glConfig.textureNonPowerOfTwoAvailable = R_DoubleCheckExtension("GL_ARB_texture_non_power_of_two");
 
+	// ARB_MapBufferRange
+	glConfig.ARBMapBufferRangeAvailable = R_DoubleCheckExtension("GL_ARB_map_buffer_range");
+
 
 	glConfig.textureCompressionAvailable = R_DoubleCheckExtension("GL_ARB_texture_compression") && R_DoubleCheckExtension("GL_EXT_texture_compression_s3tc");
 

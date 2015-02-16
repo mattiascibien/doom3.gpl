@@ -111,7 +111,7 @@ void RB_DrawElementsWithCounters(const srfTriangles_t *tri)
     {
         if (r_useIndexBuffers.GetBool())
         {
-            vertexCache.UnbindIndex();
+			vertexCache.UnbindIndex(GL_ELEMENT_ARRAY_BUFFER);
         }
         glDrawElements(GL_TRIANGLES,
                         r_singleTriangle.GetBool() ? 3 : tri->numIndexes,
@@ -145,7 +145,7 @@ void RB_DrawShadowElementsWithCounters(const srfTriangles_t *tri, int numIndexes
     {
         if (r_useIndexBuffers.GetBool())
         {
-            vertexCache.UnbindIndex();
+			vertexCache.UnbindIndex(GL_ELEMENT_ARRAY_BUFFER);
         }
         glDrawElements(GL_TRIANGLES,
                         r_singleTriangle.GetBool() ? 3 : numIndexes,
