@@ -180,7 +180,7 @@ void idImage::UploadCompressedNormalMap(int width, int height, const byte *rgba,
 
     if (glConfig.sharedTexturePaletteAvailable)
     {
-        qglTexImage2D(GL_TEXTURE_2D,
+        glTexImage2D(GL_TEXTURE_2D,
                       mipLevel,
                       GL_COLOR_INDEX8_EXT,
                       width,
@@ -430,16 +430,16 @@ void idImage::SetImageFilterAndRepeat() const
     switch (filter)
     {
     case TF_DEFAULT:
-        qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, globalImages->textureMinFilter);
-        qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, globalImages->textureMaxFilter);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, globalImages->textureMinFilter);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, globalImages->textureMaxFilter);
         break;
     case TF_LINEAR:
-        qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         break;
     case TF_NEAREST:
-        qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         break;
     default:
         common->FatalError("R_CreateImage: bad texture filter");
@@ -450,34 +450,34 @@ void idImage::SetImageFilterAndRepeat() const
         // only do aniso filtering on mip mapped images
         if (filter == TF_DEFAULT)
         {
-            qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, globalImages->textureAnisotropy);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, globalImages->textureAnisotropy);
         }
         else
         {
-            qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1);
         }
     }
     if (glConfig.textureLODBiasAvailable)
     {
-        qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS_EXT, globalImages->textureLODBias);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS_EXT, globalImages->textureLODBias);
     }
 
     // set the wrap/clamp modes
     switch (repeat)
     {
     case TR_REPEAT:
-        qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         break;
     case TR_CLAMP_TO_BORDER:
-        qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
         break;
     case TR_CLAMP_TO_ZERO:
     case TR_CLAMP_TO_ZERO_ALPHA:
     case TR_CLAMP:
-        qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         break;
     default:
         common->FatalError("R_CreateImage: bad texture repeat");
@@ -637,7 +637,7 @@ void idImage::GenerateImage(const byte *pic, int width, int height,
     scaledBuffer = NULL;
 
     // generate the texture number
-    qglGenTextures(1, &texnum);
+    glGenTextures(1, &texnum);
 
     // select proper internal format before we resample
     internalFormat = SelectInternalFormat(&pic, 1, width, height, depth, &isMonochrome);
@@ -775,7 +775,7 @@ void idImage::GenerateImage(const byte *pic, int width, int height,
     }
     else
     {
-        qglTexImage2D(GL_TEXTURE_2D, 0, internalFormat, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaledBuffer);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaledBuffer);
     }
 
     // create and upload the mip map levels, which we do in all cases, even if we don't think they are needed
@@ -817,7 +817,7 @@ void idImage::GenerateImage(const byte *pic, int width, int height,
         }
         else
         {
-            qglTexImage2D(GL_TEXTURE_2D, miplevel, internalFormat, scaled_width, scaled_height,
+            glTexImage2D(GL_TEXTURE_2D, miplevel, internalFormat, scaled_width, scaled_height,
                           0, GL_RGBA, GL_UNSIGNED_BYTE, scaledBuffer);
         }
     }
@@ -873,7 +873,7 @@ void idImage::Generate3DImage(const byte *pic, int width, int height, int picDep
     // FIXME: allow picmip here
 
     // generate the texture number
-    qglGenTextures(1, &texnum);
+    glGenTextures(1, &texnum);
 
     // select proper internal format before we resample
     // this function doesn't need to know it is 3D, so just make it very "tall"
@@ -889,7 +889,7 @@ void idImage::Generate3DImage(const byte *pic, int width, int height, int picDep
     // upload the main image level
     Bind();
 
-    qglTexImage3D(GL_TEXTURE_3D, 0, internalFormat, scaled_width, scaled_height, scaled_depth,
+    glTexImage3D(GL_TEXTURE_3D, 0, internalFormat, scaled_width, scaled_height, scaled_depth,
                   0, GL_RGBA, GL_UNSIGNED_BYTE, pic);
 
     // create and upload the mip map levels
@@ -925,7 +925,7 @@ void idImage::Generate3DImage(const byte *pic, int width, int height, int picDep
         miplevel++;
 
         // upload the mip map
-        qglTexImage3D(GL_TEXTURE_3D, miplevel, internalFormat, scaled_width, scaled_height, scaled_depth,
+        glTexImage3D(GL_TEXTURE_3D, miplevel, internalFormat, scaled_width, scaled_height, scaled_depth,
                       0, GL_RGBA, GL_UNSIGNED_BYTE, scaledBuffer);
     }
     R_StaticFree(scaledBuffer);
@@ -934,16 +934,16 @@ void idImage::Generate3DImage(const byte *pic, int width, int height, int picDep
     switch (filter)
     {
     case TF_DEFAULT:
-        qglTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, globalImages->textureMinFilter);
-        qglTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, globalImages->textureMaxFilter);
+        glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, globalImages->textureMinFilter);
+        glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, globalImages->textureMaxFilter);
         break;
     case TF_LINEAR:
-        qglTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        qglTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         break;
     case TF_NEAREST:
-        qglTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        qglTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         break;
     default:
         common->FatalError("R_CreateImage: bad texture filter");
@@ -953,20 +953,20 @@ void idImage::Generate3DImage(const byte *pic, int width, int height, int picDep
     switch (repeat)
     {
     case TR_REPEAT:
-        qglTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        qglTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        qglTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+        glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
         break;
     case TR_CLAMP_TO_BORDER:
-        qglTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        qglTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
         break;
     case TR_CLAMP_TO_ZERO:
     case TR_CLAMP_TO_ZERO_ALPHA:
     case TR_CLAMP:
-        qglTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        qglTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        qglTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+        glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
         break;
     default:
         common->FatalError("R_CreateImage: bad texture repeat");
@@ -1017,7 +1017,7 @@ void idImage::GenerateCubeImage(const byte *pic[6], int size,
     width = height = size;
 
     // generate the texture number
-    qglGenTextures(1, &texnum);
+    glGenTextures(1, &texnum);
 
     // select proper internal format before we resample
     internalFormat = SelectInternalFormat(pic, 6, width, height, depth, &isMonochrome);
@@ -1032,23 +1032,23 @@ void idImage::GenerateCubeImage(const byte *pic[6], int size,
     Bind();
 
     // no other clamp mode makes sense
-    qglTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    qglTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     // set the minimize / maximize filtering
     switch (filter)
     {
     case TF_DEFAULT:
-        qglTexParameterf(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_MIN_FILTER, globalImages->textureMinFilter);
-        qglTexParameterf(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_MAG_FILTER, globalImages->textureMaxFilter);
+        glTexParameterf(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_MIN_FILTER, globalImages->textureMinFilter);
+        glTexParameterf(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_MAG_FILTER, globalImages->textureMaxFilter);
         break;
     case TF_LINEAR:
-        qglTexParameterf(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        qglTexParameterf(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         break;
     case TF_NEAREST:
-        qglTexParameterf(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        qglTexParameterf(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameterf(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameterf(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         break;
     default:
         common->FatalError("R_CreateImage: bad texture filter");
@@ -1058,7 +1058,7 @@ void idImage::GenerateCubeImage(const byte *pic[6], int size,
     // FIXME: support GL_COLOR_INDEX8_EXT?
     for (i = 0 ; i < 6 ; i++)
     {
-        qglTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT+i, 0, internalFormat, scaled_width, scaled_height, 0,
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT+i, 0, internalFormat, scaled_width, scaled_height, 0,
                       GL_RGBA, GL_UNSIGNED_BYTE, pic[i]);
     }
 
@@ -1079,7 +1079,7 @@ void idImage::GenerateCubeImage(const byte *pic[6], int size,
         {
             byte	*shrunken;
 
-            qglTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT+i, miplevel, internalFormat,
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT+i, miplevel, internalFormat,
                           scaled_width / 2, scaled_height / 2, 0,
                           GL_RGBA, GL_UNSIGNED_BYTE, shrunk[i]);
 
@@ -1391,7 +1391,7 @@ void idImage::WritePrecompressedImage()
     // bind to the image so we can read back the contents
     Bind();
 
-    qglPixelStorei(GL_PACK_ALIGNMENT, 1);	// otherwise small rows get padded to 32 bits
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);	// otherwise small rows get padded to 32 bits
 
     int uw = uploadWidth;
     int uh = uploadHeight;
@@ -1420,11 +1420,11 @@ void idImage::WritePrecompressedImage()
 
         if (FormatIsDXT(altInternalFormat))
         {
-            qglGetCompressedTexImageARB(GL_TEXTURE_2D, level, data);
+            glGetCompressedTexImageARB(GL_TEXTURE_2D, level, data);
         }
         else
         {
-            qglGetTexImage(GL_TEXTURE_2D, level, altInternalFormat, GL_UNSIGNED_BYTE, data);
+            glGetTexImage(GL_TEXTURE_2D, level, altInternalFormat, GL_UNSIGNED_BYTE, data);
         }
 
         f->Write(data, size);
@@ -1663,7 +1663,7 @@ void idImage::UploadPrecompressedImage(byte *data, int len)
     header->ddspf.dwABitMask = LittleLong(header->ddspf.dwABitMask);
 
     // generate the texture number
-    qglGenTextures(1, &texnum);
+    glGenTextures(1, &texnum);
 
     int externalFormat = 0;
 
@@ -1779,11 +1779,11 @@ void idImage::UploadPrecompressedImage(byte *data, int len)
         {
             if (FormatIsDXT(internalFormat))
             {
-                qglCompressedTexImage2DARB(GL_TEXTURE_2D, i - skipMip, internalFormat, uw, uh, 0, size, imagedata);
+                glCompressedTexImage2DARB(GL_TEXTURE_2D, i - skipMip, internalFormat, uw, uh, 0, size, imagedata);
             }
             else
             {
-                qglTexImage2D(GL_TEXTURE_2D, i - skipMip, internalFormat, uw, uh, 0, externalFormat, GL_UNSIGNED_BYTE, imagedata);
+                glTexImage2D(GL_TEXTURE_2D, i - skipMip, internalFormat, uw, uh, 0, externalFormat, GL_UNSIGNED_BYTE, imagedata);
             }
         }
 
@@ -1926,9 +1926,9 @@ void idImage::PurgeImage()
     if (texnum != TEXTURE_NOT_LOADED)
     {
         // sometimes is NULL when exiting with an error
-        if (qglDeleteTextures)
+        if (glDeleteTextures)
         {
-            qglDeleteTextures(1, &texnum);	// this should be the ONLY place it is ever called!
+            glDeleteTextures(1, &texnum);	// this should be the ONLY place it is ever called!
         }
         texnum = TEXTURE_NOT_LOADED;
     }
@@ -2005,28 +2005,28 @@ void idImage::Bind()
     {
         if (tmu->textureType == TT_CUBIC)
         {
-            qglDisable(GL_TEXTURE_CUBE_MAP_EXT);
+            glDisable(GL_TEXTURE_CUBE_MAP_EXT);
         }
         else if (tmu->textureType == TT_3D)
         {
-            qglDisable(GL_TEXTURE_3D);
+            glDisable(GL_TEXTURE_3D);
         }
         else if (tmu->textureType == TT_2D)
         {
-            qglDisable(GL_TEXTURE_2D);
+            glDisable(GL_TEXTURE_2D);
         }
 
         if (type == TT_CUBIC)
         {
-            qglEnable(GL_TEXTURE_CUBE_MAP_EXT);
+            glEnable(GL_TEXTURE_CUBE_MAP_EXT);
         }
         else if (type == TT_3D)
         {
-            qglEnable(GL_TEXTURE_3D);
+            glEnable(GL_TEXTURE_3D);
         }
         else if (type == TT_2D)
         {
-            qglEnable(GL_TEXTURE_2D);
+            glEnable(GL_TEXTURE_2D);
         }
         tmu->textureType = type;
     }
@@ -2037,7 +2037,7 @@ void idImage::Bind()
         if (tmu->current2DMap != texnum)
         {
             tmu->current2DMap = texnum;
-            qglBindTexture(GL_TEXTURE_2D, texnum);
+            glBindTexture(GL_TEXTURE_2D, texnum);
         }
     }
     else if (type == TT_CUBIC)
@@ -2045,7 +2045,7 @@ void idImage::Bind()
         if (tmu->currentCubeMap != texnum)
         {
             tmu->currentCubeMap = texnum;
-            qglBindTexture(GL_TEXTURE_CUBE_MAP_EXT, texnum);
+            glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, texnum);
         }
     }
     else if (type == TT_3D)
@@ -2053,14 +2053,14 @@ void idImage::Bind()
         if (tmu->current3DMap != texnum)
         {
             tmu->current3DMap = texnum;
-            qglBindTexture(GL_TEXTURE_3D, texnum);
+            glBindTexture(GL_TEXTURE_3D, texnum);
         }
     }
 
     if (com_purgeAll.GetBool())
     {
         GLclampf priority = 1.0f;
-        qglPrioritizeTextures(1, &texnum, &priority);
+        glPrioritizeTextures(1, &texnum, &priority);
     }
 }
 
@@ -2124,19 +2124,19 @@ void idImage::BindFragment()
     // bind the texture
     if (type == TT_2D)
     {
-        qglBindTexture(GL_TEXTURE_2D, texnum);
+        glBindTexture(GL_TEXTURE_2D, texnum);
     }
     else if (type == TT_RECT)
     {
-        qglBindTexture(GL_TEXTURE_RECTANGLE_NV, texnum);
+        glBindTexture(GL_TEXTURE_RECTANGLE_NV, texnum);
     }
     else if (type == TT_CUBIC)
     {
-        qglBindTexture(GL_TEXTURE_CUBE_MAP_EXT, texnum);
+        glBindTexture(GL_TEXTURE_CUBE_MAP_EXT, texnum);
     }
     else if (type == TT_3D)
     {
-        qglBindTexture(GL_TEXTURE_3D, texnum);
+        glBindTexture(GL_TEXTURE_3D, texnum);
     }
 }
 
@@ -2165,7 +2165,7 @@ void idImage::CopyFramebuffer(int x, int y, int imageWidth, int imageHeight, boo
     GetDownsize(imageWidth, imageHeight);
     GetDownsize(potWidth, potHeight);
 
-    qglReadBuffer(GL_BACK);
+    glReadBuffer(GL_BACK);
 
     // only resize if the current dimensions can't hold it at all,
     // otherwise subview renderings could thrash this
@@ -2176,13 +2176,13 @@ void idImage::CopyFramebuffer(int x, int y, int imageWidth, int imageHeight, boo
         uploadHeight = potHeight;
         if (potWidth == imageWidth && potHeight == imageHeight)
         {
-            qglCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, x, y, imageWidth, imageHeight, 0);
+            glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, x, y, imageWidth, imageHeight, 0);
         }
         else
         {
             byte	*junk;
             // we need to create a dummy image with power of two dimensions,
-            // then do a qglCopyTexSubImage2D of the data we want
+            // then do a glCopyTexSubImage2D of the data we want
             // this might be a 16+ meg allocation, which could fail on _alloca
             junk = (byte *)Mem_Alloc(potWidth * potHeight * 4);
             memset(junk, 0, potWidth * potHeight * 4);		//!@#
@@ -2192,34 +2192,34 @@ void idImage::CopyFramebuffer(int x, int y, int imageWidth, int imageHeight, boo
                 junk[i+1] = 255;
             }
 #endif
-            qglTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, potWidth, potHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, junk);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, potWidth, potHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, junk);
             Mem_Free(junk);
 
-            qglCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, x, y, imageWidth, imageHeight);
+            glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, x, y, imageWidth, imageHeight);
         }
     }
     else
     {
         // otherwise, just subimage upload it so that drivers can tell we are going to be changing
         // it and don't try and do a texture compression or some other silliness
-        qglCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, x, y, imageWidth, imageHeight);
+        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, x, y, imageWidth, imageHeight);
     }
 
     // if the image isn't a full power of two, duplicate an extra row and/or column to fix bilerps
     if (imageWidth != potWidth)
     {
-        qglCopyTexSubImage2D(GL_TEXTURE_2D, 0, imageWidth, 0, x+imageWidth-1, y, 1, imageHeight);
+        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, imageWidth, 0, x+imageWidth-1, y, 1, imageHeight);
     }
     if (imageHeight != potHeight)
     {
-        qglCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, imageHeight, x, y+imageHeight-1, imageWidth, 1);
+        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, imageHeight, x, y+imageHeight-1, imageWidth, 1);
     }
 
-    qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     backEnd.c_copyFrameBuffer++;
 }
@@ -2247,28 +2247,28 @@ void idImage::CopyDepthbuffer(int x, int y, int imageWidth, int imageHeight)
         uploadHeight = potHeight;
         if (potWidth == imageWidth && potHeight == imageHeight)
         {
-            qglCopyTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, x, y, imageWidth, imageHeight, 0);
+            glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, x, y, imageWidth, imageHeight, 0);
         }
         else
         {
             // we need to create a dummy image with power of two dimensions,
-            // then do a qglCopyTexSubImage2D of the data we want
-            qglTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, potWidth, potHeight, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
-            qglCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, x, y, imageWidth, imageHeight);
+            // then do a glCopyTexSubImage2D of the data we want
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, potWidth, potHeight, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
+            glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, x, y, imageWidth, imageHeight);
         }
     }
     else
     {
         // otherwise, just subimage upload it so that drivers can tell we are going to be changing
         // it and don't try and do a texture compression or some other silliness
-        qglCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, x, y, imageWidth, imageHeight);
+        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, x, y, imageWidth, imageHeight);
     }
 
-//	qglTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-//	qglTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+//	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+//	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 
-    qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
 /*
@@ -2303,7 +2303,7 @@ void idImage::UploadScratch(const byte *data, int cols, int rows)
             // upload the base level
             for (i = 0 ; i < 6 ; i++)
             {
-                qglTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT+i, 0, GL_RGB8, cols, rows, 0,
+                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT+i, 0, GL_RGB8, cols, rows, 0,
                               GL_RGBA, GL_UNSIGNED_BYTE, data + cols*rows*4*i);
             }
         }
@@ -2313,15 +2313,15 @@ void idImage::UploadScratch(const byte *data, int cols, int rows)
             // it and don't try and do a texture compression
             for (i = 0 ; i < 6 ; i++)
             {
-                qglTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT+i, 0, 0, 0, cols, rows,
+                glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT+i, 0, 0, 0, cols, rows,
                                  GL_RGBA, GL_UNSIGNED_BYTE, data + cols*rows*4*i);
             }
         }
-        qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         // no other clamp mode makes sense
-        qglTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        qglTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP_EXT, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     }
     else
     {
@@ -2339,25 +2339,25 @@ void idImage::UploadScratch(const byte *data, int cols, int rows)
         {
             uploadWidth = cols;
             uploadHeight = rows;
-            qglTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, cols, rows, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, cols, rows, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         }
         else
         {
             // otherwise, just subimage upload it so that drivers can tell we are going to be changing
             // it and don't try and do a texture compression
-            qglTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, cols, rows, GL_RGBA, GL_UNSIGNED_BYTE, data);
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, cols, rows, GL_RGBA, GL_UNSIGNED_BYTE, data);
         }
-        qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         // these probably should be clamp, but we have a lot of issues with editor
         // geometry coming out with texcoords slightly off one side, resulting in
         // a smear across the entire polygon
 #if 1
-        qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 #else
-        qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 #endif
     }
 }
