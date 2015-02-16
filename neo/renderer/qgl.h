@@ -32,6 +32,7 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __QGL_H__
 #define __QGL_H__
 
+#if !defined(ID_TYPEINFO)
 #include "../glew/GL/glew.h"
 
 #if defined( _WIN32 )
@@ -40,6 +41,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #elif defined( __linux__ )
 #include "../glew/GL/glxglew.h"
+#endif
 #endif
 
 #ifndef APIENTRY
@@ -411,13 +413,13 @@ If you have questions concerning this license or the applicable additional terms
 #define qglColorTableEXT glColorTableEXT
 
 
-// EXT_stencil_two_side
-extern	PFNGLACTIVESTENCILFACEEXTPROC	qglActiveStencilFaceEXT;
-
-
-// ATI_separate_stencil
-extern	PFNGLSTENCILOPSEPARATEATIPROC		qglStencilOpSeparateATI;
-extern	PFNGLSTENCILFUNCSEPARATEATIPROC		qglStencilFuncSeparateATI;
+//// EXT_stencil_two_side
+//extern	PFNGLACTIVESTENCILFACEEXTPROC	qglActiveStencilFaceEXT;
+//
+//
+//// ATI_separate_stencil
+//extern	PFNGLSTENCILOPSEPARATEATIPROC		qglStencilOpSeparateATI;
+//extern	PFNGLSTENCILFUNCSEPARATEATIPROC		qglStencilFuncSeparateATI;
 
 // ARB_texture_compression
 #define qglCompressedTexImage2DARB glCompressedTexImage2DARB
