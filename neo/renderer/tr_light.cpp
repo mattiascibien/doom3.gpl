@@ -31,9 +31,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "tr_local.h"
 
-static omp_lock_t stage1Lock;
-static omp_lock_t stage2Lock;
-
 static const float CHECK_BOUNDS_EPSILON = 1.0f;
 
 
@@ -1798,15 +1795,8 @@ void R_AddModelSurfaces(void)
 	}
 	int   i, j;
 
-	omp_init_lock(&stage1Lock);
-	#pragma omp parallel for default(shared) schedule(dynamic)
 	for (i = 0; i < nInteractions; i++)
 	{
-		while (!omp_test_lock(&stage1Lock))
-		{
-			common->Warning("Could not get lock for stage1 interactions\n");
-			continue;
-		}
 		interactionPhase2[i] = interactions[i]->AddActiveInteraction(true, &shadowScissor[i], &interactionModelPtr[i]);
 
 		if (interactionModelPtr[i])
@@ -1815,40 +1805,20 @@ void R_AddModelSurfaces(void)
 			createInteractionModel[nCreateInteractions] = interactionModelPtr[i];
 			nCreateInteractions++;
 		}
-		omp_unset_lock(&stage1Lock);
 	}
-	omp_destroy_lock(&stage1Lock);
 
-	omp_init_lock(&stage2Lock);
-	#pragma omp parallel for shared(interactions,createInteractionId,createInteractionModel) schedule(dynamic)
 	for (j = 0; j < nCreateInteractions; j++)
 	{
-		while (!omp_test_lock(&stage2Lock))
-		{
-			common->Warning("Could not get lock for the stage2 interaction creator\n");
-			continue;
-		}
 		interactions[createInteractionId[j]]->CreateInteraction(createInteractionModel[j]);
-
-		omp_unset_lock(&stage2Lock);
 	}
 
 	for (i = 0; i < nInteractions; i++)
 	{
-		while (!omp_test_lock(&stage2Lock))
-		{
-			common->Warning("Could not get lock for stage2 interactions\n");
-			continue;
-		}
 		if (interactionPhase2[i])
 		{
 			interactions[i]->AddActiveInteraction(false, &shadowScissor[i], &interactionModelPtr[i]);
 		}
-
-		omp_unset_lock(&stage2Lock);
 	}
-
-	omp_destroy_lock(&stage2Lock);
 }
 
 /*

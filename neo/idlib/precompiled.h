@@ -103,7 +103,6 @@ If you have questions concerning this license or the applicable additional terms
 #include <typeinfo>
 #include <errno.h>
 #include <math.h>
-#include <omp.h>
 
 //-----------------------------------------------------
 
