@@ -1031,9 +1031,6 @@
     <ClCompile Include="sys\win32\win_shared.cpp">
       <Filter>Sys</Filter>
     </ClCompile>
-    <ClCompile Include="sys\win32\win_snd.cpp">
-      <Filter>Sys</Filter>
-    </ClCompile>
     <ClCompile Include="sys\win32\win_syscon.cpp">
       <Filter>Sys</Filter>
     </ClCompile>
@@ -1855,9 +1852,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="openal\idal.py">
-      <Filter>Sound</Filter>
-    </None>
     <None Include="sound\OggVorbis\vorbissrc\lookups.pl">
       <Filter>Sound\vorbissrc</Filter>
     </None>

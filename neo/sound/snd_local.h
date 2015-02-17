@@ -33,7 +33,6 @@ If you have questions concerning this license or the applicable additional terms
 #ifdef _WIN32
 #include "../openal/include/al.h"
 #include "../openal/include/alc.h"
-#include "../openal/idal.h"
 // broken OpenAL SDK ?
 #define ID_ALCHAR (ALubyte *)
 #elif defined( MACOS_X )
@@ -70,7 +69,6 @@ const float SND_EPSILON				= 1.0f / 32768.0f;	// if volume is below this, it wil
 
 const int ROOM_SLICES_IN_BUFFER		= 10;
 
-class idAudioHardware;
 class idAudioBuffer;
 class idWaveFile;
 class idSoundCache;
@@ -96,14 +94,14 @@ class idSoundWorldLocal;
 #endif
 struct waveformatex_s
 {
-    word    wFormatTag;        /* format type */
-    word    nChannels;         /* number of channels (i.e. mono, stereo...) */
-    dword   nSamplesPerSec;    /* sample rate */
-    dword   nAvgBytesPerSec;   /* for buffer estimation */
-    word    nBlockAlign;       /* block size of data */
-    word    wBitsPerSample;    /* Number of bits per sample of mono data */
-    word    cbSize;            /* The count in bytes of the size of
-                                    extra information (after cbSize) */
+	word wFormatTag; /* format type */
+	word nChannels; /* number of channels (i.e. mono, stereo...) */
+	dword nSamplesPerSec; /* sample rate */
+	dword nAvgBytesPerSec; /* for buffer estimation */
+	word nBlockAlign; /* block size of data */
+	word wBitsPerSample; /* Number of bits per sample of mono data */
+	word cbSize; /* The count in bytes of the size of
+				  +	extra information (after cbSize) */
 } PACKED;
 
 typedef waveformatex_s waveformatex_t;
@@ -237,38 +235,6 @@ private:
     int				CloseOGG(void);
 };
 
-
-/*
-===================================================================================
-
-idAudioHardware
-
-===================================================================================
-*/
-
-class idAudioHardware
-{
-public:
-    static idAudioHardware *Alloc();
-
-    virtual					~idAudioHardware();
-
-    virtual bool			Initialize() = 0;
-
-    virtual bool			Lock(void **pDSLockedBuffer, ulong *dwDSLockedBufferSize) = 0;
-    virtual bool			Unlock(void *pDSLockedBuffer, dword dwDSLockedBufferSize) = 0;
-    virtual bool			GetCurrentPosition(ulong *pdwCurrentWriteCursor) = 0;
-
-    // try to write as many sound samples to the device as possible without blocking and prepare for a possible new mixing call
-    // returns wether there is *some* space for writing available
-    virtual bool			Flush(void) = 0;
-
-    virtual void			Write(bool flushing) = 0;
-
-    virtual int				GetNumberOfSpeakers(void)= 0;
-    virtual int				GetMixBufferSize(void) = 0;
-    virtual short*			GetMixBuffer(void) = 0;
-};
 
 
 /*
@@ -688,7 +654,6 @@ public:
 
     void					Shutdown(void);
     void					Init(idRenderWorld *rw);
-    void					ClearBuffer(void);
 
     // update
     void					ForegroundUpdate(int currentTime);
@@ -768,7 +733,6 @@ public:
 
     // shutdown routine
     virtual	void			Shutdown(void);
-    virtual void			ClearBuffer(void);
 
     // sound is attached to the window, and must be recreated when the window is changed
     virtual bool			ShutdownHW(void);
@@ -816,7 +780,6 @@ public:
     ALuint					AllocOpenALSource(idSoundChannel *chan, bool looping, bool stereo);
     void					FreeOpenALSource(ALuint handle);
 
-    idAudioHardware *		snd_audio_hw;
     idSoundCache *			soundCache;
 
     idSoundWorldLocal *		currentSoundWorld;	// the one to mix each async tic
@@ -858,7 +821,6 @@ public:
 #endif
     bool					efxloaded;
     // latches
-    static bool				useOpenAL;
     static bool				useEAXReverb;
     // mark available during initialization, or through an explicit test
     static int				EAXAvailable;
