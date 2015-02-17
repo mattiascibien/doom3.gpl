@@ -642,6 +642,9 @@
     <ClInclude Include="glew\GL\wglew.h">
       <Filter>glew\GL</Filter>
     </ClInclude>
+    <ClInclude Include="sound\efxlib.h">
+      <Filter>Sound</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cm\CollisionModel_contacts.cpp">

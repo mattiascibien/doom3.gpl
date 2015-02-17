@@ -1043,6 +1043,7 @@ void idSessionLocal::HandleMainMenuCommands(const char *menuCommand)
                     switch (eax)
                     {
                     case 2:
+						cvarSystem->SetCVarBool("s_useOpenAL", false);
                         // OpenAL subsystem load failed
                         MessageBox(MSG_OK, common->GetLanguageDict()->GetString("#str_07238"), common->GetLanguageDict()->GetString("#str_07231"), true);
                         break;
@@ -1064,8 +1065,6 @@ void idSessionLocal::HandleMainMenuCommands(const char *menuCommand)
                 }
                 else
                 {
-                    // also turn off OpenAL so we fully go back to legacy mixer
-                    cvarSystem->SetCVarBool("s_useOpenAL", false);
                     // when you restart
                     MessageBox(MSG_OK, common->GetLanguageDict()->GetString("#str_04137"), common->GetLanguageDict()->GetString("#str_07231"), true);
                 }

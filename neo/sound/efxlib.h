@@ -4,8 +4,9 @@
 #ifndef __EFXLIBH
 #define __EFXLIBH
 
+#if ID_OPENAL_EAX
 #include "eax4.h"
-
+#endif
 
 
 

@@ -355,6 +355,7 @@
     <ClInclude Include="renderer\tr_local.h" />
     <ClInclude Include="renderer\VertexCache.h" />
     <ClInclude Include="renderer\wglext.h" />
+    <ClInclude Include="sound\efxlib.h" />
     <ClInclude Include="sound\snd_local.h" />
     <ClInclude Include="sound\sound.h" />
     <ClInclude Include="sound\OggVorbis\vorbissrc\backends.h" />

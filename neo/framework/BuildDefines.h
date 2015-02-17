@@ -29,7 +29,7 @@ If you have questions concerning this license or the applicable additional terms
 /*
 ===============================================================================
 
-	Preprocessor settings for compiling different versions.
+Preprocessor settings for compiling different versions.
 
 ===============================================================================
 */
@@ -126,6 +126,10 @@ If you have questions concerning this license or the applicable additional terms
 #	else
 #		define ID_OPENAL 0
 #	endif
+#endif
+
+#ifndef ID_OPENAL_EAX
+#	define ID_OPENAL_EAX 0
 #endif
 
 #ifndef ID_ALLOW_D3XP

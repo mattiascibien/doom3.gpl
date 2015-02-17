@@ -45,7 +45,7 @@ If you have questions concerning this license or the applicable additional terms
 #include <AL/alc.h>
 #define ID_ALCHAR
 #endif
-#include "../openal/include/efxlib.h"
+#include "efxlib.h"
 
 // demo sound commands
 typedef enum
@@ -849,11 +849,13 @@ public:
     ALCcontext				*openalContext;
     ALsizei					openalSourceCount;
     openalSource_t			openalSources[256];
+#if ID_OPENAL_EAX
     EAXSet					alEAXSet;
     EAXGet					alEAXGet;
     EAXSetBufferMode		alEAXSetBufferMode;
     EAXGetBufferMode		alEAXGetBufferMode;
     idEFXFile				EFXDatabase;
+#endif
     bool					efxloaded;
     // latches
     static bool				useOpenAL;
