@@ -1925,11 +1925,12 @@ void idImage::PurgeImage()
 {
     if (texnum != TEXTURE_NOT_LOADED)
     {
+		//mattiascibien: this is now useless when using GLEW
         // sometimes is NULL when exiting with an error
-        if (glDeleteTextures)
-        {
+        /*if (glDeleteTextures)
+        {*/
             glDeleteTextures(1, &texnum);	// this should be the ONLY place it is ever called!
-        }
+        //}
         texnum = TEXTURE_NOT_LOADED;
     }
 

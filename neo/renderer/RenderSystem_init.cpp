@@ -244,7 +244,8 @@ R_DoubleCheckExtension
 static bool R_DoubleCheckExtension(char* name)
 {
 	bool customCheck = R_CheckExtension(name);
-	bool glewCheck = static_cast<bool>(glewIsSupported(name));
+	//mattiascibien: fixing warning C4800
+	bool glewCheck = glewIsSupported(name) == GL_TRUE ? true : false;
 
 	static const char* status[] = {
 		"[ FAILED ]",
