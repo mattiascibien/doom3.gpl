@@ -177,12 +177,12 @@ void *R_GetCommandBuffer(int bytes)
 {
 	emptyCommand_t	*cmd;
 
-	cmd = (emptyCommand_t *)R_FrameAlloc(bytes);
+	cmd = (emptyCommand_t *) R_FrameAlloc(bytes);
 	cmd->next = NULL;
 	frameData->cmdTail->next = &cmd->commandId;
 	frameData->cmdTail = cmd;
 
-	return (void *)cmd;
+	return (void *) cmd;
 }
 
 
@@ -197,7 +197,7 @@ and by R_ToggleSmpFrame
 void R_ClearCommandChain(void)
 {
 	// clear the command chain
-	frameData->cmdHead = frameData->cmdTail = (emptyCommand_t *)R_FrameAlloc(sizeof(*frameData->cmdHead));
+	frameData->cmdHead = frameData->cmdTail = (emptyCommand_t *) R_FrameAlloc(sizeof(*frameData->cmdHead));
 	frameData->cmdHead->commandId = RC_NOP;
 	frameData->cmdHead->next = NULL;
 }
@@ -229,7 +229,7 @@ void	R_AddDrawViewCmd(viewDef_t *parms)
 {
 	drawSurfsCommand_t	*cmd;
 
-	cmd = (drawSurfsCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
+	cmd = (drawSurfsCommand_t *) R_GetCommandBuffer(sizeof(*cmd));
 	cmd->commandId = RC_DRAW_VIEW;
 
 	cmd->viewDef = parms;
@@ -284,7 +284,7 @@ void R_LockSurfaceScene(viewDef_t *parms)
 	}
 
 	// add the stored off surface commands again
-	cmd = (drawSurfsCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
+	cmd = (drawSurfsCommand_t *) R_GetCommandBuffer(sizeof(*cmd));
 	*cmd = tr.lockSurfacesCmd;
 }
 
@@ -466,12 +466,12 @@ void idRenderSystemLocal::DrawSmallStringExt(int x, int y, const char *string, c
 	int			xx;
 
 	// draw the colored text
-	s = (const unsigned char*)string;
+	s = (const unsigned char*) string;
 	xx = x;
 	SetColor(setColor);
 	while (*s)
 	{
-		if (idStr::IsColor((const char*)s))
+		if (idStr::IsColor((const char*) s))
 		{
 			if (!forceColor)
 			{
@@ -599,11 +599,7 @@ void idRenderSystemLocal::SetBackEndRenderer()
 
 	backEndRenderer = BE_BAD;
 
-	if (idStr::Icmp(r_renderer.GetString(), "arb") == 0)
-	{
-		backEndRenderer = BE_ARB;
-	}
-	else if (idStr::Icmp(r_renderer.GetString(), "arb2") == 0)
+	if (idStr::Icmp(r_renderer.GetString(), "arb2") == 0)
 	{
 		if (glConfig.allowARB2Path)
 		{
@@ -619,523 +615,519 @@ void idRenderSystemLocal::SetBackEndRenderer()
 		}
 	}
 
-		// fallback
-		if (backEndRenderer == BE_BAD)
-		{
-			// choose the best
-			if (glConfig.allowARB2Path)
-			{
-				backEndRenderer = BE_ARB2;
-			}
-			else
-			{
-				// the others are considered experimental
-				backEndRenderer = BE_ARB;
-			}
-		}
-
-		backEndRendererHasVertexPrograms = false;
-		backEndRendererMaxLight = 1.0;
-
-		switch (backEndRenderer)
-		{
-		case BE_ARB:
-			common->Printf("using ARB renderSystem\n");
-			break;
-		case BE_ARB2:
-			common->Printf("using ARB2 renderSystem\n");
-			backEndRendererHasVertexPrograms = true;
-			backEndRendererMaxLight = 999;
-			break;
-		case BE_GLSL:
-			common->Printf("using GLSL renderSystem\n");
-			backEndRendererHasVertexPrograms = true;
-			backEndRendererMaxLight = 999;
-			break;
-		default:
-			common->FatalError("SetbackEndRenderer: bad back end");
-		}
-
-		// clear the vertex cache if we are changing between
-		// using vertex programs and not, because specular and
-		// shadows will be different data
-		if (oldVPstate != backEndRendererHasVertexPrograms)
-		{
-			vertexCache.PurgeAll();
-			if (primaryWorld)
-			{
-				primaryWorld->FreeInteractions();
-			}
-		}
-
-		r_renderer.ClearModified();
-	}
-
-	/*
-	====================
-	BeginFrame
-	====================
-	*/
-	void idRenderSystemLocal::BeginFrame(int windowWidth, int windowHeight)
+	// fallback
+	if (backEndRenderer == BE_BAD)
 	{
-		setBufferCommand_t	*cmd;
-
-		if (!glConfig.isInitialized)
+		// choose the best
+		if (glConfig.allowARB2Path)
 		{
-			return;
+			backEndRenderer = BE_ARB2;
 		}
-
-		// determine which back end we will use
-		SetBackEndRenderer();
-
-		guiModel->Clear();
-
-		// for the larger-than-window tiled rendering screenshots
-		if (tiledViewport[0])
+		else if (glConfig.allowGLSLPath)
 		{
-			windowWidth = tiledViewport[0];
-			windowHeight = tiledViewport[1];
-		}
-
-		glConfig.vidWidth = windowWidth;
-		glConfig.vidHeight = windowHeight;
-
-		renderCrops[0].x = 0;
-		renderCrops[0].y = 0;
-		renderCrops[0].width = windowWidth;
-		renderCrops[0].height = windowHeight;
-		currentRenderCrop = 0;
-
-		// screenFraction is just for quickly testing fill rate limitations
-		if (r_screenFraction.GetInteger() != 100)
-		{
-			int	w = SCREEN_WIDTH * r_screenFraction.GetInteger() / 100.0f;
-			int h = SCREEN_HEIGHT * r_screenFraction.GetInteger() / 100.0f;
-			CropRenderSize(w, h);
-		}
-
-
-		// this is the ONLY place this is modified
-		frameCount++;
-
-		// just in case we did a common->Error while this
-		// was set
-		guiRecursionLevel = 0;
-
-		// the first rendering will be used for commands like
-		// screenshot, rather than a possible subsequent remote
-		// or mirror render
-		//	primaryWorld = NULL;
-
-		// set the time for shader effects in 2D rendering
-		frameShaderTime = eventLoop->Milliseconds() * 0.001;
-
-		//
-		// draw buffer stuff
-		//
-		cmd = (setBufferCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
-		cmd->commandId = RC_SET_BUFFER;
-		cmd->frameCount = frameCount;
-
-		if (r_frontBuffer.GetBool())
-		{
-			cmd->buffer = (int)GL_FRONT;
-		}
-		else
-		{
-			cmd->buffer = (int)GL_BACK;
+			backEndRenderer = BE_GLSL;
 		}
 	}
 
-	void idRenderSystemLocal::WriteDemoPics()
+	backEndRendererHasVertexPrograms = false;
+	backEndRendererMaxLight = 1.0;
+
+	switch (backEndRenderer)
+	{
+	case BE_ARB2:
+		common->Printf("using ARB2 renderSystem\n");
+		backEndRendererHasVertexPrograms = true;
+		backEndRendererMaxLight = 999;
+		break;
+	case BE_GLSL:
+		common->Printf("using GLSL renderSystem\n");
+		backEndRendererHasVertexPrograms = true;
+		backEndRendererMaxLight = 999;
+		break;
+	default:
+		common->FatalError("SetbackEndRenderer: bad back end");
+	}
+
+	// clear the vertex cache if we are changing between
+	// using vertex programs and not, because specular and
+	// shadows will be different data
+	if (oldVPstate != backEndRendererHasVertexPrograms)
+	{
+		vertexCache.PurgeAll();
+		if (primaryWorld)
+		{
+			primaryWorld->FreeInteractions();
+		}
+	}
+
+	r_renderer.ClearModified();
+}
+
+/*
+====================
+BeginFrame
+====================
+*/
+void idRenderSystemLocal::BeginFrame(int windowWidth, int windowHeight)
+{
+	setBufferCommand_t	*cmd;
+
+	if (!glConfig.isInitialized)
+	{
+		return;
+	}
+
+	// determine which back end we will use
+	SetBackEndRenderer();
+
+	guiModel->Clear();
+
+	// for the larger-than-window tiled rendering screenshots
+	if (tiledViewport[0])
+	{
+		windowWidth = tiledViewport[0];
+		windowHeight = tiledViewport[1];
+	}
+
+	glConfig.vidWidth = windowWidth;
+	glConfig.vidHeight = windowHeight;
+
+	renderCrops[0].x = 0;
+	renderCrops[0].y = 0;
+	renderCrops[0].width = windowWidth;
+	renderCrops[0].height = windowHeight;
+	currentRenderCrop = 0;
+
+	// screenFraction is just for quickly testing fill rate limitations
+	if (r_screenFraction.GetInteger() != 100)
+	{
+		int	w = SCREEN_WIDTH * r_screenFraction.GetInteger() / 100.0f;
+		int h = SCREEN_HEIGHT * r_screenFraction.GetInteger() / 100.0f;
+		CropRenderSize(w, h);
+	}
+
+
+	// this is the ONLY place this is modified
+	frameCount++;
+
+	// just in case we did a common->Error while this
+	// was set
+	guiRecursionLevel = 0;
+
+	// the first rendering will be used for commands like
+	// screenshot, rather than a possible subsequent remote
+	// or mirror render
+	//	primaryWorld = NULL;
+
+	// set the time for shader effects in 2D rendering
+	frameShaderTime = eventLoop->Milliseconds() * 0.001;
+
+	//
+	// draw buffer stuff
+	//
+	cmd = (setBufferCommand_t *) R_GetCommandBuffer(sizeof(*cmd));
+	cmd->commandId = RC_SET_BUFFER;
+	cmd->frameCount = frameCount;
+
+	if (r_frontBuffer.GetBool())
+	{
+		cmd->buffer = (int) GL_FRONT;
+	}
+	else
+	{
+		cmd->buffer = (int) GL_BACK;
+	}
+}
+
+void idRenderSystemLocal::WriteDemoPics()
+{
+	session->writeDemo->WriteInt(DS_RENDER);
+	session->writeDemo->WriteInt(DC_GUI_MODEL);
+	guiModel->WriteToDemo(session->writeDemo);
+}
+
+void idRenderSystemLocal::DrawDemoPics()
+{
+	demoGuiModel->EmitFullScreen();
+}
+
+/*
+=============
+EndFrame
+
+Returns the number of msec spent in the back end
+=============
+*/
+void idRenderSystemLocal::EndFrame(int *frontEndMsec, int *backEndMsec)
+{
+	emptyCommand_t *cmd;
+
+	if (!glConfig.isInitialized)
+	{
+		return;
+	}
+
+	// close any gui drawing
+	guiModel->EmitFullScreen();
+	guiModel->Clear();
+
+	// save out timing information
+	if (frontEndMsec)
+	{
+		*frontEndMsec = pc.frontEndMsec;
+	}
+	if (backEndMsec)
+	{
+		*backEndMsec = backEnd.pc.msec;
+	}
+
+	// print any other statistics and clear all of them
+	R_PerformanceCounters();
+
+	// check for dynamic changes that require some initialization
+	R_CheckCvars();
+
+	// check for errors
+	GL_CheckErrors();
+
+	// add the swapbuffers command
+	cmd = (emptyCommand_t *) R_GetCommandBuffer(sizeof(*cmd));
+	cmd->commandId = RC_SWAP_BUFFERS;
+
+	// start the back end up again with the new command list
+	R_IssueRenderCommands();
+
+	// use the other buffers next frame, because another CPU
+	// may still be rendering into the current buffers
+	R_ToggleSmpFrame();
+
+	// we can now release the vertexes used this frame
+	vertexCache.EndFrame();
+
+	if (session->writeDemo)
 	{
 		session->writeDemo->WriteInt(DS_RENDER);
-		session->writeDemo->WriteInt(DC_GUI_MODEL);
-		guiModel->WriteToDemo(session->writeDemo);
+		session->writeDemo->WriteInt(DC_END_FRAME);
+		if (r_showDemo.GetBool())
+		{
+			common->Printf("write DC_END_FRAME\n");
+		}
 	}
 
-	void idRenderSystemLocal::DrawDemoPics()
+}
+
+/*
+=====================
+RenderViewToViewport
+
+Converts from SCREEN_WIDTH / SCREEN_HEIGHT coordinates to current cropped pixel coordinates
+=====================
+*/
+void idRenderSystemLocal::RenderViewToViewport(const renderView_t *renderView, idScreenRect *viewport)
+{
+	renderCrop_t	*rc = &renderCrops[currentRenderCrop];
+
+	float wRatio = (float) rc->width / SCREEN_WIDTH;
+	float hRatio = (float) rc->height / SCREEN_HEIGHT;
+
+	viewport->x1 = idMath::Ftoi(rc->x + renderView->x * wRatio);
+	viewport->x2 = idMath::Ftoi(rc->x + floor((renderView->x + renderView->width) * wRatio + 0.5f) - 1);
+	viewport->y1 = idMath::Ftoi((rc->y + rc->height) - floor((renderView->y + renderView->height) * hRatio + 0.5f));
+	viewport->y2 = idMath::Ftoi((rc->y + rc->height) - floor(renderView->y * hRatio + 0.5f) - 1);
+}
+
+static int RoundDownToPowerOfTwo(int v)
+{
+	int	i;
+
+	for (i = 0; i < 20; i++)
 	{
-		demoGuiModel->EmitFullScreen();
+		if ((1 << i) == v)
+		{
+			return v;
+		}
+		if ((1 << i) > v)
+		{
+			return 1 << (i - 1);
+		}
 	}
+	return 1 << i;
+}
 
-	/*
-	=============
-	EndFrame
+/*
+================
+CropRenderSize
 
-	Returns the number of msec spent in the back end
-	=============
-	*/
-	void idRenderSystemLocal::EndFrame(int *frontEndMsec, int *backEndMsec)
+This automatically halves sizes until it fits in the current window size,
+so if you specify a power of two size for a texture copy, it may be shrunk
+down, but still valid.
+================
+*/
+void	idRenderSystemLocal::CropRenderSize(int width, int height, bool makePowerOfTwo, bool forceDimensions)
+{
+	if (!glConfig.isInitialized)
 	{
-		emptyCommand_t *cmd;
-
-		if (!glConfig.isInitialized)
-		{
-			return;
-		}
-
-		// close any gui drawing
-		guiModel->EmitFullScreen();
-		guiModel->Clear();
-
-		// save out timing information
-		if (frontEndMsec)
-		{
-			*frontEndMsec = pc.frontEndMsec;
-		}
-		if (backEndMsec)
-		{
-			*backEndMsec = backEnd.pc.msec;
-		}
-
-		// print any other statistics and clear all of them
-		R_PerformanceCounters();
-
-		// check for dynamic changes that require some initialization
-		R_CheckCvars();
-
-		// check for errors
-		GL_CheckErrors();
-
-		// add the swapbuffers command
-		cmd = (emptyCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
-		cmd->commandId = RC_SWAP_BUFFERS;
-
-		// start the back end up again with the new command list
-		R_IssueRenderCommands();
-
-		// use the other buffers next frame, because another CPU
-		// may still be rendering into the current buffers
-		R_ToggleSmpFrame();
-
-		// we can now release the vertexes used this frame
-		vertexCache.EndFrame();
-
-		if (session->writeDemo)
-		{
-			session->writeDemo->WriteInt(DS_RENDER);
-			session->writeDemo->WriteInt(DC_END_FRAME);
-			if (r_showDemo.GetBool())
-			{
-				common->Printf("write DC_END_FRAME\n");
-			}
-		}
-
+		return;
 	}
 
-	/*
-	=====================
-	RenderViewToViewport
+	// close any gui drawing before changing the size
+	guiModel->EmitFullScreen();
+	guiModel->Clear();
 
-	Converts from SCREEN_WIDTH / SCREEN_HEIGHT coordinates to current cropped pixel coordinates
-	=====================
-	*/
-	void idRenderSystemLocal::RenderViewToViewport(const renderView_t *renderView, idScreenRect *viewport)
+	if (width < 1 || height < 1)
 	{
-		renderCrop_t	*rc = &renderCrops[currentRenderCrop];
-
-		float wRatio = (float)rc->width / SCREEN_WIDTH;
-		float hRatio = (float)rc->height / SCREEN_HEIGHT;
-
-		viewport->x1 = idMath::Ftoi(rc->x + renderView->x * wRatio);
-		viewport->x2 = idMath::Ftoi(rc->x + floor((renderView->x + renderView->width) * wRatio + 0.5f) - 1);
-		viewport->y1 = idMath::Ftoi((rc->y + rc->height) - floor((renderView->y + renderView->height) * hRatio + 0.5f));
-		viewport->y2 = idMath::Ftoi((rc->y + rc->height) - floor(renderView->y * hRatio + 0.5f) - 1);
+		common->Error("CropRenderSize: bad sizes");
 	}
 
-	static int RoundDownToPowerOfTwo(int v)
+	if (session->writeDemo)
 	{
-		int	i;
+		session->writeDemo->WriteInt(DS_RENDER);
+		session->writeDemo->WriteInt(DC_CROP_RENDER);
+		session->writeDemo->WriteInt(width);
+		session->writeDemo->WriteInt(height);
+		session->writeDemo->WriteInt(makePowerOfTwo);
 
-		for (i = 0; i < 20; i++)
+		if (r_showDemo.GetBool())
 		{
-			if ((1 << i) == v)
-			{
-				return v;
-			}
-			if ((1 << i) > v)
-			{
-				return 1 << (i - 1);
-			}
+			common->Printf("write DC_CROP_RENDER\n");
 		}
-		return 1 << i;
 	}
 
-	/*
-	================
-	CropRenderSize
+	// convert from virtual SCREEN_WIDTH/SCREEN_HEIGHT coordinates to physical OpenGL pixels
+	renderView_t renderView;
+	renderView.x = 0;
+	renderView.y = 0;
+	renderView.width = width;
+	renderView.height = height;
 
-	This automatically halves sizes until it fits in the current window size,
-	so if you specify a power of two size for a texture copy, it may be shrunk
-	down, but still valid.
-	================
-	*/
-	void	idRenderSystemLocal::CropRenderSize(int width, int height, bool makePowerOfTwo, bool forceDimensions)
+	idScreenRect	r;
+	RenderViewToViewport(&renderView, &r);
+
+	width = r.x2 - r.x1 + 1;
+	height = r.y2 - r.y1 + 1;
+
+	if (forceDimensions)
 	{
-		if (!glConfig.isInitialized)
-		{
-			return;
-		}
-
-		// close any gui drawing before changing the size
-		guiModel->EmitFullScreen();
-		guiModel->Clear();
-
-		if (width < 1 || height < 1)
-		{
-			common->Error("CropRenderSize: bad sizes");
-		}
-
-		if (session->writeDemo)
-		{
-			session->writeDemo->WriteInt(DS_RENDER);
-			session->writeDemo->WriteInt(DC_CROP_RENDER);
-			session->writeDemo->WriteInt(width);
-			session->writeDemo->WriteInt(height);
-			session->writeDemo->WriteInt(makePowerOfTwo);
-
-			if (r_showDemo.GetBool())
-			{
-				common->Printf("write DC_CROP_RENDER\n");
-			}
-		}
-
-		// convert from virtual SCREEN_WIDTH/SCREEN_HEIGHT coordinates to physical OpenGL pixels
-		renderView_t renderView;
-		renderView.x = 0;
-		renderView.y = 0;
-		renderView.width = width;
-		renderView.height = height;
-
-		idScreenRect	r;
-		RenderViewToViewport(&renderView, &r);
-
-		width = r.x2 - r.x1 + 1;
-		height = r.y2 - r.y1 + 1;
-
-		if (forceDimensions)
-		{
-			// just give exactly what we ask for
-			width = renderView.width;
-			height = renderView.height;
-		}
-
-		// if makePowerOfTwo, drop to next lower power of two after scaling to physical pixels
-		if (makePowerOfTwo)
-		{
-			width = RoundDownToPowerOfTwo(width);
-			height = RoundDownToPowerOfTwo(height);
-			// FIXME: megascreenshots with offset viewports don't work right with this yet
-		}
-
-		renderCrop_t	*rc = &renderCrops[currentRenderCrop];
-
-		// we might want to clip these to the crop window instead
-		while (width > glConfig.vidWidth)
-		{
-			width >>= 1;
-		}
-		while (height > glConfig.vidHeight)
-		{
-			height >>= 1;
-		}
-
-		if (currentRenderCrop == MAX_RENDER_CROPS)
-		{
-			common->Error("idRenderSystemLocal::CropRenderSize: currentRenderCrop == MAX_RENDER_CROPS");
-		}
-
-		currentRenderCrop++;
-
-		rc = &renderCrops[currentRenderCrop];
-
-		rc->x = 0;
-		rc->y = 0;
-		rc->width = width;
-		rc->height = height;
+		// just give exactly what we ask for
+		width = renderView.width;
+		height = renderView.height;
 	}
 
-	/*
-	================
-	UnCrop
-	================
-	*/
-	void idRenderSystemLocal::UnCrop()
+	// if makePowerOfTwo, drop to next lower power of two after scaling to physical pixels
+	if (makePowerOfTwo)
 	{
-		if (!glConfig.isInitialized)
-		{
-			return;
-		}
-
-		if (currentRenderCrop < 1)
-		{
-			common->Error("idRenderSystemLocal::UnCrop: currentRenderCrop < 1");
-		}
-
-		// close any gui drawing
-		guiModel->EmitFullScreen();
-		guiModel->Clear();
-
-		currentRenderCrop--;
-
-		if (session->writeDemo)
-		{
-			session->writeDemo->WriteInt(DS_RENDER);
-			session->writeDemo->WriteInt(DC_UNCROP_RENDER);
-
-			if (r_showDemo.GetBool())
-			{
-				common->Printf("write DC_UNCROP\n");
-			}
-		}
+		width = RoundDownToPowerOfTwo(width);
+		height = RoundDownToPowerOfTwo(height);
+		// FIXME: megascreenshots with offset viewports don't work right with this yet
 	}
 
-	/*
-	================
-	CaptureRenderToImage
-	================
-	*/
-	void idRenderSystemLocal::CaptureRenderToImage(const char *imageName)
+	renderCrop_t	*rc = &renderCrops[currentRenderCrop];
+
+	// we might want to clip these to the crop window instead
+	while (width > glConfig.vidWidth)
 	{
-		if (!glConfig.isInitialized)
-		{
-			return;
-		}
-		guiModel->EmitFullScreen();
-		guiModel->Clear();
-
-		if (session->writeDemo)
-		{
-			session->writeDemo->WriteInt(DS_RENDER);
-			session->writeDemo->WriteInt(DC_CAPTURE_RENDER);
-			session->writeDemo->WriteHashString(imageName);
-
-			if (r_showDemo.GetBool())
-			{
-				common->Printf("write DC_CAPTURE_RENDER: %s\n", imageName);
-			}
-		}
-
-		// look up the image before we create the render command, because it
-		// may need to sync to create the image
-		idImage	*image = globalImages->ImageFromFile(imageName, TF_DEFAULT, true, TR_REPEAT, TD_DEFAULT);
-
-		renderCrop_t *rc = &renderCrops[currentRenderCrop];
-
-		copyRenderCommand_t *cmd = (copyRenderCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
-		cmd->commandId = RC_COPY_RENDER;
-		cmd->x = rc->x;
-		cmd->y = rc->y;
-		cmd->imageWidth = rc->width;
-		cmd->imageHeight = rc->height;
-		cmd->image = image;
-
-		guiModel->Clear();
+		width >>= 1;
 	}
-
-	/*
-	==============
-	CaptureRenderToFile
-
-	==============
-	*/
-	void idRenderSystemLocal::CaptureRenderToFile(const char *fileName, bool fixAlpha)
+	while (height > glConfig.vidHeight)
 	{
-		if (!glConfig.isInitialized)
-		{
-			return;
-		}
-
-		renderCrop_t *rc = &renderCrops[currentRenderCrop];
-
-		guiModel->EmitFullScreen();
-		guiModel->Clear();
-		R_IssueRenderCommands();
-
-		glReadBuffer(GL_BACK);
-
-		// include extra space for OpenGL padding to word boundaries
-		int	c = (rc->width + 3) * rc->height;
-		byte *data = (byte *)R_StaticAlloc(c * 3);
-
-		glReadPixels(rc->x, rc->y, rc->width, rc->height, GL_RGB, GL_UNSIGNED_BYTE, data);
-
-		byte *data2 = (byte *)R_StaticAlloc(c * 4);
-
-		for (int i = 0; i < c; i++)
-		{
-			data2[i * 4] = data[i * 3];
-			data2[i * 4 + 1] = data[i * 3 + 1];
-			data2[i * 4 + 2] = data[i * 3 + 2];
-			data2[i * 4 + 3] = 0xff;
-		}
-
-		R_WriteTGA(fileName, data2, rc->width, rc->height, true);
-
-		R_StaticFree(data);
-		R_StaticFree(data2);
+		height >>= 1;
 	}
 
-
-	/*
-	==============
-	AllocRenderWorld
-	==============
-	*/
-	idRenderWorld *idRenderSystemLocal::AllocRenderWorld()
+	if (currentRenderCrop == MAX_RENDER_CROPS)
 	{
-		idRenderWorldLocal *rw;
-		rw = new idRenderWorldLocal;
-		worlds.Append(rw);
-		return rw;
+		common->Error("idRenderSystemLocal::CropRenderSize: currentRenderCrop == MAX_RENDER_CROPS");
 	}
 
-	/*
-	==============
-	FreeRenderWorld
-	==============
-	*/
-	void idRenderSystemLocal::FreeRenderWorld(idRenderWorld *rw)
+	currentRenderCrop++;
+
+	rc = &renderCrops[currentRenderCrop];
+
+	rc->x = 0;
+	rc->y = 0;
+	rc->width = width;
+	rc->height = height;
+}
+
+/*
+================
+UnCrop
+================
+*/
+void idRenderSystemLocal::UnCrop()
+{
+	if (!glConfig.isInitialized)
 	{
-		if (primaryWorld == rw)
+		return;
+	}
+
+	if (currentRenderCrop < 1)
+	{
+		common->Error("idRenderSystemLocal::UnCrop: currentRenderCrop < 1");
+	}
+
+	// close any gui drawing
+	guiModel->EmitFullScreen();
+	guiModel->Clear();
+
+	currentRenderCrop--;
+
+	if (session->writeDemo)
+	{
+		session->writeDemo->WriteInt(DS_RENDER);
+		session->writeDemo->WriteInt(DC_UNCROP_RENDER);
+
+		if (r_showDemo.GetBool())
 		{
-			primaryWorld = NULL;
+			common->Printf("write DC_UNCROP\n");
 		}
-		worlds.Remove(static_cast<idRenderWorldLocal *>(rw));
-		delete rw;
 	}
+}
 
-	/*
-	==============
-	PrintMemInfo
-	==============
-	*/
-	void idRenderSystemLocal::PrintMemInfo(MemInfo_t *mi)
+/*
+================
+CaptureRenderToImage
+================
+*/
+void idRenderSystemLocal::CaptureRenderToImage(const char *imageName)
+{
+	if (!glConfig.isInitialized)
 	{
-		// sum up image totals
-		globalImages->PrintMemInfo(mi);
-
-		// sum up model totals
-		renderModelManager->PrintMemInfo(mi);
-
-		// compute render totals
-
+		return;
 	}
+	guiModel->EmitFullScreen();
+	guiModel->Clear();
 
-	/*
-	===============
-	idRenderSystemLocal::UploadImage
-	===============
-	*/
-	bool idRenderSystemLocal::UploadImage(const char *imageName, const byte *data, int width, int height)
+	if (session->writeDemo)
 	{
-		idImage *image = globalImages->GetImage(imageName);
-		if (!image)
+		session->writeDemo->WriteInt(DS_RENDER);
+		session->writeDemo->WriteInt(DC_CAPTURE_RENDER);
+		session->writeDemo->WriteHashString(imageName);
+
+		if (r_showDemo.GetBool())
 		{
-			return false;
+			common->Printf("write DC_CAPTURE_RENDER: %s\n", imageName);
 		}
-		image->UploadScratch(data, width, height);
-		image->SetImageFilterAndRepeat();
-		return true;
 	}
+
+	// look up the image before we create the render command, because it
+	// may need to sync to create the image
+	idImage	*image = globalImages->ImageFromFile(imageName, TF_DEFAULT, true, TR_REPEAT, TD_DEFAULT);
+
+	renderCrop_t *rc = &renderCrops[currentRenderCrop];
+
+	copyRenderCommand_t *cmd = (copyRenderCommand_t *) R_GetCommandBuffer(sizeof(*cmd));
+	cmd->commandId = RC_COPY_RENDER;
+	cmd->x = rc->x;
+	cmd->y = rc->y;
+	cmd->imageWidth = rc->width;
+	cmd->imageHeight = rc->height;
+	cmd->image = image;
+
+	guiModel->Clear();
+}
+
+/*
+==============
+CaptureRenderToFile
+
+==============
+*/
+void idRenderSystemLocal::CaptureRenderToFile(const char *fileName, bool fixAlpha)
+{
+	if (!glConfig.isInitialized)
+	{
+		return;
+	}
+
+	renderCrop_t *rc = &renderCrops[currentRenderCrop];
+
+	guiModel->EmitFullScreen();
+	guiModel->Clear();
+	R_IssueRenderCommands();
+
+	glReadBuffer(GL_BACK);
+
+	// include extra space for OpenGL padding to word boundaries
+	int	c = (rc->width + 3) * rc->height;
+	byte *data = (byte *) R_StaticAlloc(c * 3);
+
+	glReadPixels(rc->x, rc->y, rc->width, rc->height, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+	byte *data2 = (byte *) R_StaticAlloc(c * 4);
+
+	for (int i = 0; i < c; i++)
+	{
+		data2[i * 4] = data[i * 3];
+		data2[i * 4 + 1] = data[i * 3 + 1];
+		data2[i * 4 + 2] = data[i * 3 + 2];
+		data2[i * 4 + 3] = 0xff;
+	}
+
+	R_WriteTGA(fileName, data2, rc->width, rc->height, true);
+
+	R_StaticFree(data);
+	R_StaticFree(data2);
+}
+
+
+/*
+==============
+AllocRenderWorld
+==============
+*/
+idRenderWorld *idRenderSystemLocal::AllocRenderWorld()
+{
+	idRenderWorldLocal *rw;
+	rw = new idRenderWorldLocal;
+	worlds.Append(rw);
+	return rw;
+}
+
+/*
+==============
+FreeRenderWorld
+==============
+*/
+void idRenderSystemLocal::FreeRenderWorld(idRenderWorld *rw)
+{
+	if (primaryWorld == rw)
+	{
+		primaryWorld = NULL;
+	}
+	worlds.Remove(static_cast<idRenderWorldLocal *>(rw));
+	delete rw;
+}
+
+/*
+==============
+PrintMemInfo
+==============
+*/
+void idRenderSystemLocal::PrintMemInfo(MemInfo_t *mi)
+{
+	// sum up image totals
+	globalImages->PrintMemInfo(mi);
+
+	// sum up model totals
+	renderModelManager->PrintMemInfo(mi);
+
+	// compute render totals
+
+}
+
+/*
+===============
+idRenderSystemLocal::UploadImage
+===============
+*/
+bool idRenderSystemLocal::UploadImage(const char *imageName, const byte *data, int width, int height)
+{
+	idImage *image = globalImages->GetImage(imageName);
+	if (!image)
+	{
+		return false;
+	}
+	image->UploadScratch(data, width, height);
+	image->SetImageFilterAndRepeat();
+	return true;
+}

@@ -696,10 +696,6 @@ const int MAX_GUI_SURFACES = 1024;		// default size of the drawSurfs list for gu
 
 typedef enum
 {
-	BE_ARB,
-	BE_NV10,
-	BE_NV20,
-	BE_R200,
 	BE_ARB2,
 	BE_GLSL,
 	BE_BAD
@@ -758,7 +754,6 @@ public:
 	virtual void			CaptureRenderToImage(const char *imageName);
 	virtual void			CaptureRenderToFile(const char *fileName, bool fixAlpha);
 	virtual void			UnCrop();
-	virtual void			GetCardCaps(bool &oldCard, bool &nv10or20);
 	virtual bool			UploadImage(const char *imageName, const byte *data, int width, int height);
 
 public:

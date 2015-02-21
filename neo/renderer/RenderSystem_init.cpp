@@ -44,7 +44,7 @@ glconfig_t	glConfig;
 
 static void GfxInfo_f(void);
 
-const char *r_rendererArgs[] = { "best", "arb", "arb2", "glsl", "exp", NULL };
+const char *r_rendererArgs[] = { "best", "arb2", "glsl", "exp", NULL };
 
 idCVar r_inhibitFragmentProgram("r_inhibitFragmentProgram", "0", CVAR_RENDERER | CVAR_BOOL, "ignore the fragment program extension");
 idCVar r_glDriver("r_glDriver", "", CVAR_RENDERER, "\"opengl32\", etc.");
@@ -87,7 +87,7 @@ idCVar r_swapInterval("r_swapInterval", "0", CVAR_RENDERER | CVAR_ARCHIVE | CVAR
 idCVar r_gamma("r_gamma", "1", CVAR_RENDERER | CVAR_ARCHIVE | CVAR_FLOAT, "changes gamma tables", 0.5f, 3.0f);
 idCVar r_brightness("r_brightness", "1", CVAR_RENDERER | CVAR_ARCHIVE | CVAR_FLOAT, "changes gamma tables", 0.5f, 2.0f);
 
-idCVar r_renderer("r_renderer", "best", CVAR_RENDERER | CVAR_ARCHIVE, "hardware specific renderer path to use", r_rendererArgs, idCmdSystem::ArgCompletion_String<r_rendererArgs>);
+idCVar r_renderer("r_renderer", "arb2", CVAR_RENDERER | CVAR_ARCHIVE, "hardware specific renderer path to use", r_rendererArgs, idCmdSystem::ArgCompletion_String<r_rendererArgs>);
 
 idCVar r_jitter("r_jitter", "0", CVAR_RENDERER | CVAR_BOOL, "randomly subpixel jitter the projection matrix");
 
@@ -1833,7 +1833,6 @@ void GfxInfo_f(const idCmdArgs &args)
 	common->Printf("CPU: %s\n", Sys_GetProcessorString());
 
 	const char *active[2] = { "", " (ACTIVE)" };
-	common->Printf("ARB path ENABLED%s\n", active[tr.backEndRenderer == BE_ARB]);
 
 	if (glConfig.allowARB2Path)
 	{
@@ -2217,7 +2216,7 @@ void idRenderSystemLocal::Init(void)
 
 	// determine which back end we will use
 	// ??? this is invalid here as there is not enough information to set it up correctly
-	SetBackEndRenderer();
+	//SetBackEndRenderer();
 
 	common->Printf("renderSystem initialized.\n");
 	common->Printf("--------------------------------------\n");
@@ -2378,14 +2377,4 @@ int idRenderSystemLocal::GetScreenHeight(void) const
 	return glConfig.vidHeight;
 }
 
-/*
-========================
-idRenderSystemLocal::GetCardCaps
-========================
-*/
-void idRenderSystemLocal::GetCardCaps(bool &oldCard, bool &nv10or20)
-{
-	nv10or20 = (tr.backEndRenderer == BE_NV10 || tr.backEndRenderer == BE_NV20);
-	oldCard = (tr.backEndRenderer == BE_ARB || tr.backEndRenderer == BE_R200 || tr.backEndRenderer == BE_NV10 || tr.backEndRenderer == BE_NV20);
-}
 
