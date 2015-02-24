@@ -356,7 +356,6 @@
     <ClInclude Include="renderer\ModelManager.h" />
     <ClInclude Include="renderer\ModelOverlay.h" />
     <ClInclude Include="renderer\qgl.h" />
-    <ClInclude Include="renderer\qgl_linked.h" />
     <ClInclude Include="renderer\RenderSystem.h" />
     <ClInclude Include="renderer\RenderWorld.h" />
     <ClInclude Include="renderer\RenderWorld_local.h" />
@@ -639,7 +638,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Dedicated Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Dedicated Release|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <ClInclude Include="sys\win32\win_semaphore.h" />
     <ClInclude Include="tools\compilers\compiler_public.h" />
     <ClInclude Include="tools\compilers\aas\AASBuild_local.h" />
     <ClInclude Include="tools\compilers\aas\AASCluster.h" />

@@ -270,9 +270,6 @@
     <ClInclude Include="renderer\qgl.h">
       <Filter>Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="renderer\qgl_linked.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="renderer\RenderSystem.h">
       <Filter>Renderer</Filter>
     </ClInclude>
@@ -629,9 +626,6 @@
     </ClInclude>
     <ClInclude Include="renderer\jpeg-9a\jconfig.h">
       <Filter>Renderer\JPeg-9a</Filter>
-    </ClInclude>
-    <ClInclude Include="sys\win32\win_semaphore.h">
-      <Filter>Sys</Filter>
     </ClInclude>
     <ClInclude Include="glew\GL\glew.h">
       <Filter>glew\GL</Filter>
