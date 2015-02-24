@@ -400,28 +400,21 @@ the values from r_customWidth, amd r_customHeight
 will be used instead.
 ====================
 */
-typedef struct vidmode_s
+typedef class vidmode_s
 {
-	const char *description;
-	int         width, height;
+public:
+	int width, height;
+
+	vidmode_s() {};
+
+	vidmode_s(int w, int h)
+	{
+		width = w;
+		height = h;
+	}
 } vidmode_t;
 
-vidmode_t r_vidModes[] =
-{
-	{ "Mode  0: 320x240", 320, 240 },
-	{ "Mode  1: 400x300", 400, 300 },
-	{ "Mode  2: 512x384", 512, 384 },
-	{ "Mode  3: 640x480", 640, 480 },
-	{ "Mode  4: 800x600", 800, 600 },
-	{ "Mode  5: 1024x768", 1024, 768 },
-	{ "Mode  6: 1152x864", 1152, 864 },
-	{ "Mode  7: 1280x1024", 1280, 1024 },
-	{ "Mode  8: 1280x768", 1280, 768 },
-	{ "Mode  9: 1280x800", 1280, 800 },
-	{ "Mode 10: 1366x768", 1366, 768 },
-	{ "Mode 11: 1600x900", 1600, 900 },
-};
-static int	s_numVidModes = (sizeof(r_vidModes) / sizeof(r_vidModes[0]));
+idList<vidmode_t> r_vidModes;
 
 #if MACOS_X
 bool R_GetModeInfo(int *width, int *height, int mode)
@@ -436,7 +429,7 @@ static bool R_GetModeInfo(int *width, int *height, int mode)
 	{
 		return false;
 	}
-	if (mode >= s_numVidModes)
+	if (mode >= r_vidModes.Num())
 	{
 		return false;
 	}
@@ -462,6 +455,11 @@ static bool R_GetModeInfo(int *width, int *height, int mode)
 	return true;
 }
 
+void R_AddVideoMode(int width, int height)
+{
+	r_vidModes.Append(*(new vidmode_t(width, height)));
+	common->Printf("New video mode: \"Mode %d: %dx%d\"\n", r_vidModes.Num() - 1, width, height);
+}
 
 /*
 ==================
@@ -486,6 +484,29 @@ void R_InitOpenGL(void)
 	int				i;
 
 	common->Printf("----- R_InitOpenGL -----\n");
+
+	// add some initial videomodes
+	
+	// 4:3
+	R_AddVideoMode(320, 240);
+	R_AddVideoMode(400, 300);
+	R_AddVideoMode(512, 384);
+	R_AddVideoMode(640, 480);
+	R_AddVideoMode(800, 600);
+	R_AddVideoMode(1024, 768);
+	R_AddVideoMode(1152, 864);
+	R_AddVideoMode(1280, 1024);
+	R_AddVideoMode(1600, 1200);
+
+	// 16:9
+	R_AddVideoMode(852, 480);
+	R_AddVideoMode(1280, 720);
+	R_AddVideoMode(1366, 768);
+	R_AddVideoMode(1600, 900);
+
+	//16:10
+	R_AddVideoMode(1280, 768);
+	R_AddVideoMode(1440, 900);
 
 	if (glConfig.isInitialized)
 	{
@@ -703,9 +724,9 @@ static void R_ListModes_f(const idCmdArgs &args)
 	int i;
 
 	common->Printf("\n");
-	for (i = 0; i < s_numVidModes; i++)
+	for (i = 0; i < r_vidModes.Num(); i++)
 	{
-		common->Printf("%s\n", r_vidModes[i].description);
+		common->Printf("Mode %d: %dx%d\n", i, r_vidModes[i].width, r_vidModes[i].height);
 	}
 	common->Printf("\n");
 }
@@ -1843,14 +1864,14 @@ void GfxInfo_f(const idCmdArgs &args)
 		common->Printf("ARB2 path disabled\n");
 	}
 
-	if (glConfig.allowGLSLPath) 
+	if (glConfig.allowGLSLPath)
 	{
 		common->Printf("GLSL path ENABLED%s\n", active[tr.backEndRenderer == BE_GLSL]);
-		
+
 	}
 	else {
 		common->Printf("GLSL path disabled\n");
-		
+
 	}
 
 	//=============================
