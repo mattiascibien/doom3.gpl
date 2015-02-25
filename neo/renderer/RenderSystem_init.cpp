@@ -457,8 +457,24 @@ static bool R_GetModeInfo(int *width, int *height, int mode)
 
 void R_AddVideoMode(int width, int height)
 {
+	for (size_t i = 0; i < r_vidModes.Num(); i++)
+	{
+		if (r_vidModes[i].height == height && r_vidModes[i].width == width)
+			return;
+	}
+
 	r_vidModes.Append(*(new vidmode_t(width, height)));
 	common->Printf("New video mode: \"Mode %d: %dx%d\"\n", r_vidModes.Num() - 1, width, height);
+}
+
+void R_AddSupportedVidModes()
+{
+	DEVMODE dm = { 0 };
+	dm.dmSize = sizeof(dm);
+	for (int iModeNum = 0; EnumDisplaySettings(NULL, iModeNum, &dm) != 0; iModeNum++) 
+	{
+		R_AddVideoMode(dm.dmPelsWidth, dm.dmPelsHeight);
+	}
 }
 
 /*
@@ -485,28 +501,9 @@ void R_InitOpenGL(void)
 
 	common->Printf("----- R_InitOpenGL -----\n");
 
-	// add some initial videomodes
-	
-	// 4:3
-	R_AddVideoMode(320, 240);
-	R_AddVideoMode(400, 300);
-	R_AddVideoMode(512, 384);
-	R_AddVideoMode(640, 480);
-	R_AddVideoMode(800, 600);
-	R_AddVideoMode(1024, 768);
-	R_AddVideoMode(1152, 864);
-	R_AddVideoMode(1280, 1024);
-	R_AddVideoMode(1600, 1200);
-
-	// 16:9
-	R_AddVideoMode(852, 480);
-	R_AddVideoMode(1280, 720);
-	R_AddVideoMode(1366, 768);
-	R_AddVideoMode(1600, 900);
-
-	//16:10
-	R_AddVideoMode(1280, 768);
-	R_AddVideoMode(1440, 900);
+	// add supported video modes querying them form 
+	// Win32 information
+	R_AddSupportedVidModes();
 
 	if (glConfig.isInitialized)
 	{
